@@ -122,9 +122,9 @@ namespace sh
 		virtual void notifyFrameEntered ();
 
 		std::string mCacheFolder;
+		Factory* mFactory;
 
 	private:
-		Factory* mFactory;
 		void setFactory (Factory* factory);
 
 

@@ -8,6 +8,7 @@
 #include "OgreGpuProgram.hpp"
 
 #include "../../Main/MaterialInstance.hpp"
+#include "../../Main/Factory.hpp"
 
 namespace
 {
@@ -57,7 +58,8 @@ namespace sh
 
 	bool OgrePlatform::supportsShaderSerialization ()
 	{
-		return true;
+		// not working in GLSL for some reason, ogre bug?
+		return mFactory->getCurrentLanguage() != Language_GLSL;
 	}
 
 	bool OgrePlatform::supportsMaterialQueuedListener ()
