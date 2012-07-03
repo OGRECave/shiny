@@ -6,4 +6,9 @@ namespace sh
 		: mName(name)
 	{
 	}
+
+	std::string MaterialInstanceTextureUnit::getName() const
+	{
+		return mName;
+	}
 }

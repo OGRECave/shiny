@@ -256,6 +256,20 @@ namespace sh
 			source.replace(pos, (end+1)-pos, boost::lexical_cast<std::string>(counters[index]++));
 		}
 
+		// parse texture samplers used
+		while (true)
+		{
+			pos = source.find("@shUseSampler");
+			if (pos == std::string::npos)
+				break;
+
+			size_t start = source.find("(", pos);
+			size_t end = source.find(")", pos);
+
+			mUsedSamplers.push_back(source.substr(start+1, end-(start+1)));
+			source.erase(pos, (end+1)-pos);
+		}
+
 		while (true)
 		{
 			// can't use #version XYZ in the shader file itself because the preprocessor gets confused.
@@ -305,6 +319,11 @@ namespace sh
 	bool ShaderInstance::getSupported () const
 	{
 		return mSupported;
+	}
+
+	std::vector<std::string> ShaderInstance::getUsedSamplers()
+	{
+		return mUsedSamplers;
 	}
 
 	void ShaderInstance::setUniformParameters (boost::shared_ptr<Pass> pass, PropertySetGet* properties)

@@ -243,6 +243,21 @@ namespace sh
 			return mProperties[name];
 	}
 
+	bool PropertySetGet::hasProperty (const std::string& name)
+	{
+		bool found = (mProperties.find(name) != mProperties.end());
+
+		if (!found)
+		{
+			if (!mParent)
+				return false;
+			else
+				return true;
+		}
+		else
+			return true;
+	}
+
 	void PropertySetGet::copyAll (PropertySet* target, PropertySetGet* context)
 	{
 		if (mParent)

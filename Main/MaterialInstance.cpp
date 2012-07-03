@@ -35,7 +35,8 @@ namespace sh
 	void MaterialInstance::setProperty (const std::string& name, PropertyValuePtr value)
 	{
 		PropertySetGet::setProperty (name, value);
-		mMaterial->removeAll(); // trigger updates
+		if (mMaterial)
+			mMaterial->removeAll(); // trigger updates
 	}
 
 	void MaterialInstance::createForConfiguration (Platform* platform, const std::string& configuration)
@@ -49,14 +50,7 @@ namespace sh
 			boost::shared_ptr<Pass> pass = mMaterial->createPass (configuration);
 			it->copyAll (pass.get(), this);
 
-			// create all texture units
-			/// \todo check usage in the shader and create only those that are necessary
-			std::map<std::string, MaterialInstanceTextureUnit> texUnits = it->getTexUnits();
-			for (std::map<std::string, MaterialInstanceTextureUnit>::iterator texIt = texUnits.begin(); texIt  != texUnits.end(); ++texIt )
-			{
-				boost::shared_ptr<TextureUnitState> texUnit = pass->createTextureUnitState ();
-				texIt->second.copyAll (texUnit.get(), this);
-			}
+			std::vector<std::string> usedTextureSamplers; // texture samplers used in the shaders
 
 			// create or retrieve shaders
 			if (mShadersEnabled)
@@ -68,6 +62,8 @@ namespace sh
 				{
 					pass->assignProgram (GPT_Vertex, v->getName());
 					v->setUniformParameters (pass, &*it);
+					std::vector<std::string> vector = v->getUsedSamplers ();
+					usedTextureSamplers.insert(usedTextureSamplers.end(), vector.begin(), vector.end());
 				}
 				ShaderSet* fragment = mFactory->getShaderSet(retrieveValue<StringValue>(it->getProperty("fragment_program"), this).get());
 				ShaderInstance* f = fragment->getInstance(&*it);
@@ -75,6 +71,21 @@ namespace sh
 				{
 					pass->assignProgram (GPT_Fragment, f->getName());
 					f->setUniformParameters (pass, &*it);
+					std::vector<std::string> vector = f->getUsedSamplers ();
+					usedTextureSamplers.insert(usedTextureSamplers.end(), vector.begin(), vector.end());
+				}
+			}
+
+			// create texture units
+			std::map<std::string, MaterialInstanceTextureUnit> texUnits = it->getTexUnits();
+			for (std::map<std::string, MaterialInstanceTextureUnit>::iterator texIt = texUnits.begin(); texIt  != texUnits.end(); ++texIt )
+			{
+				// only create those that are needed by the shader, OR those marked to be created in fixed function pipeline if shaders are disabled
+				if (std::find(usedTextureSamplers.begin(), usedTextureSamplers.end(), texIt->second.getName()) != usedTextureSamplers.end()
+						|| (!mShadersEnabled && texIt->second.hasProperty("create_in_ffp") && retrieveValue<BooleanValue>(texIt->second.getProperty("create_in_ffp"), this).get()))
+				{
+					boost::shared_ptr<TextureUnitState> texUnit = pass->createTextureUnitState ();
+					texIt->second.copyAll (texUnit.get(), this);
 				}
 			}
 		}
@@ -112,6 +123,7 @@ namespace sh
 		mShadersEnabled = enabled;
 
 		// trigger updates
-		mMaterial->removeAll();
+		if (mMaterial.get())
+			mMaterial->removeAll();
 	}
 }

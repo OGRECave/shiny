@@ -103,6 +103,8 @@ namespace sh
 
 				MaterialInstance newInstance(it->first, this);
 				newInstance.create(mPlatform);
+				if (!mShadersEnabled)
+					newInstance.setShadersEnabled (false);
 
 				std::vector<ScriptNode*> props = it->second->getChildren();
 				for (std::vector<ScriptNode*>::const_iterator propIt = props.begin(); propIt != props.end(); ++propIt)

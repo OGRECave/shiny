@@ -24,6 +24,8 @@ namespace sh
 
 		bool getSupported () const;
 
+		std::vector<std::string> getUsedSamplers();
+
 		void setUniformParameters (boost::shared_ptr<Pass> pass, PropertySetGet* properties);
 
 	private:
@@ -31,6 +33,9 @@ namespace sh
 		std::string mName;
 		ShaderSet* mParent;
 		bool mSupported; ///< shader compilation was sucessful?
+
+		std::vector<std::string> mUsedSamplers;
+		///< names of the texture samplers that are used by this shader
 
 		UniformMap mUniformProperties;
 		///< uniforms that this depends on, and their property names / value-types
