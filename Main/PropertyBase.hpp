@@ -153,7 +153,7 @@ namespace sh
 		void setContext (PropertySetGet* context);
 		PropertySetGet* getContext();
 
-		void setProperty (const std::string& name, PropertyValuePtr value);
+		virtual void setProperty (const std::string& name, PropertyValuePtr value);
 		PropertyValuePtr& getProperty (const std::string& name);
 
 	private:

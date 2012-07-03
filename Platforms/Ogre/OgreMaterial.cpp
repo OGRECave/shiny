@@ -28,6 +28,12 @@ namespace sh
 		return boost::shared_ptr<Pass> (new OgrePass (this, configuration));
 	}
 
+	void OgreMaterial::removeAll ()
+	{
+		mMaterial->removeAllTechniques();
+		mMaterial->createTechnique()->setSchemeName (sDefaultTechniqueName);
+	}
+
 	void OgreMaterial::createConfiguration (const std::string& name)
 	{
 		Ogre::Technique* t = mMaterial->createTechnique();

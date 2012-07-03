@@ -237,6 +237,25 @@ namespace sh
 			source.erase(pos, (end+1)-pos);
 		}
 
+		// parse counter
+		std::map<int, int> counters;
+		while (true)
+		{
+			pos = source.find("@shCounter");
+			if (pos == std::string::npos)
+				break;
+
+			size_t start = source.find("(", pos);
+			size_t end = source.find(")", pos);
+
+			int index = boost::lexical_cast<int>(source.substr(start+1, end-(start+1)));
+
+			if (counters.find(index) == counters.end())
+				counters[index] = 0;
+
+			source.replace(pos, (end+1)-pos, boost::lexical_cast<std::string>(counters[index]++));
+		}
+
 		while (true)
 		{
 			// can't use #version XYZ in the shader file itself because the preprocessor gets confused.
@@ -264,6 +283,7 @@ namespace sh
 		else if (type == GPT_Fragment)
 			mProgram = boost::shared_ptr<GpuProgram>(platform->createGpuProgram(GPT_Fragment, "", mName, profile, source, Factory::getInstance().getCurrentLanguage()));
 
+		std::cout << source << std::endl;
 		if (!mProgram->getSupported())
 		{
 			std::cout << "        Full source code below: \n" << source << std::endl;

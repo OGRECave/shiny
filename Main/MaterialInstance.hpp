@@ -30,12 +30,18 @@ namespace sh
 
 		Material* getMaterial();
 
+		void updateShaders ();
+
+		virtual void setProperty (const std::string& name, PropertyValuePtr value);
+
 	private:
 		void setParentInstance (const std::string& name);
 		std::string getParentInstance ();
 
 		void create (Platform* platform);
 		void createForConfiguration (Platform* platform, const std::string& configuration);
+
+		void destroyAll ();
 
 		void markDirty (const std::string& configuration); ///< force recreating the technique/shaders when it's next used
 

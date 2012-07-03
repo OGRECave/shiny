@@ -222,12 +222,15 @@ namespace sh
 
 	void Factory::setGlobalSetting (const std::string& name, const std::string& value)
 	{
-		/*
 		bool changed = true;
 		if (mGlobalSettings.find(name) != mGlobalSettings.end())
 			changed = (mGlobalSettings[name] == value);
-		*/
+
 		mGlobalSettings[name] = value;
+		for (MaterialMap::iterator it = mMaterials.begin(); it != mMaterials.end(); ++it)
+		{
+			it->second.destroyAll();
+		}
 	}
 
 	void Factory::setSharedParameter (const std::string& name, PropertyValuePtr value)
@@ -253,6 +256,9 @@ namespace sh
 	void Factory::setCurrentLanguage (Language lang)
 	{
 		mCurrentLanguage = lang;
-		/// \todo
+		for (MaterialMap::iterator it = mMaterials.begin(); it != mMaterials.end(); ++it)
+		{
+			it->second.destroyAll();
+		}
 	}
 }

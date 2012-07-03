@@ -27,6 +27,17 @@ namespace sh
 		mMaterial = platform->createMaterial(mName);
 	}
 
+	void MaterialInstance::destroyAll ()
+	{
+		mMaterial->removeAll();
+	}
+
+	void MaterialInstance::setProperty (const std::string& name, PropertyValuePtr value)
+	{
+		PropertySetGet::setProperty (name, value);
+		mMaterial->removeAll(); // trigger updates
+	}
+
 	void MaterialInstance::createForConfiguration (Platform* platform, const std::string& configuration)
 	{
 		mMaterial->createConfiguration(configuration);
@@ -48,20 +59,23 @@ namespace sh
 			}
 
 			// create or retrieve shaders
-			it->setContext(this);
-			ShaderSet* vertex = mFactory->getShaderSet(retrieveValue<StringValue>(it->getProperty("vertex_program"), this).get());
-			ShaderInstance* v = vertex->getInstance(&*it);
-			if (v)
+			if (mShadersEnabled)
 			{
-				pass->assignProgram (GPT_Vertex, v->getName());
-				v->setUniformParameters (pass, &*it);
-			}
-			ShaderSet* fragment = mFactory->getShaderSet(retrieveValue<StringValue>(it->getProperty("fragment_program"), this).get());
-			ShaderInstance* f = fragment->getInstance(&*it);
-			if (f)
-			{
-				pass->assignProgram (GPT_Fragment, f->getName());
-				f->setUniformParameters (pass, &*it);
+				it->setContext(this);
+				ShaderSet* vertex = mFactory->getShaderSet(retrieveValue<StringValue>(it->getProperty("vertex_program"), this).get());
+				ShaderInstance* v = vertex->getInstance(&*it);
+				if (v)
+				{
+					pass->assignProgram (GPT_Vertex, v->getName());
+					v->setUniformParameters (pass, &*it);
+				}
+				ShaderSet* fragment = mFactory->getShaderSet(retrieveValue<StringValue>(it->getProperty("fragment_program"), this).get());
+				ShaderInstance* f = fragment->getInstance(&*it);
+				if (f)
+				{
+					pass->assignProgram (GPT_Fragment, f->getName());
+					f->setUniformParameters (pass, &*it);
+				}
 			}
 		}
 	}
@@ -96,6 +110,8 @@ namespace sh
 		if (enabled == mShadersEnabled)
 			return;
 		mShadersEnabled = enabled;
-		/// \todo
+
+		// trigger updates
+		mMaterial->removeAll();
 	}
 }

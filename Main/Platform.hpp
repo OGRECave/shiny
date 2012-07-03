@@ -58,6 +58,7 @@ namespace sh
 		virtual boost::shared_ptr<Pass> createPass (const std::string& configuration) = 0;
 		virtual void createConfiguration (const std::string& name) = 0;
 		virtual void removeConfiguration (const std::string& name) = 0; ///< safe to call if configuration does not exist
+		virtual void removeAll () = 0; ///< remove all configurations
 		//virtual boost::shared_ptr<Pass> getPass (int index, const std::string& configuration);
 	};
 
