@@ -9,6 +9,7 @@
 #include "Factory.hpp"
 #include "ShaderSet.hpp"
 
+#include "../ogre/common/QTimer.h"
 namespace
 {
 	std::string convertLang (sh::Language lang)
@@ -307,10 +308,15 @@ namespace sh
 		else if (Factory::getInstance ().getCurrentLanguage () == Language_HLSL)
 			profile = mParent->getHlslProfile ();
 
+		QTimer ti; ti.update();
+
 		if (type == GPT_Vertex)
 			mProgram = boost::shared_ptr<GpuProgram>(platform->createGpuProgram(GPT_Vertex, "", mName, profile, source, Factory::getInstance().getCurrentLanguage()));
 		else if (type == GPT_Fragment)
 			mProgram = boost::shared_ptr<GpuProgram>(platform->createGpuProgram(GPT_Fragment, "", mName, profile, source, Factory::getInstance().getCurrentLanguage()));
+
+		ti.update();
+		std::cout << "time: " << ti.dt * 1000 << std::endl;
 
 		std::cout << source << std::endl;
 		if (!mProgram->getSupported())

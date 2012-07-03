@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
 
 #include "Platform.hpp"
 #include "InstanceLoader.hpp"
@@ -24,12 +25,21 @@ namespace sh
 	Factory::Factory (Platform* platform)
 		: mPlatform(platform)
 		, mShadersEnabled(true)
-		, mCurrentLanguage(Language_CG)
+		, mCurrentLanguage(platform->selectBestLanguage ())
 	{
 		assert (!sThis);
 		sThis = this;
 
 		mPlatform->setFactory(this);
+
+		if (mPlatform->supportsShaderSerialization ())
+		{
+			std::string file = mPlatform->getCacheFolder () + "/shShaderCache.txt";
+			if (boost::filesystem::exists(file))
+			{
+				mPlatform->deserializeShaders (file);
+			}
+		}
 
 		// load shader sets
 		{
@@ -161,6 +171,12 @@ namespace sh
 
 	Factory::~Factory ()
 	{
+		if (mPlatform->supportsShaderSerialization ())
+		{
+			std::string file = mPlatform->getCacheFolder () + "/shShaderCache.txt";
+			mPlatform->serializeShaders (file);
+		}
+
 		delete mPlatform;
 		sThis = 0;
 	}

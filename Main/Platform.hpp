@@ -70,8 +70,8 @@ namespace sh
 		Platform (const std::string& basePath);
 		virtual ~Platform ();
 
-		virtual void serializeShaders (const std::string& file);
-		virtual void deserializeShaders (const std::string& file);
+		/// set the folder to use for shader caching
+		void setCacheFolder (const std::string& folder);
 
 	private:
 		virtual boost::shared_ptr<Material> createMaterial (const std::string& name) = 0;
@@ -85,6 +85,13 @@ namespace sh
 		virtual void setSharedParameter (const std::string& name, PropertyValuePtr value) = 0;
 
 		virtual bool isProfileSupported (const std::string& profile) = 0;
+
+		virtual void serializeShaders (const std::string& file);
+		virtual void deserializeShaders (const std::string& file);
+
+		std::string getCacheFolder () const;
+
+		virtual Language selectBestLanguage () = 0;
 
 		friend class Factory;
 		friend class MaterialInstance;
@@ -101,6 +108,7 @@ namespace sh
 		 * this will be \a true if the platform supports a listener that notifies the system
 		 * whenever a material is requested for rendering. if this is supported, shaders can be
 		 * compiled on-demand when needed (and not earlier)
+		 * @todo the Factory is not designed yet to handle the case where this method returns false
 		 */
 		virtual bool supportsMaterialQueuedListener ();
 
@@ -112,6 +120,8 @@ namespace sh
 		MaterialInstance* fireMaterialRequested (const std::string& name, const std::string& configuration);
 
 		virtual void notifyFrameEntered ();
+
+		std::string mCacheFolder;
 
 	private:
 		Factory* mFactory;

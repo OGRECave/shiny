@@ -87,6 +87,8 @@ namespace sh
 		ShaderSetMap mShaderSets;
 		SettingsMap mGlobalSettings;
 
+		std::string mCachePath;
+
 		Language mCurrentLanguage;
 
 		Platform* mPlatform;

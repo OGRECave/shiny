@@ -8,6 +8,7 @@ namespace sh
 {
 	Platform::Platform (const std::string& basePath)
 		: mBasePath(basePath)
+		, mCacheFolder("./")
 	{
 	}
 
@@ -52,5 +53,15 @@ namespace sh
 	void Platform::deserializeShaders (const std::string& file)
 	{
 		throw std::runtime_error ("Shader serialization not supported by this platform");
+	}
+
+	void Platform::setCacheFolder (const std::string& folder)
+	{
+		mCacheFolder = folder;
+	}
+
+	std::string Platform::getCacheFolder() const
+	{
+		return mCacheFolder;
 	}
 }

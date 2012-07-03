@@ -25,14 +25,15 @@ namespace sh
 		OgrePlatform (const std::string& resourceGroupName, const std::string& basePath);
 		virtual ~OgrePlatform ();
 
+		virtual Ogre::Technique* handleSchemeNotFound (
+			unsigned short schemeIndex, const Ogre::String &schemeName, Ogre::Material *originalMaterial,
+			unsigned short lodIndex, const Ogre::Renderable *rend);
+
+	private:
 		virtual bool isProfileSupported (const std::string& profile);
 
 		virtual void serializeShaders (const std::string& file);
 		virtual void deserializeShaders (const std::string& file);
-
-		virtual Ogre::Technique* handleSchemeNotFound (
-			unsigned short schemeIndex, const Ogre::String &schemeName, Ogre::Material *originalMaterial,
-			unsigned short lodIndex, const Ogre::Renderable *rend);
 
 		virtual boost::shared_ptr<Material> createMaterial (const std::string& name);
 
@@ -43,6 +44,11 @@ namespace sh
 			const std::string& source, Language lang);
 
 		virtual void setSharedParameter (const std::string& name, PropertyValuePtr value);
+
+		Language selectBestLanguage ();
+
+		friend class ShaderInstance;
+		friend class Factory;
 
 	protected:
 		virtual bool supportsShaderSerialization ();
