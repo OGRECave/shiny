@@ -1,6 +1,7 @@
 #include "ShaderInstance.hpp"
 
 #include <stdexcept>
+#include <iostream>
 
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
@@ -18,7 +19,7 @@ namespace
 			return "SH_CG";
 		else if (lang == sh::Language_HLSL)
 			return "SH_HLSL";
-		else if (lang == sh::Language_GLSL)
+		else //if (lang == sh::Language_GLSL)
 			return "SH_GLSL";
 	}
 }
@@ -308,20 +309,17 @@ namespace sh
 		else if (Factory::getInstance ().getCurrentLanguage () == Language_HLSL)
 			profile = mParent->getHlslProfile ();
 
-		QTimer ti; ti.update();
 
 		if (type == GPT_Vertex)
 			mProgram = boost::shared_ptr<GpuProgram>(platform->createGpuProgram(GPT_Vertex, "", mName, profile, source, Factory::getInstance().getCurrentLanguage()));
 		else if (type == GPT_Fragment)
 			mProgram = boost::shared_ptr<GpuProgram>(platform->createGpuProgram(GPT_Fragment, "", mName, profile, source, Factory::getInstance().getCurrentLanguage()));
 
-		ti.update();
-		std::cout << "time: " << ti.dt * 1000 << std::endl;
+		//std::cout << source << std::endl;
 
-		std::cout << source << std::endl;
 		if (!mProgram->getSupported())
 		{
-			std::cout << "        Full source code below: \n" << source << std::endl;
+			std::cerr << "        Full source code below: \n" << source << std::endl;
 			mSupported = false;
 			return;
 		}
