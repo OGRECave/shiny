@@ -62,6 +62,13 @@ namespace sh
 				{
 					pass->assignProgram (GPT_Vertex, v->getName());
 					v->setUniformParameters (pass, &*it);
+
+					std::vector<std::string> sharedParams = v->getSharedParameters ();
+					for (std::vector<std::string>::iterator it = sharedParams.begin(); it != sharedParams.end(); ++it)
+					{
+						pass->addSharedParameter (GPT_Vertex, *it);
+					}
+
 					std::vector<std::string> vector = v->getUsedSamplers ();
 					usedTextureSamplers.insert(usedTextureSamplers.end(), vector.begin(), vector.end());
 				}
@@ -71,6 +78,13 @@ namespace sh
 				{
 					pass->assignProgram (GPT_Fragment, f->getName());
 					f->setUniformParameters (pass, &*it);
+
+					std::vector<std::string> sharedParams = f->getSharedParameters ();
+					for (std::vector<std::string>::iterator it = sharedParams.begin(); it != sharedParams.end(); ++it)
+					{
+						pass->addSharedParameter (GPT_Fragment, *it);
+					}
+
 					std::vector<std::string> vector = f->getUsedSamplers ();
 					usedTextureSamplers.insert(usedTextureSamplers.end(), vector.begin(), vector.end());
 				}

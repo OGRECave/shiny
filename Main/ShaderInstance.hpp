@@ -11,7 +11,6 @@ namespace sh
 
 	typedef std::map< std::string, std::pair<std::string, ValueType > > UniformMap;
 
-/// \todo add the global settings here (and consider them in buildHash)
 	/**
 	 * @brief A specific instance of a \a ShaderSet with a deterministic shader source
 	 */
@@ -25,6 +24,7 @@ namespace sh
 		bool getSupported () const;
 
 		std::vector<std::string> getUsedSamplers();
+		std::vector<std::string> getSharedParameters() { return mSharedParameters; }
 
 		void setUniformParameters (boost::shared_ptr<Pass> pass, PropertySetGet* properties);
 
@@ -36,6 +36,8 @@ namespace sh
 
 		std::vector<std::string> mUsedSamplers;
 		///< names of the texture samplers that are used by this shader
+
+		std::vector<std::string> mSharedParameters;
 
 		UniformMap mUniformProperties;
 		///< uniforms that this depends on, and their property names / value-types

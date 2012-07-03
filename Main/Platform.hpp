@@ -50,6 +50,8 @@ namespace sh
 		/// @param value value to set
 		/// @param context used for retrieving linked values
 		virtual void setGpuConstant (int type, const std::string& name, ValueType vt, PropertyValuePtr value, PropertySetGet* context) = 0;
+
+		virtual void addSharedParameter (int type, const std::string& name) = 0;
 	};
 
 	class Material : public PropertySet
@@ -68,11 +70,10 @@ namespace sh
 		Platform (const std::string& basePath);
 		virtual ~Platform ();
 
-		virtual bool isProfileSupported (const std::string& profile) = 0;
-
 		virtual void serializeShaders (const std::string& file);
 		virtual void deserializeShaders (const std::string& file);
 
+	private:
 		virtual boost::shared_ptr<Material> createMaterial (const std::string& name) = 0;
 
 		virtual boost::shared_ptr<GpuProgram> createGpuProgram (
@@ -83,7 +84,11 @@ namespace sh
 
 		virtual void setSharedParameter (const std::string& name, PropertyValuePtr value) = 0;
 
+		virtual bool isProfileSupported (const std::string& profile) = 0;
+
 		friend class Factory;
+		friend class MaterialInstance;
+		friend class ShaderInstance;
 
 	protected:
 		/**

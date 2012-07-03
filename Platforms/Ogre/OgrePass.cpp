@@ -123,4 +123,15 @@ namespace sh
 		else
 			throw std::runtime_error ("unsupported constant type");
 	}
+
+	void OgrePass::addSharedParameter (int type, const std::string& name)
+	{
+		Ogre::GpuProgramParametersSharedPtr params;
+		if (type == GPT_Vertex)
+			params = mPass->getVertexProgramParameters();
+		else if (type == GPT_Fragment)
+			params = mPass->getFragmentProgramParameters();
+
+		params->addSharedParameters (name);
+	}
 }

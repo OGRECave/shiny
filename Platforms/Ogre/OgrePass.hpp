@@ -21,6 +21,8 @@ namespace sh
 
 		virtual void setGpuConstant (int type, const std::string& name, ValueType vt, PropertyValuePtr value, PropertySetGet* context);
 
+		virtual void addSharedParameter (int type, const std::string& name);
+
 	private:
 		Ogre::Pass* mPass;
 

@@ -154,6 +154,40 @@ namespace sh
 		Preprocessor p;
 		source = p.preprocess(source, basePath, definitions, name);
 
+		// parse counter
+		std::map<int, int> counters;
+		while (true)
+		{
+			pos = source.find("@shCounter");
+			if (pos == std::string::npos)
+				break;
+
+			size_t start = source.find("(", pos);
+			size_t end = source.find(")", pos);
+
+			int index = boost::lexical_cast<int>(source.substr(start+1, end-(start+1)));
+
+			if (counters.find(index) == counters.end())
+				counters[index] = 0;
+
+			source.replace(pos, (end+1)-pos, boost::lexical_cast<std::string>(counters[index]++));
+		}
+
+		// parse shared parameters
+		while (true)
+		{
+			pos = source.find("@shSharedParameter");
+			if (pos == std::string::npos)
+				break;
+
+			size_t start = source.find("(", pos);
+			size_t end = source.find(")", pos);
+
+			mSharedParameters.push_back(source.substr(start+1, end-(start+1)));
+
+			source.erase(pos, (end+1)-pos);
+		}
+
 		// parse auto constants
 		typedef std::map< std::string, std::pair<std::string, std::string> > AutoConstantMap;
 		AutoConstantMap autoConstants;
@@ -237,25 +271,6 @@ namespace sh
 			source.erase(pos, (end+1)-pos);
 		}
 
-		// parse counter
-		std::map<int, int> counters;
-		while (true)
-		{
-			pos = source.find("@shCounter");
-			if (pos == std::string::npos)
-				break;
-
-			size_t start = source.find("(", pos);
-			size_t end = source.find(")", pos);
-
-			int index = boost::lexical_cast<int>(source.substr(start+1, end-(start+1)));
-
-			if (counters.find(index) == counters.end())
-				counters[index] = 0;
-
-			source.replace(pos, (end+1)-pos, boost::lexical_cast<std::string>(counters[index]++));
-		}
-
 		// parse texture samplers used
 		while (true)
 		{
@@ -305,10 +320,12 @@ namespace sh
 			return;
 		}
 
+		// set auto constants
 		for (AutoConstantMap::iterator it = autoConstants.begin(); it != autoConstants.end(); ++it)
 		{
 			mProgram->setAutoConstant(it->first, it->second.first, it->second.second);
 		}
+
 	}
 
 	std::string ShaderInstance::getName ()

@@ -215,6 +215,12 @@ namespace sh
 		else
 			return PropertyValuePtr (static_cast<PropertyValue*> (new StringValue(prop)));
 	}
+
+	template <typename T>
+	inline PropertyValuePtr makeProperty (T* p)
+	{
+		return PropertyValuePtr ( static_cast<PropertyValue*>(p) );
+	}
 }
 
 #endif
