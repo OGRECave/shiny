@@ -10,7 +10,6 @@
 #include "Factory.hpp"
 #include "ShaderSet.hpp"
 
-#include "../ogre/common/QTimer.h"
 namespace
 {
 	std::string convertLang (sh::Language lang)
