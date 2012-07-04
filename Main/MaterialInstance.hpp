@@ -28,6 +28,8 @@ namespace sh
 		MaterialInstancePass* createPass ();
 		PassVector getPasses(); ///< gets the passes of the top-most parent
 
+		MaterialInstancePass* getPass(int id);
+
 		Material* getMaterial();
 
 		void updateShaders ();

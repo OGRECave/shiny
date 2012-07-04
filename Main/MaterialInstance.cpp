@@ -140,4 +140,9 @@ namespace sh
 		if (mMaterial.get())
 			mMaterial->removeAll();
 	}
+
+	MaterialInstancePass* MaterialInstance::getPass(int id)
+	{
+		return &mPasses[id];
+	}
 }
