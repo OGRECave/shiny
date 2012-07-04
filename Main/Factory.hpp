@@ -60,7 +60,7 @@ namespace sh
 		void setCurrentLanguage (Language lang);
 
 		/// get a MaterialInstance by name
-		//MaterialInstance* getInstance (const std::string& name);
+		MaterialInstance* getInstance (const std::string& name);
 
 		/// switch the active \a Configuration
 		/// @param configuration name of the configuration to switch to

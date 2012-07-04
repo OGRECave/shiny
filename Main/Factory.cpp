@@ -279,4 +279,9 @@ namespace sh
 			it->second.destroyAll();
 		}
 	}
+
+	MaterialInstance* Factory::getInstance (const std::string& name)
+	{
+		return findInstance(name);
+	}
 }
