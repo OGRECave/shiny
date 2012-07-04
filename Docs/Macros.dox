@@ -1,0 +1,171 @@
+/*!
+	\page macros Shader Macros
+
+	\tableofcontents
+
+	\section Shader Language
+
+	These macros are automatically defined, depending on the shader language that has been set by the application using sh::Factory::setCurrentLanguage.
+
+	 - SH_GLSL
+	 - SH_HLSL
+	 - SH_CG
+
+	<B>Example:</B>
+
+	\code
+	#if SH_GLSL == 1
+	 // glsl porting code
+	#endif
+
+	#if SH_CG == 1 || SH_HLSL == 1
+	 // cg / hlsl porting code (similiar syntax)
+	#endif
+	\endcode
+
+	\note It is encouraged to use the shipped porting header (extra/core.h) by #include-ing it in your shaders. If you do that, you should not have to use the above macros directly. 
+
+	\section texUnits Texture units
+
+	\subsection shUseSampler
+
+	<B>Usage:</B> \@shUseSampler(samplerName)
+
+	Requests the texture unit with name \a samplerName to be available for use in this pass.
+
+	Why is this necessary? If you have a derived material that does not use all of the texture units that its parent defines (for example, if an optional asset such as a normal map is not available), there would be no way to know which texture units are actually needed and which can be skipped in the creation process (those that are never referenced in the shader).
+
+	\section properties Property retrieval / binding
+
+	\subsection shUniformProperty
+
+	<B>Usage:</B> \@shUniformProperty<4f|3f|2f|1f|int> (uniformName, property)
+
+	Binds the value of \a property (from the pass this shader belongs to) to the uniform with name \a uniformName.
+
+	The following variants are available, depending on the type of your uniform variable:
+	 - \@shUniformProperty4f
+	 - \@shUniformProperty3f
+	 - \@shUniformProperty2f
+	 - \@shUniformProperty1f
+	 - \@shUniformPropertyInt
+
+	<B>Example:</B> \@shUniformProperty1f (uFresnelScale, fresnelScale)
+
+	\subsection shPropertyBool shPropertyBool
+
+	Retrieve a boolean property of the pass that this shader belongs to, gets replaced with either 0 or 1.
+
+	<B>Usage:</B> \@shPropertyBool(propertyName)
+
+	<B>Example:</B>
+	\code
+	#if @shPropertyBool(has_normal_map)
+	...
+	#endif
+	\endcode
+
+	\subsection shPropertyNotBool shPropertyNotBool
+
+	Same as shPropertyBool, but inverts the result (i.e. when shPropertyBool would return 0, this returns 1 and vice versa)
+
+	\section shCounter
+
+	Gets replaced after the preprocessing step with the number that equals the n-th occurence of counters of the same ID.
+
+	<B>Usage:</B> \@shCounter(ID)
+
+	<B>Example</B>:
+	\code
+	@shCounter(0)
+	@shCounter(0)
+	@shCounter(1)
+	@shCounter(0)
+	\endcode
+
+	Gets replaced with:
+
+	\code
+	0
+	1
+	0
+	2
+	\endcode
+
+	\subsection shPropertyString
+
+	Retrieve a string property of the pass that this shader belongs to
+
+	<B>Usage:</B> \@shPropertyBool(propertyName)
+
+	\subsection shPropertyEqual
+
+	Check if the value of a property equals a specific value, gets replaced with either 0 or 1. This is useful because the preprocessor cannot compare strings, only numbers.
+
+	<B>Usage:</B> \@shPropertyEqual(propertyName, value)
+
+	<B>Example:</B>
+	\code
+	#if @shPropertyEqual(lighting_mode, phong)
+	...
+	#endif
+	\endcode
+
+	\section globalSettings Global settings
+
+	\subsection shGlobalSettingBool
+
+	Retrieves the boolean value of a specific global setting, gets replaced with either 0 or 1. The value can be set using sh::Factory::setGlobalSetting.
+
+	<B>Usage:</B> \@shGlobalSettingBool(settingName)
+
+	\subsection shGlobalSettingEqual
+
+	Check if the value of a global setting equals a specific value, gets replaced with either 0 or 1. This is useful because the preprocessor cannot compare strings, only numbers.
+
+	<B>Usage:</B> \@shGlobalSettingEqual(settingName, value)
+
+	\section sharedParams Shared parameters
+
+	\subsection shSharedParameter
+
+	Allows you to bind a custom value to a uniform parameter.
+
+	<B>Usage</B>: \@shSharedParameter(uniformName, sharedParameterName)
+
+	<B>Example</B>: \@shSharedParameter(pssmSplitPoints, myPssmSplitPoints) - now the uniform parameter 'pssmSplitPoints' can be altered in all shaders that use it by executing sh::Factory::setSharedParameter("myPssmSplitPoints", value)
+
+	\note You may use the same shared parameter in as many shaders as you want. But don't forget to add the \@shSharedParameter macro to every shader that uses this shared parameter. 
+
+	\section shForeach
+
+	<B>Usage:</B> \@shForeach(n)
+
+	Repeats the content of this foreach block \a n times. The end of the block is marked via \@shEndForeach, and the current iteration number can be retrieved via \@shIterator.
+
+	\note Nested foreach blocks are currently \a not supported.
+
+	<B>Example:</B>
+
+	\code
+	#define NUM_LAYERS 3
+	@shForeach(NUM_LAYERS)
+	this is iteration number @shIterator
+	@shEndForeach
+
+	Gets replaced with:
+
+	this is iteration number 0
+	this is iteration number 1
+	this is iteration number 2
+	\endcode
+
+	\section shAutoConstant
+
+	<B>Usage:</B> \@shAutoConstant(uniformName, autoConstantName, [extraData])
+
+	Binds auto constant with name \a autoConstantName to the uniform \a uniformName. Optionally, you may specify extra data (for example the light index), as required by some auto constants.
+
+	The auto constant names are the same as Ogre's. Read the section "3.1.9 Using Vertex/Geometry/Fragment Programs in a Pass" of the Ogre manual for a list of all auto constant names.
+
+*/

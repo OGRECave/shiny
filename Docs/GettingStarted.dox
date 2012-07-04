@@ -1,0 +1,57 @@
+/*!
+	\page getting-started Getting started
+
+	\section download Download the source
+
+	\code
+	git clone git@github.com:scrawl/shiny.git
+	\endcode
+
+	\section building Build the source
+
+	The source files you want to build are:
+	 - Main/*.cpp
+	 - OgrePlatform/*.cpp
+
+	You can either build the sources as a static library, or simply add the sources to the source tree of your project.
+
+	If you use CMake, you might find the included CMakeLists.txt useful. It builds static libraries with the names "shiny" and "shiny.OgrePlatform".
+
+	Make sure to link against OGRE and the following boost libraries: filesystem, wave
+
+	\section code Basic initialisation code
+
+	Add the following code to your application:
+
+	\code{cpp}
+
+	#include <shiny/Main/Factory.hpp>
+	#include <shiny/Platforms/OgrePlatform/OgrePlatform.hpp>
+
+	....
+
+	sh::OgrePlatform* platform = new sh::OgrePlatform(
+		"General",                                      // OGRE Resource group to use for creating materials.
+		myApplication.getDataPath() + "/" + "materials"  // Path to look for materials and shaders. NOTE: This does NOT use the Ogre resource system, so you have to specify an absolute path.
+	);
+
+
+	// Optionally, you can enable shader caching.
+	// This will speed up the compilation process of your shaders by writing the microcodes to a file on exit.
+	platform->setShaderCachingEnabled(true);
+	platform->setCacheFolder (myApplication.getCachePath()); // Absolute path to use for shader caching 
+
+	sh::Factory* factory = new sh::Factory(platform);
+
+	....
+	your application runs here
+	....
+
+	// don't forget to delete on exit
+	delete factory;
+
+	\endcode
+
+	That's it! Now you can start defining materials. Refer to the page \ref defining-materials-shaders .
+
+*/
