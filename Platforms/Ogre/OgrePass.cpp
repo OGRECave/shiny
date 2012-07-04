@@ -40,7 +40,8 @@ namespace sh
 	{
 		bool found = true;
 
-		if (typeid(value.get()) == typeid(StringValue) && retrieveValue<StringValue>(value, context).get() == "default")
+		if (((typeid(*value) == typeid(StringValue)) || typeid(*value) == typeid(LinkedValue))
+				&& retrieveValue<StringValue>(value, context).get() == "default")
 			return true;
 
 		if (name == "depth_write")
