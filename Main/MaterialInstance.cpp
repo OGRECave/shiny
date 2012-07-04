@@ -143,9 +143,6 @@ namespace sh
 
 	MaterialInstancePass* MaterialInstance::getPass(int id)
 	{
-		if (mParent)
-			return static_cast<MaterialInstance*>(mParent)->getPass(id);
-		else
-			return &mPasses[id];
+		return &mPasses[id];
 	}
 }
