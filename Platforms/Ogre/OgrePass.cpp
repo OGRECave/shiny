@@ -87,6 +87,32 @@ namespace sh
 			mPass->setSpecular(color.mX, color.mY, color.mZ, 1.0);
 			mPass->setShininess(color.mW);
 		}
+		else if (name == "alpha_rejection_value")
+		{
+			mPass->setAlphaRejectValue (static_cast<unsigned char>(retrieveValue<IntValue>(value, context).get()));
+		}
+		else if (name == "alpha_rejection_func")
+		{
+			std::string val = retrieveValue<StringValue>(value, context).get();
+			if (val == "equal")
+				mPass->setAlphaRejectFunction (Ogre::CMPF_EQUAL);
+			else if (val == "greater")
+				mPass->setAlphaRejectFunction (Ogre::CMPF_GREATER);
+			else if (val == "greater_equal")
+				mPass->setAlphaRejectFunction (Ogre::CMPF_GREATER_EQUAL);
+			else if (val == "less_equal")
+				mPass->setAlphaRejectFunction (Ogre::CMPF_LESS_EQUAL);
+			else if (val == "less")
+				mPass->setAlphaRejectFunction (Ogre::CMPF_LESS);
+			else if (val == "not_equal")
+				mPass->setAlphaRejectFunction (Ogre::CMPF_NOT_EQUAL);
+			else if (val == "always_pass")
+				mPass->setAlphaRejectFunction (Ogre::CMPF_ALWAYS_PASS);
+			else if (val == "always_fail")
+				mPass->setAlphaRejectFunction (Ogre::CMPF_ALWAYS_FAIL);
+			else
+				std::cerr << "sh::OgrePass: Warning: Unrecognized value for alpha_rejection_func" << std::endl;
+		}
 		else
 			found = false;
 
