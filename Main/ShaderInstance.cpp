@@ -60,6 +60,13 @@ namespace sh
 				bool val = retrieveValue<BooleanValue>(value, properties->getContext()).get();
 				replaceValue = val ? "1" : "0";
 			}
+			if (cmd == "shPropertyNotBool") // same as above, but inverts the result
+			{
+				std::string propertyName = source.substr(start+1, end-(start+1));
+				PropertyValuePtr value = properties->getProperty(propertyName);
+				bool val = retrieveValue<BooleanValue>(value, properties->getContext()).get();
+				replaceValue = val ? "0" : "1";
+			}
 			else if (cmd == "shPropertyString")
 			{
 				std::string propertyName = source.substr(start+1, end-(start+1));
