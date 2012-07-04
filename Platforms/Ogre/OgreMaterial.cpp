@@ -36,6 +36,7 @@ namespace sh
 
 	void OgreMaterial::createConfiguration (const std::string& name)
 	{
+		removeConfiguration(name);
 		Ogre::Technique* t = mMaterial->createTechnique();
 		t->setSchemeName (name);
 		t->setName (name);
