@@ -15,10 +15,10 @@ namespace sh
 
 	/**
 	 * @brief
-	 * a specific material instance, which has all required properties set
-	 * (for example the diffuse & normal map, ambient/diffuse/specular values) \n
-	 * Depending on these properties, the factory will automatically select a shader permutation
-	 * that suits these and create the backend materials / passes (provided by the \a Platform class)
+	 * A specific material instance, which has all required properties set
+	 * (for example the diffuse & normal map, ambient/diffuse/specular values). \n
+	 * Depending on these properties, the system will automatically select a shader permutation
+	 * that suits these and create the backend materials / passes (provided by the \a Platform class).
 	 */
 	class MaterialInstance : public PropertySetGet
 	{

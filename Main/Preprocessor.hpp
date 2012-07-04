@@ -13,11 +13,11 @@ namespace sh
 	{
 	public:
 		/**
-		 * @brief preprocess a shader source string
+		 * @brief Run a shader source string through the preprocessor
 		 * @param source source string
 		 * @param includePath path to search for includes (that are included with #include)
 		 * @param definitions macros to predefine (vector of strings of the format MACRO=value, or just MACRO to define it as 1)
-		 * @param name name to use for error message
+		 * @param name name to use for error messages
 		 * @return processed string
 		 */
 		static std::string preprocess (std::string source, const std::string& includePath, std::vector<std::string> definitions, const std::string& name);

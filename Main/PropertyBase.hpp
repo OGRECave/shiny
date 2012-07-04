@@ -208,6 +208,7 @@ namespace sh
 	/// @note \a value is changed in-place to the converted object
 	/// @return converted object \n
 
+	/// Create a property from a string
 	inline PropertyValuePtr makeProperty (const std::string& prop)
 	{
 		if (prop.size() > 1 && prop[0] == '$')
@@ -217,6 +218,8 @@ namespace sh
 	}
 
 	template <typename T>
+	/// Create a property of any type
+	/// Example: sh::makeProperty\<sh::Vector4\> (new sh::Vector4(1, 1, 1, 1))
 	inline PropertyValuePtr makeProperty (T* p)
 	{
 		return PropertyValuePtr ( static_cast<PropertyValue*>(p) );

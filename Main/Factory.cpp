@@ -208,18 +208,23 @@ namespace sh
 		mPlatform->notifyFrameEntered();
 	}
 
-	MaterialInstance* Factory::createMaterialInstance (const std::string& name, const std::string& instance, bool createImmediately)
+	MaterialInstance* Factory::createMaterialInstance (const std::string& name, const std::string& parentInstance)
 	{
-		if (mMaterials.find(instance) == mMaterials.end())
+		if (mMaterials.find(parentInstance) == mMaterials.end())
 			throw std::runtime_error ("trying to clone material that does not exist");
+
 		MaterialInstance newInstance(name, this);
+
 		if (!mShadersEnabled)
 			newInstance.setShadersEnabled(false);
-		newInstance.setParent (&mMaterials.find(instance)->second);
+
+		if (parentInstance != "")
+			newInstance.setParent (&mMaterials.find(parentInstance)->second);
+
 		newInstance.create(mPlatform);
-		if (createImmediately)
-			newInstance.createForConfiguration(mPlatform, "Default"); /// \todo create all configurations
+
 		mMaterials.insert (std::make_pair(name, newInstance));
+
 		return &mMaterials.find(name)->second;
 	}
 
@@ -283,5 +288,21 @@ namespace sh
 	MaterialInstance* Factory::getInstance (const std::string& name)
 	{
 		return findInstance(name);
+	}
+
+	void Factory::setTextureAlias (const std::string& alias, const std::string& realName)
+	{
+		mTextureAliases[alias] = realName;
+
+		for (MaterialMap::iterator it = mMaterials.begin(); it != mMaterials.end(); ++it)
+		{
+			it->second.destroyAll();
+		}
+	}
+
+	std::string Factory::retrieveTextureAlias (const std::string& name)
+	{
+		assert (mTextureAliases.find(name) != mTextureAliases.end());
+		return mTextureAliases[name];
 	}
 }

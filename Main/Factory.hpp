@@ -17,62 +17,83 @@ namespace sh
 	typedef std::map<std::string, ShaderSet> ShaderSetMap;
 	typedef std::map<std::string, std::string> SettingsMap;
 
+	typedef std::map<std::string, std::string> TextureAliasMap;
+
 	/**
 	 * @brief
-	 * the main interface class
+	 * The main interface class
 	 */
 	class Factory
 	{
 	public:
 		Factory(Platform* platform);
-		///< @note ownership of \a platform is transferred to this class, so you don't have to delete it
+		///< @note Ownership of \a platform is transferred to this class, so you don't have to delete it.
 
 		~Factory();
 
 		/**
-		 * create a MaterialInstance, copying all properties from \a instance
+		 * Create a MaterialInstance, optionally copying all properties from \a parentInstance
 		 * @param name name of the new instance
-		 * @param instance name of the parent
-		 * @param createImmediately if true, the material is created immediately, otherwise it is created as soon as the renderer requests it
+		 * @param name of the parent (optional)
 		 * @return newly created instance
 		 */
-		MaterialInstance* createMaterialInstance (const std::string& name, const std::string& instance, bool createImmediately = false);
+		MaterialInstance* createMaterialInstance (const std::string& name, const std::string& parentInstance = "");
 
-		/// safe to call if instance does not exist
+		/// @note It is safe to call this if the instance does not exist
 		void destroyMaterialInstance (const std::string& name);
 
-		/// use this to enable or disable shaders on-the-fly
+		/// Use this to enable or disable shaders on-the-fly
 		void setShadersEnabled (bool enabled);
 
-		/// use this to manage user settings (for example this can be used to disable normal maps in your shaders) \n
-		/// global settings can be retrieved in a shader through a macro \n
-		/// when a global setting is changed, the shaders that depend on them are recompiled automatically
+		/// Use this to manage user settings. \n
+		/// Global settings can be retrieved in shaders through a macro. \n
+		/// When a global setting is changed, the shaders that depend on them are recompiled automatically.
 		void setGlobalSetting (const std::string& name, const std::string& value);
 
-		/// adjusts the given shared parameter \n
-		/// internally, this will change all uniform parameters of this name marked with @shSharedParameter \n
-		/// @note they also apply to shaders that are created after the parameter was set, so the order does not matter
+		/// Adjusts the given shared parameter. \n
+		/// Internally, this will change all uniform parameters of this name marked with the macro \@shSharedParameter \n
+		/// @param name of the shared parameter
+		/// @param value of the parameter, use sh::makeProperty to construct this value
 		void setSharedParameter (const std::string& name, PropertyValuePtr value);
 
 		Language getCurrentLanguage ();
 
-		/// switch between different shader languages (cg, glsl, hlsl)
+		/// Switch between different shader languages (cg, glsl, hlsl)
 		void setCurrentLanguage (Language lang);
 
-		/// get a MaterialInstance by name
+		/// Get a MaterialInstance by name
 		MaterialInstance* getInstance (const std::string& name);
 
-		/// switch the active \a Configuration
+		/// Switch the active \a Configuration
 		/// @param configuration name of the configuration to switch to
 		void setActiveConfiguration (const std::string& configuration);
 
-		/// register a \a Configuration, which can then be used for setActiveConfiguration method
+		/// Register a \a Configuration, which can then be used for setActiveConfiguration method
 		void registerConfiguration (const std::string& name, Configuration configuration);
+
+		/// Set an alias name for a texture, the real name can then be retrieved with the "texture_alias"
+		/// property in a texture unit - this is useful if you don't know the name of your texture beforehand. \n
+		/// Example: \n
+		///  - In the material definition: texture_alias ReflectionMap \n
+		///  - At runtime: factory->setTextureAlias("ReflectionMap", "rtt_654654"); \n
+		/// You can call factory->setTextureAlias as many times as you want, and if the material was already created, its texture will be updated!
+		/// @note If the material with a texture alias is requested for rendering before this method was called, will result in a crash,
+		/// so make sure to do it in time.
+		void setTextureAlias (const std::string& alias, const std::string& realName);
+
+		/// Retrieve the real texture name for a texture alias (the real name is set by the user)
+		std::string retrieveTextureAlias (const std::string& name);
 
 		void notifyFrameEntered ();
 
 		static Factory& getInstance();
 		///< Return instance of this class.
+
+	private:
+
+		MaterialInstance* requestMaterial (const std::string& name, const std::string& configuration);
+		ShaderSet* getShaderSet (const std::string& name);
+		Platform* getPlatform ();
 
 		friend class Platform;
 		friend class MaterialInstance;
@@ -87,17 +108,13 @@ namespace sh
 		ShaderSetMap mShaderSets;
 		SettingsMap mGlobalSettings;
 
+		TextureAliasMap mTextureAliases;
+
 		std::string mCachePath;
 
 		Language mCurrentLanguage;
 
 		Platform* mPlatform;
-
-		Platform* getPlatform ();
-
-		ShaderSet* getShaderSet (const std::string& name);
-
-		MaterialInstance* requestMaterial (const std::string& name, const std::string& configuration);
 
 		MaterialInstance* findInstance (const std::string& name);
 		MaterialInstance* searchInstance (const std::string& name);

@@ -36,6 +36,9 @@ namespace sh
 	{
 	public:
 		virtual void setTextureName (const std::string& textureName) = 0;
+
+	protected:
+		virtual bool setPropertyOverride (const std::string& name, PropertyValuePtr& value, PropertySetGet *context);
 	};
 
 	class Pass : public PropertySet
@@ -69,6 +72,8 @@ namespace sh
 	public:
 		Platform (const std::string& basePath);
 		virtual ~Platform ();
+
+		void setShaderCachingEnabled (bool enabled);
 
 		/// set the folder to use for shader caching
 		void setCacheFolder (const std::string& folder);
@@ -124,9 +129,11 @@ namespace sh
 		std::string mCacheFolder;
 		Factory* mFactory;
 
+	protected:
+		bool mShaderCachingEnabled;
+
 	private:
 		void setFactory (Factory* factory);
-
 
 		std::string mBasePath;
 		std::string getBasePath();

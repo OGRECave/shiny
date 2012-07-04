@@ -9,6 +9,7 @@ namespace sh
 	Platform::Platform (const std::string& basePath)
 		: mBasePath(basePath)
 		, mCacheFolder("./")
+		, mShaderCachingEnabled(false)
 	{
 	}
 
@@ -60,8 +61,25 @@ namespace sh
 		mCacheFolder = folder;
 	}
 
+	void Platform::setShaderCachingEnabled (bool enabled)
+	{
+	}
+
 	std::string Platform::getCacheFolder() const
 	{
 		return mCacheFolder;
+	}
+
+	// ------------------------------------------------------------------------------
+
+	bool TextureUnitState::setPropertyOverride (const std::string& name, PropertyValuePtr& value, PropertySetGet *context)
+	{
+		if (name == "texture_alias")
+		{
+			setTextureName (Factory::getInstance().retrieveTextureAlias (retrieveValue<StringValue>(value, context).get()));
+			return true;
+		}
+		else
+			return false;
 	}
 }

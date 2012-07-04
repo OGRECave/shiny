@@ -59,7 +59,7 @@ namespace sh
 	bool OgrePlatform::supportsShaderSerialization ()
 	{
 		// not working in GLSL for some reason, ogre bug?
-		return mFactory->getCurrentLanguage() != Language_GLSL;
+		return (mFactory->getCurrentLanguage() != Language_GLSL) && mShaderCachingEnabled;
 	}
 
 	bool OgrePlatform::supportsMaterialQueuedListener ()

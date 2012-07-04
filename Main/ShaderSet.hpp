@@ -22,11 +22,11 @@ namespace sh
 		ShaderSet (const std::string& type, const std::string& cgProfile, const std::string& hlslProfile, const std::string& sourceFile, const std::string& basePath,
 				   const std::string& name, std::map <std::string, std::string>* globalSettingsPtr);
 
-		/// retrieve a shader instance for the given properties. \n
-		/// if a \a ShaderInstance with the same properties exists already, simply returns this instance. \n
-		/// otherwise, creates a new \a ShaderInstance (i.e. compiles a new shader) \n
-		/// might also return NULL if the shader failed to compile \n
-		/// @note only the properties that actually affect the shader source are taken into consideration here,
+		/// Retrieve a shader instance for the given properties. \n
+		/// If a \a ShaderInstance with the same properties exists already, simply returns this instance. \n
+		/// Otherwise, creates a new \a ShaderInstance (i.e. compiles a new shader). \n
+		/// Might also return NULL if the shader failed to compile. \n
+		/// @note Only the properties that actually affect the shader source are taken into consideration here,
 		/// so it does not matter if you pass any extra properties that the shader does not care about.
 		ShaderInstance* getInstance (PropertySetGet* properties);
 
