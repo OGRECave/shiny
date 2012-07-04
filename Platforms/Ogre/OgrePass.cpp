@@ -40,6 +40,9 @@ namespace sh
 	{
 		bool found = true;
 
+		if (typeid(value.get()) == typeid(StringValue) && retrieveValue<StringValue>(value, context).get() == "default")
+			return true;
+
 		if (name == "depth_write")
 			mPass->setDepthWriteEnabled(retrieveValue<BooleanValue>(value, context).get());
 		else if (name == "depth_check")
