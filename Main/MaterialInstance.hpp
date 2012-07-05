@@ -29,7 +29,7 @@ namespace sh
 		MaterialInstancePass* createPass ();
 		PassVector getPasses(); ///< gets the passes of the top-most parent
 
-		/// @attention Because material passes are created on demand, the returned material here might not contain anything yet!
+		/// @attention Because the backend material passes are created on demand, the returned material here might not contain anything yet!
 		/// The only place where you should use this method, is for the MaterialInstance given by the MaterialListener::materialCreated event!
 		Material* getMaterial();
 
