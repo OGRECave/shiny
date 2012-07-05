@@ -280,9 +280,13 @@ namespace sh
 			changed = (mGlobalSettings[name] == value);
 
 		mGlobalSettings[name] = value;
-		for (MaterialMap::iterator it = mMaterials.begin(); it != mMaterials.end(); ++it)
+
+		if (changed)
 		{
-			it->second.destroyAll();
+			for (MaterialMap::iterator it = mMaterials.begin(); it != mMaterials.end(); ++it)
+			{
+				it->second.destroyAll();
+			}
 		}
 	}
 
