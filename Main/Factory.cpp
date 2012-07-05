@@ -7,8 +7,7 @@
 #include <boost/filesystem.hpp>
 
 #include "Platform.hpp"
-#include "InstanceLoader.hpp"
-#include "ShaderSetLoader.hpp"
+#include "ScriptLoader.hpp"
 #include "ShaderSet.hpp"
 #include "MaterialInstanceTextureUnit.hpp"
 
@@ -43,7 +42,8 @@ namespace sh
 
 		// load shader sets
 		{
-			ShaderSetLoader shaderSetLoader(mPlatform->getBasePath());
+			ScriptLoader shaderSetLoader(".shaderset");
+			ScriptLoader::loadAllFiles (&shaderSetLoader, mPlatform->getBasePath());
 			std::map <std::string, ScriptNode*> nodes = shaderSetLoader.getAllConfigScripts();
 			for (std::map <std::string, ScriptNode*>::const_iterator it = nodes.begin();
 				it != nodes.end(); ++it)
@@ -97,11 +97,12 @@ namespace sh
 			}
 		}
 
-		// load instances
+		// load materials
 		{
-			InstanceLoader instanceLoader(mPlatform->getBasePath());
+			ScriptLoader materialLoader(".mat");
+			ScriptLoader::loadAllFiles (&materialLoader, mPlatform->getBasePath());
 
-			std::map <std::string, ScriptNode*> nodes = instanceLoader.getAllConfigScripts();
+			std::map <std::string, ScriptNode*> nodes = materialLoader.getAllConfigScripts();
 			for (std::map <std::string, ScriptNode*>::const_iterator it = nodes.begin();
 				it != nodes.end(); ++it)
 			{
@@ -155,7 +156,7 @@ namespace sh
 				mMaterials.insert (std::make_pair(it->first, newInstance));
 			}
 
-			// now that all instances are loaded, replace the parent names with the actual pointers to parent
+			// now that all materials are loaded, replace the parent names with the actual pointers to parent
 			for (MaterialMap::iterator it = mMaterials.begin(); it != mMaterials.end(); ++it)
 			{
 				std::string parent = it->second.getParentInstance();
