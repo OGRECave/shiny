@@ -5,6 +5,7 @@
 	- \ref getting-started
 	- \ref defining-materials-shaders
 	- \ref macros
+	- \ref configurations
 
 
 	- sh::Factory - the main interface class

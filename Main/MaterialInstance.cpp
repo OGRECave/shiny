@@ -67,37 +67,43 @@ namespace sh
 			if (mShadersEnabled)
 			{
 				it->setContext(context);
-				ShaderSet* vertex = mFactory->getShaderSet(retrieveValue<StringValue>(it->getProperty("vertex_program"), context).get());
-				ShaderInstance* v = vertex->getInstance(&*it);
-				if (v)
+				if (it->hasProperty("vertex_program"))
 				{
-					pass->assignProgram (GPT_Vertex, v->getName());
-					v->setUniformParameters (pass, &*it);
-
-					std::vector<std::string> sharedParams = v->getSharedParameters ();
-					for (std::vector<std::string>::iterator it = sharedParams.begin(); it != sharedParams.end(); ++it)
+					ShaderSet* vertex = mFactory->getShaderSet(retrieveValue<StringValue>(it->getProperty("vertex_program"), context).get());
+					ShaderInstance* v = vertex->getInstance(&*it);
+					if (v)
 					{
-						pass->addSharedParameter (GPT_Vertex, *it);
-					}
+						pass->assignProgram (GPT_Vertex, v->getName());
+						v->setUniformParameters (pass, &*it);
 
-					std::vector<std::string> vector = v->getUsedSamplers ();
-					usedTextureSamplers.insert(usedTextureSamplers.end(), vector.begin(), vector.end());
+						std::vector<std::string> sharedParams = v->getSharedParameters ();
+						for (std::vector<std::string>::iterator it = sharedParams.begin(); it != sharedParams.end(); ++it)
+						{
+							pass->addSharedParameter (GPT_Vertex, *it);
+						}
+
+						std::vector<std::string> vector = v->getUsedSamplers ();
+						usedTextureSamplers.insert(usedTextureSamplers.end(), vector.begin(), vector.end());
+					}
 				}
-				ShaderSet* fragment = mFactory->getShaderSet(retrieveValue<StringValue>(it->getProperty("fragment_program"), context).get());
-				ShaderInstance* f = fragment->getInstance(&*it);
-				if (f)
+				if (it->hasProperty("fragment_program"))
 				{
-					pass->assignProgram (GPT_Fragment, f->getName());
-					f->setUniformParameters (pass, &*it);
-
-					std::vector<std::string> sharedParams = f->getSharedParameters ();
-					for (std::vector<std::string>::iterator it = sharedParams.begin(); it != sharedParams.end(); ++it)
+					ShaderSet* fragment = mFactory->getShaderSet(retrieveValue<StringValue>(it->getProperty("fragment_program"), context).get());
+					ShaderInstance* f = fragment->getInstance(&*it);
+					if (f)
 					{
-						pass->addSharedParameter (GPT_Fragment, *it);
-					}
+						pass->assignProgram (GPT_Fragment, f->getName());
+						f->setUniformParameters (pass, &*it);
 
-					std::vector<std::string> vector = f->getUsedSamplers ();
-					usedTextureSamplers.insert(usedTextureSamplers.end(), vector.begin(), vector.end());
+						std::vector<std::string> sharedParams = f->getSharedParameters ();
+						for (std::vector<std::string>::iterator it = sharedParams.begin(); it != sharedParams.end(); ++it)
+						{
+							pass->addSharedParameter (GPT_Fragment, *it);
+						}
+
+						std::vector<std::string> vector = f->getUsedSamplers ();
+						usedTextureSamplers.insert(usedTextureSamplers.end(), vector.begin(), vector.end());
+					}
 				}
 			}
 
