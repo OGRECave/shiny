@@ -13,11 +13,17 @@ namespace sh
 
 	struct Passthrough
 	{
-		std::string name;
+		Language lang; ///< language to generate for
+
 		int num_components; ///< e.g. 4 for a float4
 
-		std::string expand_to; ///< string to expand to when macro @shPassthrough(type, name) is called
+		int passthrough_number;
+		int component_start; ///< 0 = x
+
+		std::string expand_assign(std::string assignTo);
+		std::string expand_receive();
 	};
+	typedef std::map<std::string, Passthrough> PassthroughMap;
 
 	/**
 	 * @brief A specific instance of a \a ShaderSet with a deterministic shader source
@@ -51,10 +57,10 @@ namespace sh
 		///< uniforms that this depends on, and their property names / value-types
 		/// @note this lists shared uniform parameters as well
 
-		int currentPassthrough; ///< 0 - x
-		int currentComponent; ///< 0:x, 1:y, 2:z, 3:w
+		int mCurrentPassthrough; ///< 0 - x
+		int mCurrentComponent; ///< 0:x, 1:y, 2:z, 3:w
 
-		std::vector<Passthrough> mPassthroughVector;
+		PassthroughMap mPassthroughMap;
 	};
 }
 

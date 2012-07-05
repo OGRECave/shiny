@@ -46,12 +46,12 @@
 
 	\subsection shAllocatePassthrough shAllocatePassthrough
 
-	<B>Usage:</B> \@shAllocatePassthrough(type, name)
+	<B>Usage:</B> \@shAllocatePassthrough(num_components, name)
 
 	<B>Example:</B>
 	\code
 	#if FRAGMENT_NEED_DEPTH
-	@shAllocatePassthrough(float, depth)
+	@shAllocatePassthrough(1, depth)
 	#endif
 	\endcode
 

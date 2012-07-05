@@ -21,14 +21,130 @@ namespace
 		else //if (lang == sh::Language_GLSL)
 			return "SH_GLSL";
 	}
+
+	char getComponent(int num)
+	{
+		if (num == 0)
+			return 'x';
+		else if (num == 1)
+			return 'y';
+		else if (num == 2)
+			return 'z';
+		else if (num == 3)
+			return 'w';
+		else
+			throw std::runtime_error("invalid component");
+	}
+
+	std::string getFloat(sh::Language lang)
+	{
+		if (lang == sh::Language_CG || lang == sh::Language_HLSL)
+			return "float";
+		else
+			return "vec";
+	}
 }
 
 namespace sh
 {
+	std::string Passthrough::expand_assign(std::string toAssign)
+	{
+		std::string res;
+
+		int i = 0;
+		int current_passthrough = passthrough_number;
+		int current_component_left = component_start;
+		int current_component_right = 0;
+		int components_left = num_components;
+		while (i < num_components)
+		{
+			int components_at_once = components_left - current_component_left;
+			std::string componentStr;
+			for (int j = 0; j < components_at_once; ++j)
+				componentStr += getComponent(j + current_component_left);
+			std::string componentStr2;
+			for (int j = 0; j < components_at_once; ++j)
+				componentStr2 += getComponent(j + current_component_right);
+			res += "passthrough" + boost::lexical_cast<std::string>(current_passthrough) + "." + componentStr + " = " + toAssign + "." + componentStr2;
+
+			current_component_left += components_at_once;
+			current_component_right += components_at_once;
+			components_left -= components_at_once;
+
+			i += components_at_once;
+
+			if (components_left == 0)
+			{
+				// finished
+				return res;
+			}
+			else
+			{
+				// add semicolon to every instruction but the last
+				res += "; ";
+			}
+
+			if (current_component_left == 4)
+			{
+				current_passthrough++;
+				current_component_left = 0;
+			}
+		}
+	}
+
+	std::string Passthrough::expand_receive()
+	{
+		std::string res;
+
+		res += getFloat(lang) + boost::lexical_cast<std::string>(num_components) + "(";
+
+		int i = 0;
+		int current_passthrough = passthrough_number;
+		int current_component = component_start;
+		int components_left = num_components;
+		while (i < num_components)
+		{
+			int components_at_once = components_left - current_component;
+			std::string componentStr;
+			for (int j = 0; j < components_at_once; ++j)
+				componentStr += getComponent(j + current_component);
+
+			res += "passthrough" + boost::lexical_cast<std::string>(current_passthrough) + "." + componentStr;
+
+			current_component += components_at_once;
+
+			components_left -= components_at_once;
+
+			i += components_at_once;
+
+			if (components_left == 0)
+			{
+				// finished
+				return res + ")";
+;
+			}
+			else
+			{
+				// add comma to every variable but the last
+				res += ", ";
+			}
+
+			if (current_component == 4)
+			{
+				current_passthrough++;
+				current_component = 0;
+			}
+		}
+	}
+
+	// ------------------------------------------------------------------------------
+
 	ShaderInstance::ShaderInstance (ShaderSet* parent, const std::string& name, PropertySetGet* properties)
 		: mName(name)
 		, mParent(parent)
 		, mSupported(true)
+		, mCurrentPassthrough(0)
+		, mCurrentComponent(0)
 	{
 		std::string source = mParent->getSource();
 		int type = mParent->getType();
@@ -293,19 +409,125 @@ namespace sh
 			source.erase(pos, (end+1)-pos);
 		}
 
+		// parse passthrough declarations
 		while (true)
 		{
-			// can't use #version XYZ in the shader file itself because the preprocessor gets confused.
-			// therefore use a @shGlslVersion macro, that gets replaced _after_ the preprocessing.
-			pos = source.find("@shGlslVersion");
+			pos = source.find("@shAllocatePassthrough");
+			if (pos == std::string::npos)
+				break;
+
+			if (mCurrentPassthrough > 7)
+				throw std::runtime_error ("too many passthrough's requested (max 8)");
+
+			size_t start = source.find("(", pos);
+			size_t end = source.find(")", pos);
+			size_t comma = source.find(",", pos);
+
+			Passthrough passthrough;
+
+			passthrough.num_components = boost::lexical_cast<int>(source.substr(start+1, comma-(start+1)));
+
+			// skip spaces
+			++comma;
+			while (source[comma] == ' ')
+				++comma;
+
+			std::string passthroughName = source.substr(comma, end-comma);
+			passthrough.lang = Factory::getInstance().getCurrentLanguage ();
+			passthrough.component_start = mCurrentComponent;
+			passthrough.passthrough_number = mCurrentPassthrough;
+
+			mPassthroughMap[passthroughName] = passthrough;
+
+			mCurrentComponent += passthrough.num_components;
+			if (mCurrentComponent > 3)
+				++mCurrentPassthrough;
+
+			source.erase(pos, (end+1)-pos);
+		}
+
+		// passthrough assign
+		while (true)
+		{
+			pos = source.find("@shPassthroughAssign");
 			if (pos == std::string::npos)
 				break;
 
 			size_t start = source.find("(", pos);
 			size_t end = source.find(")", pos);
-			std::string version = source.substr(start+1, end-(start+1));
-			source.replace(pos, (end+1)-pos, "#version " + version);
+			size_t comma = source.find(",", pos);
+			std::string passthroughName = source.substr(start+1, comma-(start+1));
+
+			// skip spaces
+			++comma;
+			while (source[comma] == ' ')
+				++comma;
+
+			std::string assignTo = source.substr(comma, end-comma);
+
+			Passthrough& p = mPassthroughMap[passthroughName];
+
+			source.replace(pos, (end+1)-pos, p.expand_assign(assignTo));
 		}
+
+		// passthrough receive
+		while (true)
+		{
+			pos = source.find("@shPassthroughReceive");
+			if (pos == std::string::npos)
+				break;
+
+			size_t start = source.find("(", pos);
+			size_t end = source.find(")", pos);
+			std::string passthroughName = source.substr(start+1, end-(start+1));
+
+			Passthrough& p = mPassthroughMap[passthroughName];
+
+			source.replace(pos, (end+1)-pos, p.expand_receive());
+		}
+
+		// passthrough vertex outputs
+		while (true)
+		{
+			pos = source.find("@shPassthroughVertexOutputs");
+			if (pos == std::string::npos)
+				break;
+
+			std::string result;
+			for (int i = 0; i < mCurrentPassthrough+1; ++i)
+			{
+				// not using newlines here, otherwise the line numbers reported by compiler would be messed up..
+				if (Factory::getInstance().getCurrentLanguage () == Language_CG || Factory::getInstance().getCurrentLanguage () == Language_HLSL)
+					result += ", out float4 passthrough" + boost::lexical_cast<std::string>(i) + " : TEXCOORD" + boost::lexical_cast<std::string>(i);
+				else
+					result += "out vec4 passthrough" + boost::lexical_cast<std::string>(i) + "; ";
+			}
+
+			source.replace(pos, std::string("@shPassthroughVertexOutputs").length(), result);
+		}
+
+		// passthrough fragment inputs
+		while (true)
+		{
+			pos = source.find("@shPassthroughFragmentInputs");
+			if (pos == std::string::npos)
+				break;
+
+			std::string result;
+			for (int i = 0; i < mCurrentPassthrough+1; ++i)
+			{
+				// not using newlines here, otherwise the line numbers reported by compiler would be messed up..
+				if (Factory::getInstance().getCurrentLanguage () == Language_CG || Factory::getInstance().getCurrentLanguage () == Language_HLSL)
+					result += ", in float4 passthrough" + boost::lexical_cast<std::string>(i) + " : TEXCOORD" + boost::lexical_cast<std::string>(i);
+				else
+					result += "in vec4 passthrough" + boost::lexical_cast<std::string>(i) + "; ";
+			}
+
+			source.replace(pos, std::string("@shPassthroughFragmentInputs").length(), result);
+		}
+
+		// convert any left-over @'s to #
+		boost::algorithm::replace_all(source, "@", "#");
 
 		Platform* platform = Factory::getInstance().getPlatform();
 
