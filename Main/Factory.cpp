@@ -233,11 +233,6 @@ namespace sh
 		return m;
 	}
 
-	void Factory::notifyFrameEntered ()
-	{
-		mPlatform->notifyFrameEntered();
-	}
-
 	MaterialInstance* Factory::createMaterialInstance (const std::string& name, const std::string& parentInstance)
 	{
 		if (mMaterials.find(parentInstance) == mMaterials.end())

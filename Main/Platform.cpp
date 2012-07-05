@@ -17,10 +17,6 @@ namespace sh
 	{
 	}
 
-	void Platform::notifyFrameEntered ()
-	{
-	}
-
 	void Platform::setFactory (Factory* factory)
 	{
 		mFactory = factory;

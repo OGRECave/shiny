@@ -29,7 +29,6 @@ namespace sh
 	OgrePlatform::OgrePlatform(const std::string& resourceGroupName, const std::string& basePath)
 		: Platform(basePath)
 		, mResourceGroup(resourceGroupName)
-		, mCurrentConfiguration("Default")
 	{
 		Ogre::MaterialManager::getSingleton().addListener(this);
 
@@ -87,12 +86,6 @@ namespace sh
 		unsigned short schemeIndex, const Ogre::String &schemeName, Ogre::Material *originalMaterial,
 		unsigned short lodIndex, const Ogre::Renderable *rend)
 	{
-		if (schemeName != mCurrentConfiguration)
-		{
-			Ogre::MaterialManager::getSingleton().setActiveScheme(mCurrentConfiguration);
-			return 0;
-		}
-
 		MaterialInstance* m = fireMaterialRequested(originalMaterial->getName(), schemeName);
 		if (m)
 		{
@@ -117,11 +110,6 @@ namespace sh
 		inp.open(file.c_str(), std::ios::in | std::ios::binary);
 		Ogre::DataStreamPtr shaderCache(OGRE_NEW Ogre::FileStreamDataStream(file, &inp, false));
 		Ogre::GpuProgramManager::getSingleton().loadMicrocodeCache(shaderCache);
-	}
-
-	void OgrePlatform::notifyFrameEntered ()
-	{
-		Ogre::MaterialManager::getSingleton().setActiveScheme(mCurrentConfiguration);
 	}
 
 	void OgrePlatform::setSharedParameter (const std::string& name, PropertyValuePtr value)

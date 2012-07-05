@@ -124,8 +124,6 @@ namespace sh
 		 */
 		MaterialInstance* fireMaterialRequested (const std::string& name, const std::string& configuration);
 
-		virtual void notifyFrameEntered ();
-
 		std::string mCacheFolder;
 		Factory* mFactory;
 

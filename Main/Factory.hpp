@@ -80,8 +80,6 @@ namespace sh
 		/// Retrieve the real texture name for a texture alias (the real name is set by the user)
 		std::string retrieveTextureAlias (const std::string& name);
 
-		void notifyFrameEntered ();
-
 		static Factory& getInstance();
 		///< Return instance of this class.
 
