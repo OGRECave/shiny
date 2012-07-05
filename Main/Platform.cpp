@@ -63,6 +63,7 @@ namespace sh
 
 	void Platform::setShaderCachingEnabled (bool enabled)
 	{
+		mShaderCachingEnabled = enabled;
 	}
 
 	std::string Platform::getCacheFolder() const
