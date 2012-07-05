@@ -69,28 +69,34 @@
 
 	Use this in the inputs/outputs section of your fragment shader, in order to declare all the inputs that are needed for receiving the variables that you want passed to the fragment.
 
-	\subsection shPassthrough shPassthrough
+	\subsection shPassthroughAssign shPassthroughAssign
 
-	<B>Usage:</B> \@shPassthrough(name)
+	<B>Usage:</B> \@shPassthroughAssign(name, value)
 
-	This can be used in both vertex and fragment shader. In the vertex shader, you will want to use it for assigning a value to the variable you want passed to the fragment.
-
-	In the fragment shader, use this to access the passed value.
+	Use this in the vertex shader for assigning a value to the variable you want passed to the fragment.
 
 	<B>Example:</B>
 	\code
-	// vertex shader
 	#if FRAGMENT_NEED_DEPTH
-	@shPassthrough(depth) = shOutputPosition.z;
+	@shPassthroughAssign(depth, shOutputPosition.z);
 	#endif
 
-	// fragment shader
+	\endcode
+
+	\subsection shPassthroughReceive shPassthroughReceive
+
+	<B>Usage:</B> \@shPassthroughReceive(name)
+
+	Use this in the fragment shader to receive the passed value.
+
+	<B>Example:</B>
+
+	\code
 	#if FRAGMENT_NEED_DEPTH
-	float depth = @shPassthrough(depth)
-	// now we can do something with depth :)
+	float depth = @shPassthroughReceive(depth);
 	#endif
 	\endcode
-	
+
 	\section texUnits Texture units
 
 	\subsection shUseSampler shUseSampler
@@ -237,4 +243,13 @@
 	0
 	2
 	\endcode
+
+	\subsection shGlslVersion shGlslVersion
+
+	<B>Usage:</B> \@shGlslVersion <version>
+
+	<B>Example:</B> \@shGlslVersion 130
+
+	Equivalent to #version <version> in GLSL. Why does this exist? You can't use #version directly because it confuses the preprocessor boost::wave and throws an error. Until I find a way to work around this, simply use \@shGlslVersion instead.
+
 */
