@@ -12,6 +12,10 @@ namespace sh
 	{
 	}
 
+	MaterialInstance::~MaterialInstance ()
+	{
+	}
+
 	void MaterialInstance::setParentInstance (const std::string& name)
 	{
 		mParentInstance = name;
@@ -52,11 +56,18 @@ namespace sh
 
 			std::vector<std::string> usedTextureSamplers; // texture samplers used in the shaders
 
+			PropertySetGet* context = this;
+			if (configuration != "Default")
+			{
+				context = mFactory->getConfiguration (configuration);
+				context->setParent(this);
+			}
+
 			// create or retrieve shaders
 			if (mShadersEnabled)
 			{
-				it->setContext(this);
-				ShaderSet* vertex = mFactory->getShaderSet(retrieveValue<StringValue>(it->getProperty("vertex_program"), this).get());
+				it->setContext(context);
+				ShaderSet* vertex = mFactory->getShaderSet(retrieveValue<StringValue>(it->getProperty("vertex_program"), context).get());
 				ShaderInstance* v = vertex->getInstance(&*it);
 				if (v)
 				{
@@ -72,7 +83,7 @@ namespace sh
 					std::vector<std::string> vector = v->getUsedSamplers ();
 					usedTextureSamplers.insert(usedTextureSamplers.end(), vector.begin(), vector.end());
 				}
-				ShaderSet* fragment = mFactory->getShaderSet(retrieveValue<StringValue>(it->getProperty("fragment_program"), this).get());
+				ShaderSet* fragment = mFactory->getShaderSet(retrieveValue<StringValue>(it->getProperty("fragment_program"), context).get());
 				ShaderInstance* f = fragment->getInstance(&*it);
 				if (f)
 				{
@@ -99,7 +110,7 @@ namespace sh
 						|| (!mShadersEnabled && texIt->second.hasProperty("create_in_ffp") && retrieveValue<BooleanValue>(texIt->second.getProperty("create_in_ffp"), this).get()))
 				{
 					boost::shared_ptr<TextureUnitState> texUnit = pass->createTextureUnitState ();
-					texIt->second.copyAll (texUnit.get(), this);
+					texIt->second.copyAll (texUnit.get(), context);
 				}
 			}
 		}

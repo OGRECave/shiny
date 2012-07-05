@@ -24,6 +24,7 @@ namespace sh
 	{
 	public:
 		MaterialInstance (const std::string& name, Factory* f);
+		virtual ~MaterialInstance ();
 
 		MaterialInstancePass* createPass ();
 		PassVector getPasses(); ///< gets the passes of the top-most parent

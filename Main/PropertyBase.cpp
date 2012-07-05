@@ -208,8 +208,6 @@ namespace sh
 
 	void PropertySetGet::setParent (PropertySetGet* parent)
 	{
-		if (mParent)
-			throw std::runtime_error ("PropertySetGet already has a parent");
 		mParent = parent;
 	}
 

@@ -149,7 +149,7 @@ namespace sh
 
 		void copyAll (PropertySet* target, PropertySetGet* context); ///< call setProperty for each property/value pair stored in \a this
 
-		void setParent (PropertySetGet* parent); ///< throws an exception if there is already a parent
+		void setParent (PropertySetGet* parent);
 		void setContext (PropertySetGet* context);
 		PropertySetGet* getContext();
 

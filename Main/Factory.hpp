@@ -5,7 +5,6 @@
 #include <string>
 
 #include "MaterialInstance.hpp"
-#include "Configuration.hpp"
 #include "ShaderSet.hpp"
 #include "Language.hpp"
 
@@ -16,6 +15,7 @@ namespace sh
 	typedef std::map<std::string, MaterialInstance> MaterialMap;
 	typedef std::map<std::string, ShaderSet> ShaderSetMap;
 	typedef std::map<std::string, std::string> SettingsMap;
+	typedef std::map<std::string, PropertySetGet> ConfigurationMap;
 
 	typedef std::map<std::string, std::string> TextureAliasMap;
 
@@ -64,12 +64,8 @@ namespace sh
 		/// Get a MaterialInstance by name
 		MaterialInstance* getInstance (const std::string& name);
 
-		/// Switch the active \a Configuration
-		/// @param configuration name of the configuration to switch to
-		void setActiveConfiguration (const std::string& configuration);
-
-		/// Register a \a Configuration, which can then be used for setActiveConfiguration method
-		void registerConfiguration (const std::string& name, Configuration configuration);
+		/// Register a \a Configuration, which can then be used by switching the active material scheme
+		void registerConfiguration (const std::string& name, PropertySetGet configuration);
 
 		/// Set an alias name for a texture, the real name can then be retrieved with the "texture_alias"
 		/// property in a texture unit - this is useful if you don't know the name of your texture beforehand. \n
@@ -93,6 +89,7 @@ namespace sh
 
 		MaterialInstance* requestMaterial (const std::string& name, const std::string& configuration);
 		ShaderSet* getShaderSet (const std::string& name);
+		PropertySetGet* getConfiguration (const std::string& name);
 		Platform* getPlatform ();
 
 		friend class Platform;
@@ -107,6 +104,7 @@ namespace sh
 		MaterialMap mMaterials;
 		ShaderSetMap mShaderSets;
 		SettingsMap mGlobalSettings;
+		ConfigurationMap mConfigurations;
 
 		TextureAliasMap mTextureAliases;
 

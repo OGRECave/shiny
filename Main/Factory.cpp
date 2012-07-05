@@ -40,6 +40,35 @@ namespace sh
 			}
 		}
 
+		// load configurations
+		{
+			ScriptLoader shaderSetLoader(".configuration");
+			ScriptLoader::loadAllFiles (&shaderSetLoader, mPlatform->getBasePath());
+			std::map <std::string, ScriptNode*> nodes = shaderSetLoader.getAllConfigScripts();
+			for (std::map <std::string, ScriptNode*>::const_iterator it = nodes.begin();
+				it != nodes.end(); ++it)
+			{
+				if (!(it->second->getName() == "configuration"))
+				{
+					std::cerr << "sh::Factory: Warning: Unsupported root node type \"" << it->second->getName() << "\" for file type .configuration" << std::endl;
+					break;
+				}
+
+				PropertySetGet newConfiguration;
+
+				std::vector<ScriptNode*> props = it->second->getChildren();
+				for (std::vector<ScriptNode*>::const_iterator propIt = props.begin(); propIt != props.end(); ++propIt)
+				{
+					std::string name = (*propIt)->getName();
+					std::string val = (*propIt)->getValue();
+
+					newConfiguration.setProperty (name, makeProperty(val));
+				}
+
+				mConfigurations[it->first] = newConfiguration;
+			}
+		}
+
 		// load shader sets
 		{
 			ScriptLoader shaderSetLoader(".shaderset");
@@ -305,5 +334,15 @@ namespace sh
 	{
 		assert (mTextureAliases.find(name) != mTextureAliases.end());
 		return mTextureAliases[name];
+	}
+
+	PropertySetGet* Factory::getConfiguration (const std::string& name)
+	{
+		return &mConfigurations[name];
+	}
+
+	void Factory::registerConfiguration (const std::string& name, PropertySetGet configuration)
+	{
+		mConfigurations[name] = configuration;
 	}
 }
