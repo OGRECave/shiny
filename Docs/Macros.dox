@@ -25,9 +25,18 @@
 
 	\note It is encouraged to use the shipped porting header (extra/core.h) by #include-ing it in your shaders. If you do that, you should not have to use the above macros directly. 
 
+	\section vertex-fragment Vertex / fragment shader
+
+	These macros are automatically defined, depending on the type of shader that is currently being compiled.
+
+	 - SH_VERTEX_SHADER
+	 - SH_FRAGMENT_SHADER
+
+	If you use the same source file for both vertex and fragment shader, then it is advised to use these macros for blending out the unused source. This will reduce your compile time.
+
 	\section texUnits Texture units
 
-	\subsection shUseSampler
+	\subsection shUseSampler shUseSampler
 
 	<B>Usage:</B> \@shUseSampler(samplerName)
 
@@ -37,7 +46,7 @@
 
 	\section properties Property retrieval / binding
 
-	\subsection shUniformProperty
+	\subsection shUniformProperty shUniformProperty
 
 	<B>Usage:</B> \@shUniformProperty<4f|3f|2f|1f|int> (uniformName, property)
 
@@ -69,36 +78,13 @@
 
 	Same as shPropertyBool, but inverts the result (i.e. when shPropertyBool would return 0, this returns 1 and vice versa)
 
-	\section shCounter
-
-	Gets replaced after the preprocessing step with the number that equals the n-th occurence of counters of the same ID.
-
-	<B>Usage:</B> \@shCounter(ID)
-
-	<B>Example</B>:
-	\code
-	@shCounter(0)
-	@shCounter(0)
-	@shCounter(1)
-	@shCounter(0)
-	\endcode
-
-	Gets replaced with:
-
-	\code
-	0
-	1
-	0
-	2
-	\endcode
-
-	\subsection shPropertyString
+	\subsection shPropertyString shPropertyString
 
 	Retrieve a string property of the pass that this shader belongs to
 
 	<B>Usage:</B> \@shPropertyBool(propertyName)
 
-	\subsection shPropertyEqual
+	\subsection shPropertyEqual shPropertyEqual
 
 	Check if the value of a property equals a specific value, gets replaced with either 0 or 1. This is useful because the preprocessor cannot compare strings, only numbers.
 
@@ -113,13 +99,13 @@
 
 	\section globalSettings Global settings
 
-	\subsection shGlobalSettingBool
+	\subsection shGlobalSettingBool shGlobalSettingBool
 
 	Retrieves the boolean value of a specific global setting, gets replaced with either 0 or 1. The value can be set using sh::Factory::setGlobalSetting.
 
 	<B>Usage:</B> \@shGlobalSettingBool(settingName)
 
-	\subsection shGlobalSettingEqual
+	\subsection shGlobalSettingEqual shGlobalSettingEqual
 
 	Check if the value of a global setting equals a specific value, gets replaced with either 0 or 1. This is useful because the preprocessor cannot compare strings, only numbers.
 
@@ -127,7 +113,7 @@
 
 	\section sharedParams Shared parameters
 
-	\subsection shSharedParameter
+	\subsection shSharedParameter shSharedParameter
 
 	Allows you to bind a custom value to a uniform parameter.
 
@@ -137,7 +123,19 @@
 
 	\note You may use the same shared parameter in as many shaders as you want. But don't forget to add the \@shSharedParameter macro to every shader that uses this shared parameter. 
 
-	\section shForeach
+	\section autoconstants Auto constants
+
+	\subsection shAutoConstant shAutoConstant
+
+	<B>Usage:</B> \@shAutoConstant(uniformName, autoConstantName, [extraData])
+
+	Binds auto constant with name \a autoConstantName to the uniform \a uniformName. Optionally, you may specify extra data (for example the light index), as required by some auto constants.
+
+	The auto constant names are the same as Ogre's. Read the section "3.1.9 Using Vertex/Geometry/Fragment Programs in a Pass" of the Ogre manual for a list of all auto constant names.
+
+	\section misc Misc
+
+	\subsection shForeach shForeach
 
 	<B>Usage:</B> \@shForeach(n)
 
@@ -160,12 +158,28 @@
 	this is iteration number 2
 	\endcode
 
-	\section shAutoConstant
+	\subsection shCounter shCounter
 
-	<B>Usage:</B> \@shAutoConstant(uniformName, autoConstantName, [extraData])
+	Gets replaced after the preprocessing step with the number that equals the n-th occurence of counters of the same ID.
 
-	Binds auto constant with name \a autoConstantName to the uniform \a uniformName. Optionally, you may specify extra data (for example the light index), as required by some auto constants.
+	<B>Usage:</B> \@shCounter(ID)
 
-	The auto constant names are the same as Ogre's. Read the section "3.1.9 Using Vertex/Geometry/Fragment Programs in a Pass" of the Ogre manual for a list of all auto constant names.
+	<B>Example</B>:
+	\code
+	@shCounter(0)
+	@shCounter(0)
+	@shCounter(1)
+	@shCounter(0)
+	\endcode
+
+	Gets replaced with:
+
+	\code
+	0
+	1
+	0
+	2
+	\endcode
+
 
 */
