@@ -69,16 +69,12 @@ namespace sh
 			else
 				std::cerr << "sh::OgrePass: Warning: Invalid value for property \"scene_blend\"" << std::endl;
 		}
-
-		/// \todo
-		/*
-		else if (name == "vertex_colour")
+		else if (name == "ffp_vertex_colour_ambient")
 		{
 			bool enabled = retrieveValue<BooleanValue>(value, context).get();
 			// fixed-function vertex colour tracking
-			mPass->setVertexColourTracking(enabled ? (Ogre::TVC_AMBIENT | Ogre::TVC_DIFFUSE | Ogre::TVC_SPECULAR) : Ogre::TVC_NONE);
+			mPass->setVertexColourTracking(enabled ? Ogre::TVC_AMBIENT : Ogre::TVC_NONE);
 		}
-		*/
 		else if (name == "diffuse")
 		{
 			Vector4 color = retrieveValue<Vector4>(value, context);
