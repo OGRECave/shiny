@@ -181,5 +181,11 @@
 	2
 	\endcode
 
+	\subsection shGlslVersion shGlslVersion
 
+	<B>Usage:</B> \@shGlslVersion <version>
+
+	<B>Example:</B> \@shGlslVersion 130
+
+	Equivalent to #version <version> in GLSL. Why does this exist? You can't use #version directly because it confuses the preprocessor boost::wave and throws an error. Until I find a way to work around this, simply use \@shGlslVersion instead.
 */
