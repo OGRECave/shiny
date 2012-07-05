@@ -160,7 +160,14 @@ namespace sh
 		// thus, we run the code through a preprocessor first to remove the parts that are unused because of
 		// unmet #if conditions (or other preprocessor directives).
 		Preprocessor p;
+
+		// temporarily replace #version (the preprocessor gets confused about the unknown token, and would throw an error)
+		boost::algorithm::replace_all(source, "#version", "@shGlslVersion");
+
 		source = p.preprocess(source, basePath, definitions, name);
+
+		// ...and replace it back
+		boost::algorithm::replace_all(source, "@shGlslVersion", "#version");
 
 		// parse counter
 		std::map<int, int> counters;

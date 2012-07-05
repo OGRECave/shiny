@@ -11,6 +11,14 @@ namespace sh
 
 	typedef std::map< std::string, std::pair<std::string, ValueType > > UniformMap;
 
+	struct Passthrough
+	{
+		std::string name;
+		int num_components; ///< e.g. 4 for a float4
+
+		std::string expand_to; ///< string to expand to when macro @shPassthrough(type, name) is called
+	};
+
 	/**
 	 * @brief A specific instance of a \a ShaderSet with a deterministic shader source
 	 */
@@ -42,6 +50,11 @@ namespace sh
 		UniformMap mUniformProperties;
 		///< uniforms that this depends on, and their property names / value-types
 		/// @note this lists shared uniform parameters as well
+
+		int currentPassthrough; ///< 0 - x
+		int currentComponent; ///< 0:x, 1:y, 2:z, 3:w
+
+		std::vector<Passthrough> mPassthroughVector;
 	};
 }
 

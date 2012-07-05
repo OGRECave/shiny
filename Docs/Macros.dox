@@ -34,6 +34,63 @@
 
 	If you use the same source file for both vertex and fragment shader, then it is advised to use these macros for blending out the unused source. This will reduce your compile time.
 
+	\section passthrough Vertex -> Fragment passthrough
+
+	In shader development, a common task is to pass variables from the vertex to the fragment shader. This is no problem if you have a deterministic shader source (i.e. no #ifdefs).
+
+	However, as soon as you begin to have lots of permutations of the same shader source, a problem arises. All current GPUs have a limit of 8 vertex to fragment passthroughs (with 4 components each, for example a float4).
+
+	A common optimization is to put several individual float values together in a float4 (so-called "Packing"). But how can you do this if your shader has lots of permutations and you don't know beforehand all of the passthroughs you will need?
+
+	The answer is: You can't, unless you use the following macros.
+
+	\subsection shAllocatePassthrough shAllocatePassthrough
+
+	<B>Usage:</B> \@shAllocatePassthrough(type, name)
+
+	<B>Example:</B>
+	\code
+	#if FRAGMENT_NEED_DEPTH
+	@shAllocatePassthrough(float, depth)
+	#endif
+	\endcode
+
+	This is the first thing you should do before using any of the macros below.
+
+	\subsection shPassthroughVertexOutputs shPassthroughVertexOutputs
+
+	<B>Usage:</B> \@shPassthroughVertexOutputs
+
+	Use this in the inputs/outputs section of your vertex shader, in order to declare all the outputs that are needed for packing the variables that you want passed to the fragment.
+
+	\subsection shPassthroughFragmentInputs shPassthroughFragmentInputs
+
+	<B>Usage:</B> \@shPassthroughFragmentInputs
+
+	Use this in the inputs/outputs section of your fragment shader, in order to declare all the inputs that are needed for receiving the variables that you want passed to the fragment.
+
+	\subsection shPassthrough shPassthrough
+
+	<B>Usage:</B> \@shPassthrough(name)
+
+	This can be used in both vertex and fragment shader. In the vertex shader, you will want to use it for assigning a value to the variable you want passed to the fragment.
+
+	In the fragment shader, use this to access the passed value.
+
+	<B>Example:</B>
+	\code
+	// vertex shader
+	#if FRAGMENT_NEED_DEPTH
+	@shPassthrough(depth) = shOutputPosition.z;
+	#endif
+
+	// fragment shader
+	#if FRAGMENT_NEED_DEPTH
+	float depth = @shPassthrough(depth)
+	// now we can do something with depth :)
+	#endif
+	\endcode
+	
 	\section texUnits Texture units
 
 	\subsection shUseSampler shUseSampler
@@ -180,12 +237,4 @@
 	0
 	2
 	\endcode
-
-	\subsection shGlslVersion shGlslVersion
-
-	<B>Usage:</B> \@shGlslVersion <version>
-
-	<B>Example:</B> \@shGlslVersion 130
-
-	Equivalent to #version <version> in GLSL. Why does this exist? You can't use #version directly because it confuses the preprocessor boost::wave and throws an error. Until I find a way to work around this, simply use \@shGlslVersion instead.
 */
