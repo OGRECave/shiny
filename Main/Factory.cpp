@@ -25,6 +25,7 @@ namespace sh
 		: mPlatform(platform)
 		, mShadersEnabled(true)
 		, mCurrentLanguage(platform->selectBestLanguage ())
+		, mListener(NULL)
 	{
 		assert (!sThis);
 		sThis = this;
@@ -229,7 +230,11 @@ namespace sh
 	{
 		MaterialInstance* m = searchInstance (name);
 		if (m)
+		{
 			m->createForConfiguration (mPlatform, configuration);
+			if (mListener)
+				mListener->materialCreated (m, configuration);
+		}
 		return m;
 	}
 
@@ -343,5 +348,10 @@ namespace sh
 	void Factory::registerConfiguration (const std::string& name, PropertySetGet configuration)
 	{
 		mConfigurations[name] = configuration;
+	}
+
+	void Factory::setMaterialListener (MaterialListener* listener)
+	{
+		mListener = listener;
 	}
 }

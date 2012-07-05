@@ -19,6 +19,19 @@ namespace sh
 
 	typedef std::map<std::string, std::string> TextureAliasMap;
 
+	/*
+	 * @brief
+	 * Allows you to be notified when a certain material was just created. Useful for changing material properties that you can't
+	 * do in a .mat script (for example a series of animated textures) \n
+	 * When receiving the event, you can get the platform material by calling m->getMaterial()
+	 * and casting that to the platform specific material (e.g. for Ogre, sh::OgreMaterial)
+	 */
+	class MaterialListener
+	{
+	public:
+		virtual void materialCreated (MaterialInstance* m, const std::string& configuration) = 0;
+	};
+
 	/**
 	 * @brief
 	 * The main interface class
@@ -80,6 +93,9 @@ namespace sh
 		/// Retrieve the real texture name for a texture alias (the real name is set by the user)
 		std::string retrieveTextureAlias (const std::string& name);
 
+		/// Attach a listener for material created events
+		void setMaterialListener (MaterialListener* listener);
+
 		static Factory& getInstance();
 		///< Return instance of this class.
 
@@ -109,6 +125,8 @@ namespace sh
 		std::string mCachePath;
 
 		Language mCurrentLanguage;
+
+		MaterialListener* mListener;
 
 		Platform* mPlatform;
 
