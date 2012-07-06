@@ -19,6 +19,8 @@
 
 namespace sh
 {
+	class OgreMaterialSerializer;
+
 	class OgrePlatform : public Platform, public Ogre::MaterialManager::Listener
 	{
 	public:
@@ -28,6 +30,8 @@ namespace sh
 		virtual Ogre::Technique* handleSchemeNotFound (
 			unsigned short schemeIndex, const Ogre::String &schemeName, Ogre::Material *originalMaterial,
 			unsigned short lodIndex, const Ogre::Renderable *rend);
+
+		static OgreMaterialSerializer& getSerializer();
 
 	private:
 		virtual bool isProfileSupported (const std::string& profile);
@@ -55,6 +59,8 @@ namespace sh
 		virtual bool supportsMaterialQueuedListener ();
 
 		std::string mResourceGroup;
+
+		static OgreMaterialSerializer* sSerializer;
 
 		std::map <std::string, Ogre::GpuSharedParametersPtr> mSharedParameters;
 	};

@@ -1,6 +1,8 @@
 #include "OgreTextureUnitState.hpp"
 
 #include "OgrePass.hpp"
+#include "OgrePlatform.hpp"
+#include "OgreMaterialSerializer.hpp"
 
 namespace sh
 {
@@ -12,26 +14,16 @@ namespace sh
 
 	bool OgreTextureUnitState::setPropertyOverride (const std::string &name, PropertyValuePtr& value, PropertySetGet* context)
 	{
-		bool found = true;
+		OgreMaterialSerializer& s = OgrePlatform::getSerializer();
 
-		if (name == "address_mode")
+		if (name == "texture_alias")
 		{
-			std::string val = retrieveValue<StringValue>(value, context).get();
-			if (val == "clamp")
-				mTextureUnitState->setTextureAddressingMode(Ogre::TextureUnitState::TAM_CLAMP);
-			else if (val == "border")
-				mTextureUnitState->setTextureAddressingMode(Ogre::TextureUnitState::TAM_BORDER);
-			else if (val == "mirror")
-				mTextureUnitState->setTextureAddressingMode(Ogre::TextureUnitState::TAM_MIRROR);
-			else if (val == "wrap")
-				mTextureUnitState->setTextureAddressingMode(Ogre::TextureUnitState::TAM_WRAP);
+			// texture alias in this library refers to something else than in ogre
+			// delegate up
+			return TextureUnitState::setPropertyOverride (name, value, context);
 		}
-		else if (name == "texture")
-			mTextureUnitState->setTextureName(retrieveValue<StringValue>(value, context).get());
-		else
-			found = false;
 
-		return found;
+		return s.setTextureUnitProperty (name, retrieveValue<StringValue>(value, context).get(), mTextureUnitState);
 	}
 
 	void OgreTextureUnitState::setTextureName (const std::string& textureName)

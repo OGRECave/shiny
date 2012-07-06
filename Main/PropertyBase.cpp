@@ -182,13 +182,13 @@ namespace sh
 
 	void PropertySet::setProperty (const std::string& name, PropertyValuePtr &value, PropertySetGet* context)
 	{
-		setPropertyOverride (name, value, context);
+		if (!setPropertyOverride (name, value, context))
+			std::cerr << "sh::PropertySet: Warning: No match for property with name '" << name << "'" << std::endl;
 	}
 
 	bool PropertySet::setPropertyOverride (const std::string& name, PropertyValuePtr &value, PropertySetGet* context)
 	{
 		// if we got here, none of the sub-classes was able to make use of the property
-		std::cerr << "sh::PropertySet: Warning: No match for property with name '" << name << "'" << std::endl;
 		return false;
 	}
 

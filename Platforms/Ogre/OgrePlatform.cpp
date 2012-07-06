@@ -6,6 +6,7 @@
 
 #include "OgreMaterial.hpp"
 #include "OgreGpuProgram.hpp"
+#include "OgreMaterialSerializer.hpp"
 
 #include "../../Main/MaterialInstance.hpp"
 #include "../../Main/Factory.hpp"
@@ -26,6 +27,8 @@ namespace
 
 namespace sh
 {
+	OgreMaterialSerializer* OgrePlatform::sSerializer = 0;
+
 	OgrePlatform::OgrePlatform(const std::string& resourceGroupName, const std::string& basePath)
 		: Platform(basePath)
 		, mResourceGroup(resourceGroupName)
@@ -33,6 +36,14 @@ namespace sh
 		Ogre::MaterialManager::getSingleton().addListener(this);
 
 		Ogre::GpuProgramManager::getSingletonPtr()->setSaveMicrocodesToCache(true);
+
+		sSerializer = new OgreMaterialSerializer();
+	}
+
+	OgreMaterialSerializer& OgrePlatform::getSerializer()
+	{
+		assert(sSerializer);
+		return *sSerializer;
 	}
 
 	Language OgrePlatform::selectBestLanguage ()
@@ -48,6 +59,7 @@ namespace sh
 
 	OgrePlatform::~OgrePlatform ()
 	{
+		delete sSerializer;
 	}
 
 	bool OgrePlatform::isProfileSupported (const std::string& profile)

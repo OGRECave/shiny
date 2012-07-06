@@ -6,6 +6,8 @@
 #include "OgreTextureUnitState.hpp"
 #include "OgreGpuProgram.hpp"
 #include "OgreMaterial.hpp"
+#include "OgreMaterialSerializer.hpp"
+#include "OgrePlatform.hpp"
 
 namespace sh
 {
@@ -38,89 +40,23 @@ namespace sh
 
 	bool OgrePass::setPropertyOverride (const std::string &name, PropertyValuePtr& value, PropertySetGet* context)
 	{
-		bool found = true;
-
 		if (((typeid(*value) == typeid(StringValue)) || typeid(*value) == typeid(LinkedValue))
 				&& retrieveValue<StringValue>(value, context).get() == "default")
 			return true;
 
-		if (name == "depth_write")
-			mPass->setDepthWriteEnabled(retrieveValue<BooleanValue>(value, context).get());
-		else if (name == "depth_check")
-			mPass->setDepthCheckEnabled(retrieveValue<BooleanValue>(value, context).get());
-		else if (name == "colour_write")
-			mPass->setColourWriteEnabled(retrieveValue<BooleanValue>(value, context).get());
-		else if (name == "depth_bias")
-		{
-			Vector2 vec = retrieveValue<Vector2>(value, context);
-			mPass->setDepthBias(vec.mX, vec.mY);
-		}
-		else if (name == "scene_blend")
-		{
-			std::string val = retrieveValue<StringValue>(value, context).get();
-			if (val == "add")
-				mPass->setSceneBlending(Ogre::SBT_ADD);
-			else if (val == "modulate")
-				mPass->setSceneBlending(Ogre::SBT_MODULATE);
-			else if (val == "colour_blend")
-				mPass->setSceneBlending(Ogre::SBT_TRANSPARENT_COLOUR);
-			else if (val == "alpha_blend")
-				mPass->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
-			else
-				std::cerr << "sh::OgrePass: Warning: Invalid value for property \"scene_blend\"" << std::endl;
-		}
 		else if (name == "ffp_vertex_colour_ambient")
 		{
 			bool enabled = retrieveValue<BooleanValue>(value, context).get();
 			// fixed-function vertex colour tracking
 			mPass->setVertexColourTracking(enabled ? Ogre::TVC_AMBIENT : Ogre::TVC_NONE);
-		}
-		else if (name == "diffuse")
-		{
-			Vector4 color = retrieveValue<Vector4>(value, context);
-			mPass->setDiffuse(color.mX, color.mY, color.mZ, color.mW);
-		}
-		else if (name == "ambient")
-		{
-			Vector3 color = retrieveValue<Vector3>(value, context);
-			mPass->setAmbient(color.mX, color.mY, color.mZ);
-		}
-		else if (name == "specular")
-		{
-			Vector4 color = retrieveValue<Vector4>(value, context);
-			mPass->setSpecular(color.mX, color.mY, color.mZ, 1.0);
-			mPass->setShininess(color.mW);
-		}
-		else if (name == "alpha_rejection_value")
-		{
-			mPass->setAlphaRejectValue (static_cast<unsigned char>(retrieveValue<IntValue>(value, context).get()));
-		}
-		else if (name == "alpha_rejection_func")
-		{
-			std::string val = retrieveValue<StringValue>(value, context).get();
-			if (val == "equal")
-				mPass->setAlphaRejectFunction (Ogre::CMPF_EQUAL);
-			else if (val == "greater")
-				mPass->setAlphaRejectFunction (Ogre::CMPF_GREATER);
-			else if (val == "greater_equal")
-				mPass->setAlphaRejectFunction (Ogre::CMPF_GREATER_EQUAL);
-			else if (val == "less_equal")
-				mPass->setAlphaRejectFunction (Ogre::CMPF_LESS_EQUAL);
-			else if (val == "less")
-				mPass->setAlphaRejectFunction (Ogre::CMPF_LESS);
-			else if (val == "not_equal")
-				mPass->setAlphaRejectFunction (Ogre::CMPF_NOT_EQUAL);
-			else if (val == "always_pass")
-				mPass->setAlphaRejectFunction (Ogre::CMPF_ALWAYS_PASS);
-			else if (val == "always_fail")
-				mPass->setAlphaRejectFunction (Ogre::CMPF_ALWAYS_FAIL);
-			else
-				std::cerr << "sh::OgrePass: Warning: Unrecognized value for alpha_rejection_func" << std::endl;
+			return true;
 		}
 		else
-			found = false;
+		{
+			OgreMaterialSerializer& s = OgrePlatform::getSerializer();
 
-		return found;
+			return s.setPassProperty (name, retrieveValue<StringValue>(value, context).get(), mPass);
+		}
 	}
 
 	void OgrePass::setGpuConstant (int type, const std::string& name, ValueType vt, PropertyValuePtr value, PropertySetGet* context)
