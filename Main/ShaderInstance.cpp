@@ -5,6 +5,7 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/bind.hpp>
 
 #include "Preprocessor.hpp"
 #include "Factory.hpp"
@@ -168,39 +169,38 @@ namespace sh
 			pos =  source.find("@shProperty");
 			if (pos == std::string::npos)
 				break;
+
+			std::vector<std::string> args = extractMacroArguments (pos, source);
+
 			size_t start = source.find("(", pos);
 			size_t end = source.find(")", pos);
 			std::string cmd = source.substr(pos+1, start-(pos+1));
+
 			std::string replaceValue;
 			if (cmd == "shPropertyBool")
 			{
-				std::string propertyName = source.substr(start+1, end-(start+1));
+				std::string propertyName = args[0];
 				PropertyValuePtr value = properties->getProperty(propertyName);
 				bool val = retrieveValue<BooleanValue>(value, properties->getContext()).get();
 				replaceValue = val ? "1" : "0";
 			}
 			else if (cmd == "shPropertyNotBool") // same as above, but inverts the result
 			{
-				std::string propertyName = source.substr(start+1, end-(start+1));
+				std::string propertyName = args[0];
 				PropertyValuePtr value = properties->getProperty(propertyName);
 				bool val = retrieveValue<BooleanValue>(value, properties->getContext()).get();
 				replaceValue = val ? "0" : "1";
 			}
 			else if (cmd == "shPropertyString")
 			{
-				std::string propertyName = source.substr(start+1, end-(start+1));
+				std::string propertyName = args[0];
 				PropertyValuePtr value = properties->getProperty(propertyName);
 				replaceValue = retrieveValue<StringValue>(value, properties->getContext()).get();
 			}
 			else if (cmd == "shPropertyEqual")
 			{
-				size_t comma_start = source.find(",", pos);
-				size_t comma_end = comma_start+1;
-				// skip spaces
-				while (source[comma_end] == ' ')
-					++comma_end;
-				std::string propertyName = source.substr(start+1, comma_start-(start+1));
-				std::string comparedAgainst = source.substr(comma_end, end-comma_end);
+				std::string propertyName = args[0];
+				std::string comparedAgainst = args[1];
 				std::string value = retrieveValue<StringValue>(properties->getProperty(propertyName), properties->getContext()).get();
 				replaceValue = (value == comparedAgainst) ? "1" : "0";
 			}
@@ -216,32 +216,27 @@ namespace sh
 			if (pos == std::string::npos)
 				break;
 
-			size_t start = source.find("(", pos);
-			size_t end = source.find(")", pos);
-			std::string cmd = source.substr(pos+1, start-(pos+1));
+			std::vector<std::string> args = extractMacroArguments (pos, source);
+
+			std::string cmd = source.substr(pos+1,  source.find("(", pos)-(pos+1));
 			std::string replaceValue;
 			if (cmd == "shGlobalSettingBool")
 			{
-				std::string settingName = source.substr(start+1, end-(start+1));
+				std::string settingName = args[0];
 				std::string value = mParent->getCurrentGlobalSettings()->find(settingName)->second;
 				replaceValue = (value == "true" || value == "1") ? "1" : "0";
 			}
 			if (cmd == "shGlobalSettingEqual")
 			{
-				size_t comma_start = source.find(",", pos);
-				size_t comma_end = comma_start+1;
-				// skip spaces
-				while (source[comma_end] == ' ')
-					++comma_end;
-				std::string settingName = source.substr(start+1, comma_start-(start+1));
-				std::string comparedAgainst = source.substr(comma_end, end-comma_end);
+				std::string settingName = args[0];
+				std::string comparedAgainst = args[1];
 				std::string value = mParent->getCurrentGlobalSettings()->find(settingName)->second;
 				replaceValue = (value == comparedAgainst) ? "1" : "0";
 			}
 
 			else
 				throw std::runtime_error ("unknown command \"" + cmd + "\" in \"" + name + "\"");
-			source.replace(pos, (end+1)-pos, replaceValue);
+			source.replace(pos, (source.find(")")+1)-pos, replaceValue);
 		}
 
 		// why do we need our own preprocessor? there are several custom commands available in the shader files
@@ -259,12 +254,14 @@ namespace sh
 			if (pos == std::string::npos)
 				break;
 
-			size_t start = source.find("(", pos);
-			size_t end = source.find(")", pos);
-			int num = boost::lexical_cast<int>(source.substr(start+1, end-(start+1)));
+			std::vector<std::string> args = extractMacroArguments (pos, source);
+			assert(args.size());
+
+			int num = boost::lexical_cast<int>(args[0]);
 
 			assert(source.find("@shEndForeach", pos) != std::string::npos);
 			size_t block_end = source.find("@shEndForeach", pos);
+			size_t end = source.find(")", pos);
 
 			// get the content of the inner block
 			std::string content = source.substr(end+1, block_end - (end+1));
@@ -289,10 +286,12 @@ namespace sh
 			if (pos == std::string::npos)
 				break;
 
-			size_t start = source.find("(", pos);
 			size_t end = source.find(")", pos);
 
-			int index = boost::lexical_cast<int>(source.substr(start+1, end-(start+1)));
+			std::vector<std::string> args = extractMacroArguments (pos, source);
+			assert(args.size());
+
+			int index = boost::lexical_cast<int>(args[0]);
 
 			if (counters.find(index) == counters.end())
 				counters[index] = 0;
@@ -307,10 +306,12 @@ namespace sh
 			if (pos == std::string::npos)
 				break;
 
-			size_t start = source.find("(", pos);
+			std::vector<std::string> args = extractMacroArguments (pos, source);
+			assert(args.size());
+
 			size_t end = source.find(")", pos);
 
-			mSharedParameters.push_back(source.substr(start+1, end-(start+1)));
+			mSharedParameters.push_back(args[0]);
 
 			source.erase(pos, (end+1)-pos);
 		}
@@ -324,37 +325,19 @@ namespace sh
 			if (pos == std::string::npos)
 				break;
 
-			size_t start = source.find("(", pos);
-			size_t end = source.find(")", pos);
-			size_t comma1 = source.find(",", pos);
-			size_t comma2 = source.find(",", comma1+1);
+			std::vector<std::string> args = extractMacroArguments (pos, source);
+			assert(args.size() >= 2);
 
-			bool hasExtraData = (comma2 != std::string::npos) && (comma2 < end);
+			size_t end = source.find(")", pos);
+
 			std::string autoConstantName, uniformName;
 			std::string extraData;
-			if (!hasExtraData)
-			{
-				uniformName = source.substr(start+1, comma1-(start+1));
-				// skip spaces
-				++comma1;
-				while (source[comma1] == ' ')
-					++comma1;
-				autoConstantName = source.substr(comma1, end-(comma1));
-			}
-			else
-			{
-				uniformName = source.substr(start+1, comma1-(start+1));
-				// skip spaces
-				++comma1;
-				while (source[comma1] == ' ')
-					++comma1;
-				autoConstantName = source.substr(comma1, comma2-(comma1));
-				// skip spaces
-				++comma2;
-				while (source[comma2] == ' ')
-					++comma2;
-				extraData = source.substr(comma2, end-comma2);
-			}
+
+			uniformName = args[0];
+			autoConstantName = args[1];
+			if (args.size() > 2)
+				extraData = args[2];
+
 			autoConstants[uniformName] = std::make_pair(autoConstantName, extraData);
 
 			source.erase(pos, (end+1)-pos);
@@ -367,9 +350,13 @@ namespace sh
 			if (pos == std::string::npos)
 				break;
 
+			std::vector<std::string> args = extractMacroArguments (pos, source);
+			assert(args.size() == 2);
+
 			size_t start = source.find("(", pos);
 			size_t end = source.find(")", pos);
 			std::string cmd = source.substr(pos, start-pos);
+
 			ValueType vt;
 			if (cmd == "@shUniformProperty4f")
 				vt = VT_Vector4;
@@ -384,15 +371,10 @@ namespace sh
 			else
 				throw std::runtime_error ("unsupported command \"" + cmd + "\"");
 
-			size_t comma1 = source.find(",", pos);
 
 			std::string propertyName, uniformName;
-			uniformName = source.substr(start+1, comma1-(start+1));
-			// skip spaces
-			++comma1;
-			while (source[comma1] == ' ')
-				++comma1;
-			propertyName = source.substr(comma1, end-(comma1));
+			uniformName = args[0];
+			propertyName = args[1];
 			mUniformProperties[uniformName] = std::make_pair(propertyName, vt);
 
 			source.erase(pos, (end+1)-pos);
@@ -405,10 +387,9 @@ namespace sh
 			if (pos == std::string::npos)
 				break;
 
-			size_t start = source.find("(", pos);
 			size_t end = source.find(")", pos);
 
-			mUsedSamplers.push_back(source.substr(start+1, end-(start+1)));
+			mUsedSamplers.push_back(extractMacroArguments (pos, source)[0]);
 			source.erase(pos, (end+1)-pos);
 		}
 
@@ -422,20 +403,16 @@ namespace sh
 			if (mCurrentPassthrough > 7)
 				throw std::runtime_error ("too many passthrough's requested (max 8)");
 
-			size_t start = source.find("(", pos);
+			std::vector<std::string> args = extractMacroArguments (pos, source);
+			assert(args.size() == 2);
+
 			size_t end = source.find(")", pos);
-			size_t comma = source.find(",", pos);
 
 			Passthrough passthrough;
 
-			passthrough.num_components = boost::lexical_cast<int>(source.substr(start+1, comma-(start+1)));
+			passthrough.num_components = boost::lexical_cast<int>(args[0]);
 
-			// skip spaces
-			++comma;
-			while (source[comma] == ' ')
-				++comma;
-
-			std::string passthroughName = source.substr(comma, end-comma);
+			std::string passthroughName = args[1];
 			passthrough.lang = Factory::getInstance().getCurrentLanguage ();
 			passthrough.component_start = mCurrentComponent;
 			passthrough.passthrough_number = mCurrentPassthrough;
@@ -456,17 +433,13 @@ namespace sh
 			if (pos == std::string::npos)
 				break;
 
-			size_t start = source.find("(", pos);
+			std::vector<std::string> args = extractMacroArguments (pos, source);
+			assert(args.size() == 2);
+
 			size_t end = source.find(")", pos);
-			size_t comma = source.find(",", pos);
-			std::string passthroughName = source.substr(start+1, comma-(start+1));
 
-			// skip spaces
-			++comma;
-			while (source[comma] == ' ')
-				++comma;
-
-			std::string assignTo = source.substr(comma, end-comma);
+			std::string passthroughName = args[0];
+			std::string assignTo = args[1];
 
 			Passthrough& p = mPassthroughMap[passthroughName];
 
@@ -480,9 +453,11 @@ namespace sh
 			if (pos == std::string::npos)
 				break;
 
-			size_t start = source.find("(", pos);
+			std::vector<std::string> args = extractMacroArguments (pos, source);
+			assert(args.size() == 1);
+
 			size_t end = source.find(")", pos);
-			std::string passthroughName = source.substr(start+1, end-(start+1));
+			std::string passthroughName = args[0];
 
 			Passthrough& p = mPassthroughMap[passthroughName];
 
@@ -586,4 +561,16 @@ namespace sh
 		}
 	}
 
+	std::vector<std::string> ShaderInstance::extractMacroArguments (size_t pos, const std::string& source)
+	{
+		size_t start = source.find("(", pos);
+		size_t end = source.find(")", pos);
+		std::string args = source.substr(start+1, end-(start+1));
+		std::vector<std::string> results;
+		boost::algorithm::split(results, args, boost::is_any_of(","));
+		std::for_each(results.begin(), results.end(),
+			boost::bind(&boost::trim<std::string>,
+			_1, std::locale() ));
+		return results;
+	}
 }

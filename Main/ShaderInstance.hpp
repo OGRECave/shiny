@@ -61,6 +61,8 @@ namespace sh
 		int mCurrentComponent; ///< 0:x, 1:y, 2:z, 3:w
 
 		PassthroughMap mPassthroughMap;
+
+		std::vector<std::string> extractMacroArguments (size_t pos, const std::string& source); ///< take a macro invocation and return vector of arguments
 	};
 }
 

@@ -180,9 +180,9 @@
 
 	Allows you to bind a custom value to a uniform parameter.
 
-	<B>Usage</B>: \@shSharedParameter(uniformName, sharedParameterName)
+	<B>Usage</B>: \@shSharedParameter(sharedParameterName)
 
-	<B>Example</B>: \@shSharedParameter(pssmSplitPoints, myPssmSplitPoints) - now the uniform parameter 'pssmSplitPoints' can be altered in all shaders that use it by executing sh::Factory::setSharedParameter("myPssmSplitPoints", value)
+	<B>Example</B>: \@shSharedParameter(pssmSplitPoints) - now the uniform parameter 'pssmSplitPoints' can be altered in all shaders that use it by executing sh::Factory::setSharedParameter("pssmSplitPoints", value)
 
 	\note You may use the same shared parameter in as many shaders as you want. But don't forget to add the \@shSharedParameter macro to every shader that uses this shared parameter. 
 
