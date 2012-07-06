@@ -90,6 +90,7 @@ namespace sh
 				current_component_left = 0;
 			}
 		}
+		throw std::runtime_error("expand_assign error"); // this should never happen, but gets us rid of the "control reaches end of non-void function" warning
 	}
 
 	std::string Passthrough::expand_receive()
@@ -135,6 +136,8 @@ namespace sh
 				current_component = 0;
 			}
 		}
+
+		throw std::runtime_error("expand_receive error"); // this should never happen, but gets us rid of the "control reaches end of non-void function" warning
 	}
 
 	// ------------------------------------------------------------------------------
