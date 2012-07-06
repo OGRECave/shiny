@@ -38,7 +38,7 @@ namespace sh
 		mProgram->load();
 
 		if (mProgram.isNull() || !mProgram->isSupported())
-			std::cerr << "Failed to compile vertex shader \"" << name << "\". Consider the OGRE log for more information." << std::endl;
+			std::cerr << "Failed to compile shader \"" << name << "\". Consider the OGRE log for more information." << std::endl;
 	}
 
 	bool OgreGpuProgram::getSupported()
