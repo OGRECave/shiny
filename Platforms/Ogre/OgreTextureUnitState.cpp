@@ -25,6 +25,7 @@ namespace sh
 		else if (name == "direct_texture")
 		{
 			setTextureName (retrieveValue<StringValue>(value, context).get());
+			return true;
 		}
 		else if (name == "create_in_ffp")
 			return true; // handled elsewhere
