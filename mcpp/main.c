@@ -371,9 +371,12 @@ int     main
     mb_init();      /* Should be initialized prior to get options   */
     do_options( argc, argv, &in_file, &out_file);   /* Command line options */
 
+	fp_in = inputFile;
+
     /* Open input file, "-" means stdin.    */
+	/*
     if (in_file != NULL && ! str_eq( in_file, "-")) {
-        if ((fp_in = fopen( in_file, "r")) == NULL) {
+		if ((fp_in = fopen( in_file, "r")) == NULL) {
             mcpp_fprintf( ERR, "Can't open input file \"%s\".\n", in_file);
             errors++;
 #if MCPP_LIB
@@ -385,6 +388,8 @@ int     main
     } else {
         in_file = stdin_name;
     }
+	*/
+	in_file = "unknown_file";
     /* Open output file, "-" means stdout.  */
     if (out_file != NULL && ! str_eq( out_file, "-")) {
         if ((fp_out = fopen( out_file, "w")) == NULL) {

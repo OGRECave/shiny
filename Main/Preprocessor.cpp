@@ -14,27 +14,32 @@ namespace sh
 		FILE* temp_file;
 		temp_file = tmpfile();
 
+		fwrite(source.c_str(), sizeof(char), source.size(), temp_file);
+		rewind(temp_file);
+
 		mcpp_use_mem_buffers(1);
 
-		int num_args = 4 + definitions.size()*2;
+		int num_args = 3 + definitions.size()*2;
 		char* args[num_args];
-		args[0] = "mcpp";
-		args[1] = "/tmp/test.shader";
-		args[2] = "-I";
+		char mcpp_str[] = "mcpp";
+		char _i[] = "-I";
+		char _d[] = "-D";
+		args[0] = mcpp_str;
+		args[1] = _i;
 
 		std::vector<char> writable(includePath.size()+1);
 		std::copy(includePath.begin(), includePath.end(), writable.begin());
 		char* include = &writable[0];
 
-		args[3] = include;
+		args[2] = include;
 
 		std::vector<char> vectors[definitions.size()];
 
-		int i=4;
+		int i=3;
 		int cur=0;
 		for (std::vector<std::string>::iterator it = definitions.begin(); it != definitions.end(); ++it)
 		{
-			args[i] = "-D";
+			args[i] = _d;
 			++i;
 
 			std::string val = *it;
@@ -50,7 +55,6 @@ namespace sh
 		mcpp_lib_main(num_args, args, temp_file);
 
 		char* result = mcpp_get_mem_buffer (OUT);
-
 		return std::string(result);
 	}
 }
