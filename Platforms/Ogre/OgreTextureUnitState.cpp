@@ -22,6 +22,10 @@ namespace sh
 			// delegate up
 			return TextureUnitState::setPropertyOverride (name, value, context);
 		}
+		else if (name == "direct_texture")
+		{
+			setTextureName (retrieveValue<StringValue>(value, context).get());
+		}
 		else if (name == "create_in_ffp")
 			return true; // handled elsewhere
 
