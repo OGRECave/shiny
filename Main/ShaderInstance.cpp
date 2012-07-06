@@ -244,6 +244,14 @@ namespace sh
 			source.replace(pos, (end+1)-pos, replaceValue);
 		}
 
+		// why do we need our own preprocessor? there are several custom commands available in the shader files
+		// (for example for binding uniforms to properties or auto constants) - more below. it is important that these
+		// commands are _only executed if the specific code path actually "survives" the compilation.
+		// thus, we run the code through a preprocessor first to remove the parts that are unused because of
+		// unmet #if conditions (or other preprocessor directives).
+		Preprocessor p;
+		source = p.preprocess(source, basePath, definitions, name);
+
 		// parse foreach
 		while (true)
 		{
@@ -267,19 +275,11 @@ namespace sh
 			{
 				// replace @shIterator with the current iteration
 				std::string addStr = content;
-				boost::replace_all(addStr, "@shIteration", boost::lexical_cast<std::string>(i));
+				boost::replace_all(addStr, "@shIterator", boost::lexical_cast<std::string>(i));
 				replaceStr += addStr;
 			}
 			source.replace(pos, (block_end+std::string("@shEndForeach").length())-pos, replaceStr);
 		}
-
-		// why do we need our own preprocessor? there are several custom commands available in the shader files
-		// (for example for binding uniforms to properties or auto constants) - more below. it is important that these
-		// commands are _only executed if the specific code path actually "survives" the compilation.
-		// thus, we run the code through a preprocessor first to remove the parts that are unused because of
-		// unmet #if conditions (or other preprocessor directives).
-		Preprocessor p;
-		source = p.preprocess(source, basePath, definitions, name);
 
 		// parse counter
 		std::map<int, int> counters;
