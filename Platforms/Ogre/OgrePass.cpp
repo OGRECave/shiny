@@ -44,6 +44,10 @@ namespace sh
 				&& retrieveValue<StringValue>(value, context).get() == "default")
 			return true;
 
+		if (name == "vertex_program")
+			return true; // handled already
+		else if (name == "fragment_program")
+			return true; // handled already
 		else if (name == "ffp_vertex_colour_ambient")
 		{
 			bool enabled = retrieveValue<BooleanValue>(value, context).get();

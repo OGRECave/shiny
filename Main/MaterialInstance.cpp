@@ -67,14 +67,15 @@ namespace sh
 			if (mShadersEnabled)
 			{
 				it->setContext(context);
+				it->mShaderProperties.setContext(context);
 				if (it->hasProperty("vertex_program"))
 				{
 					ShaderSet* vertex = mFactory->getShaderSet(retrieveValue<StringValue>(it->getProperty("vertex_program"), context).get());
-					ShaderInstance* v = vertex->getInstance(&*it);
+					ShaderInstance* v = vertex->getInstance(&it->mShaderProperties);
 					if (v)
 					{
 						pass->assignProgram (GPT_Vertex, v->getName());
-						v->setUniformParameters (pass, &*it);
+						v->setUniformParameters (pass, &it->mShaderProperties);
 
 						std::vector<std::string> sharedParams = v->getSharedParameters ();
 						for (std::vector<std::string>::iterator it = sharedParams.begin(); it != sharedParams.end(); ++it)
@@ -89,11 +90,11 @@ namespace sh
 				if (it->hasProperty("fragment_program"))
 				{
 					ShaderSet* fragment = mFactory->getShaderSet(retrieveValue<StringValue>(it->getProperty("fragment_program"), context).get());
-					ShaderInstance* f = fragment->getInstance(&*it);
+					ShaderInstance* f = fragment->getInstance(&it->mShaderProperties);
 					if (f)
 					{
 						pass->assignProgram (GPT_Fragment, f->getName());
-						f->setUniformParameters (pass, &*it);
+						f->setUniformParameters (pass, &it->mShaderProperties);
 
 						std::vector<std::string> sharedParams = f->getSharedParameters ();
 						for (std::vector<std::string>::iterator it = sharedParams.begin(); it != sharedParams.end(); ++it)

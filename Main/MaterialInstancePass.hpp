@@ -16,6 +16,8 @@ namespace sh
 	public:
 		MaterialInstanceTextureUnit* createTextureUnit (const std::string& name);
 
+		PropertySetGet mShaderProperties;
+
 		std::map <std::string, MaterialInstanceTextureUnit> getTexUnits ();
 	private:
 		std::map <std::string, MaterialInstanceTextureUnit> mTexUnits;

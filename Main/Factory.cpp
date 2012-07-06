@@ -163,7 +163,16 @@ namespace sh
 							std::string name2 = (*propIt2)->getName();
 							std::string val2 = (*propIt2)->getValue();
 
-							if (name2 == "texture_unit")
+							if (name2 == "shader_properties")
+							{
+								std::vector<ScriptNode*> shaderProps = (*propIt2)->getChildren();
+								for (std::vector<ScriptNode*>::const_iterator shaderPropIt = shaderProps.begin(); shaderPropIt != shaderProps.end(); ++shaderPropIt)
+								{
+									std::string val = (*shaderPropIt)->getValue();
+									newPass->mShaderProperties.setProperty((*shaderPropIt)->getName(), makeProperty(val));
+								}
+							}
+							else if (name2 == "texture_unit")
 							{
 								MaterialInstanceTextureUnit* newTex = newPass->createTextureUnit(val2);
 								std::vector<ScriptNode*> texProps = (*propIt2)->getChildren();
