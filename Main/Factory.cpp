@@ -192,6 +192,12 @@ namespace sh
 						newInstance.setProperty((*propIt)->getName(), makeProperty(val));
 				}
 
+				if (newInstance.hasProperty("create_configuration"))
+				{
+					std::string config = retrieveValue<StringValue>(newInstance.getProperty("create_configuration"), NULL).get();
+					newInstance.createForConfiguration (config);
+				}
+
 				mMaterials.insert (std::make_pair(it->first, newInstance));
 			}
 

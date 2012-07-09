@@ -29,12 +29,6 @@ namespace sh
 	void MaterialInstance::create (Platform* platform)
 	{
 		mMaterial = platform->createMaterial(mName);
-
-		if (hasProperty("create_configuration"))
-		{
-			std::string config = retrieveValue<StringValue>(getProperty("create_configuration"), NULL).get();
-			createForConfiguration (config);
-		}
 	}
 
 	void MaterialInstance::destroyAll ()
