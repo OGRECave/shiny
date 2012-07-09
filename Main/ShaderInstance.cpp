@@ -277,7 +277,7 @@ namespace sh
 					{
 						size_t closeBrace = addStr.find(")", pos2);
 						int offset = boost::lexical_cast<int> (addStr.substr(openBracePos+1, closeBrace-(openBracePos+1)));
-						addStr.replace(pos2, std::string("@shIterator").length(), boost::lexical_cast<std::string>(i+offset));
+						addStr.replace(pos2, (closeBrace+1)-pos2, boost::lexical_cast<std::string>(i+offset));
 					}
 					else
 					{
