@@ -250,7 +250,7 @@ namespace sh
 			if (!mParent)
 				return false;
 			else
-				return true;
+				return mParent->hasProperty (name);
 		}
 		else
 			return true;
