@@ -47,6 +47,12 @@ namespace sh
 	{
 		mMaterial->createConfiguration(configuration);
 
+		bool allowFixedFunction = true;
+		if (hasProperty("allow_fixed_function"))
+		{
+			allowFixedFunction = retrieveValue<BooleanValue>(getProperty("allow_fixed_function"), NULL).get();
+		}
+
 		// get passes of the top-most parent
 		PassVector passes = getPasses();
 		for (PassVector::iterator it = passes.begin(); it != passes.end(); ++it)
@@ -64,7 +70,7 @@ namespace sh
 			}
 
 			// create or retrieve shaders
-			if (mShadersEnabled)
+			if (mShadersEnabled || !allowFixedFunction)
 			{
 				it->setContext(context);
 				it->mShaderProperties.setContext(context);
@@ -114,7 +120,7 @@ namespace sh
 			{
 				// only create those that are needed by the shader, OR those marked to be created in fixed function pipeline if shaders are disabled
 				if (std::find(usedTextureSamplers.begin(), usedTextureSamplers.end(), texIt->second.getName()) != usedTextureSamplers.end()
-						|| (!mShadersEnabled && texIt->second.hasProperty("create_in_ffp") && retrieveValue<BooleanValue>(texIt->second.getProperty("create_in_ffp"), this).get()))
+						|| ((!mShadersEnabled && allowFixedFunction) && texIt->second.hasProperty("create_in_ffp") && retrieveValue<BooleanValue>(texIt->second.getProperty("create_in_ffp"), this).get()))
 				{
 					boost::shared_ptr<TextureUnitState> texUnit = pass->createTextureUnitState ();
 					texIt->second.copyAll (texUnit.get(), context);
