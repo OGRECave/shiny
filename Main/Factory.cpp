@@ -240,7 +240,7 @@ namespace sh
 		MaterialInstance* m = searchInstance (name);
 		if (m)
 		{
-			m->createForConfiguration (mPlatform, configuration);
+			m->createForConfiguration (configuration);
 			if (mListener)
 				mListener->materialCreated (m, configuration);
 		}

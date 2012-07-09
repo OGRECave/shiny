@@ -29,6 +29,12 @@ namespace sh
 	void MaterialInstance::create (Platform* platform)
 	{
 		mMaterial = platform->createMaterial(mName);
+
+		if (hasProperty("create_configuration"))
+		{
+			std::string config = retrieveValue<StringValue>(getProperty("create_configuration"), NULL).get();
+			createForConfiguration (config);
+		}
 	}
 
 	void MaterialInstance::destroyAll ()
@@ -43,7 +49,7 @@ namespace sh
 			mMaterial->removeAll(); // trigger updates
 	}
 
-	void MaterialInstance::createForConfiguration (Platform* platform, const std::string& configuration)
+	void MaterialInstance::createForConfiguration (const std::string& configuration)
 	{
 		mMaterial->createConfiguration(configuration);
 
