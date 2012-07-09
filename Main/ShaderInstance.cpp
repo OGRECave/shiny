@@ -264,7 +264,27 @@ namespace sh
 			{
 				// replace @shIterator with the current iteration
 				std::string addStr = content;
-				boost::replace_all(addStr, "@shIterator", boost::lexical_cast<std::string>(i));
+
+				while (true)
+				{
+					size_t pos2 = addStr.find("@shIterator");
+					if (pos2 == std::string::npos)
+						break;
+
+					// optional offset parameter.
+					size_t openBracePos = pos2 + std::string("@shIterator").length();
+					if (addStr[openBracePos] == '(')
+					{
+						size_t closeBrace = addStr.find(")", pos2);
+						int offset = boost::lexical_cast<int> (addStr.substr(openBracePos+1, closeBrace-(openBracePos+1)));
+						addStr.replace(pos2, std::string("@shIterator").length(), boost::lexical_cast<std::string>(i+offset));
+					}
+					else
+					{
+						addStr.replace(pos2, std::string("@shIterator").length(), boost::lexical_cast<std::string>(i));
+					}
+				}
+
 				replaceStr += addStr;
 			}
 			source.replace(pos, (block_end+std::string("@shEndForeach").length())-pos, replaceStr);

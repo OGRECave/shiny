@@ -222,6 +222,20 @@
 	this is iteration number 2
 	\endcode
 
+	Optionally, you can pass a constant offset to \@shIterator. Example:
+
+	\code
+	@shForeach(3)
+	this is iteration number @shIterator(7)
+	@shEndForeach
+
+	Gets replaced with:
+
+	this is iteration number 7
+	this is iteration number 8
+	this is iteration number 9
+	\endcode
+
 	\subsection shCounter shCounter
 
 	Gets replaced after the preprocessing step with the number that equals the n-th occurence of counters of the same ID.
@@ -244,4 +258,5 @@
 	0
 	2
 	\endcode
+
 */
