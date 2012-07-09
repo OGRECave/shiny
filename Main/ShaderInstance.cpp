@@ -535,7 +535,6 @@ namespace sh
 		{
 			mProgram->setAutoConstant(it->first, it->second.first, it->second.second);
 		}
-
 	}
 
 	std::string ShaderInstance::getName ()

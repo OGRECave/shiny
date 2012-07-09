@@ -60,7 +60,9 @@ namespace sh
 			boost::shared_ptr<Pass> pass = mMaterial->createPass (configuration);
 			it->copyAll (pass.get(), this);
 
-			std::vector<std::string> usedTextureSamplers; // texture samplers used in the shaders
+			// texture samplers used in the shaders
+			std::vector<std::string> usedTextureSamplersVertex;
+			std::vector<std::string> usedTextureSamplersFragment;
 
 			PropertySetGet* context = this;
 			if (configuration != "Default")
@@ -90,7 +92,7 @@ namespace sh
 						}
 
 						std::vector<std::string> vector = v->getUsedSamplers ();
-						usedTextureSamplers.insert(usedTextureSamplers.end(), vector.begin(), vector.end());
+						usedTextureSamplersVertex.insert(usedTextureSamplersVertex.end(), vector.begin(), vector.end());
 					}
 				}
 				if (it->hasProperty("fragment_program"))
@@ -109,21 +111,33 @@ namespace sh
 						}
 
 						std::vector<std::string> vector = f->getUsedSamplers ();
-						usedTextureSamplers.insert(usedTextureSamplers.end(), vector.begin(), vector.end());
+						usedTextureSamplersFragment.insert(usedTextureSamplersFragment.end(), vector.begin(), vector.end());
 					}
 				}
 			}
 
 			// create texture units
 			std::map<std::string, MaterialInstanceTextureUnit> texUnits = it->getTexUnits();
+			int i=0;
 			for (std::map<std::string, MaterialInstanceTextureUnit>::iterator texIt = texUnits.begin(); texIt  != texUnits.end(); ++texIt )
 			{
 				// only create those that are needed by the shader, OR those marked to be created in fixed function pipeline if shaders are disabled
-				if (std::find(usedTextureSamplers.begin(), usedTextureSamplers.end(), texIt->second.getName()) != usedTextureSamplers.end()
+				bool foundVertex = std::find(usedTextureSamplersVertex.begin(), usedTextureSamplersVertex.end(), texIt->second.getName()) != usedTextureSamplersVertex.end();
+				bool foundFragment = std::find(usedTextureSamplersFragment.begin(), usedTextureSamplersFragment.end(), texIt->second.getName()) != usedTextureSamplersFragment.end();
+				if (  (foundVertex || foundFragment)
 						|| ((!mShadersEnabled && allowFixedFunction) && texIt->second.hasProperty("create_in_ffp") && retrieveValue<BooleanValue>(texIt->second.getProperty("create_in_ffp"), this).get()))
 				{
 					boost::shared_ptr<TextureUnitState> texUnit = pass->createTextureUnitState ();
 					texIt->second.copyAll (texUnit.get(), context);
+
+
+					// set texture unit indices (required by GLSL)
+					if (mShadersEnabled && mFactory->getCurrentLanguage () == Language_GLSL)
+					{
+						pass->setTextureUnitIndex (foundVertex ? GPT_Vertex : GPT_Fragment, texIt->second.getName(), i);
+
+						++i;
+					}
 				}
 			}
 		}

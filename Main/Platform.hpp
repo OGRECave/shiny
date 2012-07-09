@@ -54,6 +54,8 @@ namespace sh
 		/// @param context used for retrieving linked values
 		virtual void setGpuConstant (int type, const std::string& name, ValueType vt, PropertyValuePtr value, PropertySetGet* context) = 0;
 
+		virtual void setTextureUnitIndex (int programType, const std::string& name, int index) = 0;
+
 		virtual void addSharedParameter (int type, const std::string& name) = 0;
 	};
 

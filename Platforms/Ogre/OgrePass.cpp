@@ -104,4 +104,15 @@ namespace sh
 
 		params->addSharedParameters (name);
 	}
+
+	void OgrePass::setTextureUnitIndex (int programType, const std::string& name, int index)
+	{
+		Ogre::GpuProgramParametersSharedPtr params;
+		if (programType == GPT_Vertex)
+			params = mPass->getVertexProgramParameters();
+		else if (programType == GPT_Fragment)
+			params = mPass->getFragmentProgramParameters();
+
+		params->setNamedConstant("name", index);
+	}
 }
