@@ -226,14 +226,13 @@ namespace sh
 				std::string value = mParent->getCurrentGlobalSettings()->find(settingName)->second;
 				replaceValue = (value == "true" || value == "1") ? "1" : "0";
 			}
-			if (cmd == "shGlobalSettingEqual")
+			else if (cmd == "shGlobalSettingEqual")
 			{
 				std::string settingName = args[0];
 				std::string comparedAgainst = args[1];
 				std::string value = mParent->getCurrentGlobalSettings()->find(settingName)->second;
 				replaceValue = (value == comparedAgainst) ? "1" : "0";
 			}
-
 			else
 				throw std::runtime_error ("unknown command \"" + cmd + "\" in \"" + name + "\"");
 			source.replace(pos, (source.find(")")+1)-pos, replaceValue);
