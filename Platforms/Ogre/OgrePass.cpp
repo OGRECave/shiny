@@ -113,6 +113,6 @@ namespace sh
 		else if (programType == GPT_Fragment)
 			params = mPass->getFragmentProgramParameters();
 
-		params->setNamedConstant("name", index);
+		params->setNamedConstant(name, index);
 	}
 }
