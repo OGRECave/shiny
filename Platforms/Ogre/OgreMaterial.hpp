@@ -25,8 +25,12 @@ namespace sh
 
 		Ogre::Technique* getOgreTechniqueForConfiguration (const std::string& configurationName);
 
+		virtual void setShadowCasterMaterial (const std::string& name);
+
 	private:
 		Ogre::MaterialPtr mMaterial;
+
+		std::string mShadowCasterMaterial;
 	};
 }
 

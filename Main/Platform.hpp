@@ -65,6 +65,8 @@ namespace sh
 		virtual void removeConfiguration (const std::string& name) = 0; ///< safe to call if configuration does not exist
 		virtual void removeAll () = 0; ///< remove all configurations
 		//virtual boost::shared_ptr<Pass> getPass (int index, const std::string& configuration);
+
+		virtual void setShadowCasterMaterial (const std::string& name) = 0;
 	};
 
 	class Platform

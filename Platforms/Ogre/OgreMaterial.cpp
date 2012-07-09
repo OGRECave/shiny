@@ -40,6 +40,7 @@ namespace sh
 		Ogre::Technique* t = mMaterial->createTechnique();
 		t->setSchemeName (name);
 		t->setName (name);
+		t->setShadowCasterMaterial(name);
 	}
 
 	void OgreMaterial::removeConfiguration (const std::string& name)
@@ -59,5 +60,14 @@ namespace sh
 	Ogre::Technique* OgreMaterial::getOgreTechniqueForConfiguration (const std::string& configurationName)
 	{
 		return mMaterial->getTechnique (configurationName); /// \todo don't use strings here?
+	}
+
+	void OgreMaterial::setShadowCasterMaterial (const std::string& name)
+	{
+		mShadowCasterMaterial = name;
+		for (int i=0; i<mMaterial->getNumTechniques(); ++i)
+		{
+			mMaterial->getTechnique(i)->setShadowCasterMaterial(name);
+		}
 	}
 }
