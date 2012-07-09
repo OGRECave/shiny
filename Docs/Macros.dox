@@ -206,11 +206,12 @@
 
 	\note Nested foreach blocks are currently \a not supported.
 
+	\note You can only use constant numbers or properties (\@shProperty1f) as \a n parameter.
+
 	<B>Example:</B>
 
 	\code
-	#define NUM_LAYERS 3
-	@shForeach(NUM_LAYERS)
+	@shForeach(3)
 	this is iteration number @shIterator
 	@shEndForeach
 
