@@ -48,7 +48,7 @@ namespace sh
 		mMaterial->createConfiguration(configuration);
 
 		bool allowFixedFunction = true;
-		if (hasProperty("allow_fixed_function"))
+		if (!mShadersEnabled && hasProperty("allow_fixed_function"))
 		{
 			allowFixedFunction = retrieveValue<BooleanValue>(getProperty("allow_fixed_function"), NULL).get();
 		}
