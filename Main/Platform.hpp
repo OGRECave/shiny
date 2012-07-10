@@ -35,6 +35,8 @@ namespace sh
 	class TextureUnitState : public PropertySet
 	{
 	public:
+		virtual ~TextureUnitState();
+
 		virtual void setTextureName (const std::string& textureName) = 0;
 
 	protected:

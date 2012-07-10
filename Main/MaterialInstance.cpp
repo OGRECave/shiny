@@ -34,6 +34,13 @@ namespace sh
 	void MaterialInstance::destroyAll ()
 	{
 		mMaterial->removeAll();
+		mTexUnits.clear();
+
+		if (hasProperty("create_configuration"))
+		{
+			std::string config = retrieveValue<StringValue>(getProperty("create_configuration"), NULL).get();
+			createForConfiguration (config);
+		}
 	}
 
 	void MaterialInstance::setProperty (const std::string& name, PropertyValuePtr value)
@@ -130,6 +137,7 @@ namespace sh
 					boost::shared_ptr<TextureUnitState> texUnit = pass->createTextureUnitState ();
 					texIt->second.copyAll (texUnit.get(), context);
 
+					mTexUnits.push_back(texUnit);
 
 					// set texture unit indices (required by GLSL)
 					if (mShadersEnabled && mFactory->getCurrentLanguage () == Language_GLSL)

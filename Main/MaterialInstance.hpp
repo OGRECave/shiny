@@ -59,6 +59,8 @@ namespace sh
 		/// so initially only the parent's name is written to this member.
 		/// once all instances are loaded, the actual mParent pointer (from PropertySetGet class) can be set
 
+		std::vector< boost::shared_ptr<TextureUnitState> > mTexUnits;
+
 		PassVector mPasses;
 
 		std::string mName;

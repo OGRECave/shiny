@@ -99,6 +99,8 @@ namespace sh
 		static Factory& getInstance();
 		///< Return instance of this class.
 
+		static Factory* getInstancePtr();
+
 	private:
 
 		MaterialInstance* requestMaterial (const std::string& name, const std::string& configuration);
@@ -106,9 +108,15 @@ namespace sh
 		PropertySetGet* getConfiguration (const std::string& name);
 		Platform* getPlatform ();
 
+		void addTextureAliasInstance (const std::string& name, TextureUnitState* t);
+		void removeTextureAliasInstances (TextureUnitState* t);
+
+		std::map<TextureUnitState*, std::string> mTextureAliasInstances;
+
 		friend class Platform;
 		friend class MaterialInstance;
 		friend class ShaderInstance;
+		friend class TextureUnitState;
 
 	private:
 		static Factory* sThis;

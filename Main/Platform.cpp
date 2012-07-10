@@ -71,12 +71,24 @@ namespace sh
 
 	bool TextureUnitState::setPropertyOverride (const std::string& name, PropertyValuePtr& value, PropertySetGet *context)
 	{
-		if (name == "texture_alias") /// \todo this is unsupported at the moment
+		if (name == "texture_alias")
 		{
-			setTextureName (Factory::getInstance().retrieveTextureAlias (retrieveValue<StringValue>(value, context).get()));
+			std::string aliasName = retrieveValue<StringValue>(value, context).get();
+
+			Factory::getInstance().addTextureAliasInstance (aliasName, this);
+
+			setTextureName (Factory::getInstance().retrieveTextureAlias (aliasName));
+
 			return true;
 		}
 		else
 			return false;
+	}
+
+	TextureUnitState::~TextureUnitState()
+	{
+		Factory* f = Factory::getInstancePtr ();
+		if (f)
+			f->removeTextureAliasInstances (this);
 	}
 }

@@ -21,6 +21,11 @@ namespace sh
 		return *sThis;
 	}
 
+	Factory* Factory::getInstancePtr()
+	{
+		return sThis;
+	}
+
 	Factory::Factory (Platform* platform)
 		: mPlatform(platform)
 		, mShadersEnabled(true)
@@ -327,10 +332,15 @@ namespace sh
 
 	void Factory::setCurrentLanguage (Language lang)
 	{
+		bool changed = (mCurrentLanguage == lang);
 		mCurrentLanguage = lang;
-		for (MaterialMap::iterator it = mMaterials.begin(); it != mMaterials.end(); ++it)
+
+		if (changed)
 		{
-			it->second.destroyAll();
+			for (MaterialMap::iterator it = mMaterials.begin(); it != mMaterials.end(); ++it)
+			{
+				it->second.destroyAll();
+			}
 		}
 	}
 
@@ -343,9 +353,13 @@ namespace sh
 	{
 		mTextureAliases[alias] = realName;
 
-		for (MaterialMap::iterator it = mMaterials.begin(); it != mMaterials.end(); ++it)
+		// update the already existing texture units
+		for (std::map<TextureUnitState*, std::string>::iterator it = mTextureAliasInstances.begin(); it != mTextureAliasInstances.end(); ++it)
 		{
-			it->second.destroyAll();
+			if (it->second == alias)
+			{
+				it->first->setTextureName(realName);
+			}
 		}
 	}
 
@@ -368,5 +382,15 @@ namespace sh
 	void Factory::setMaterialListener (MaterialListener* listener)
 	{
 		mListener = listener;
+	}
+
+	void Factory::addTextureAliasInstance (const std::string& name, TextureUnitState* t)
+	{
+		mTextureAliasInstances[t] = name;
+	}
+
+	void Factory::removeTextureAliasInstances (TextureUnitState* t)
+	{
+		mTextureAliasInstances.erase(t);
 	}
 }
