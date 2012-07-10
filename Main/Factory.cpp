@@ -297,7 +297,7 @@ namespace sh
 	{
 		bool changed = true;
 		if (mGlobalSettings.find(name) != mGlobalSettings.end())
-			changed = (mGlobalSettings[name] == value);
+			changed = (mGlobalSettings[name] != value);
 
 		mGlobalSettings[name] = value;
 
@@ -332,7 +332,7 @@ namespace sh
 
 	void Factory::setCurrentLanguage (Language lang)
 	{
-		bool changed = (mCurrentLanguage == lang);
+		bool changed = (mCurrentLanguage != lang);
 		mCurrentLanguage = lang;
 
 		if (changed)
