@@ -46,8 +46,6 @@ namespace sh
 
 		void destroyAll ();
 
-		void markDirty (const std::string& configuration); ///< force recreating the technique/shaders when it's next used
-
 		void setShadersEnabled (bool enabled);
 
 		friend class Factory;

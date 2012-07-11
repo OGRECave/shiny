@@ -146,11 +146,6 @@ namespace sh
 		}
 	}
 
-	void MaterialInstance::markDirty (const std::string& configuration)
-	{
-		mMaterial->removeConfiguration(configuration);
-	}
-
 	Material* MaterialInstance::getMaterial ()
 	{
 		return mMaterial.get();
