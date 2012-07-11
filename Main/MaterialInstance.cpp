@@ -42,8 +42,7 @@ namespace sh
 	void MaterialInstance::setProperty (const std::string& name, PropertyValuePtr value)
 	{
 		PropertySetGet::setProperty (name, value);
-		if (mMaterial)
-			mMaterial->removeAll(); // trigger updates
+		destroyAll(); // trigger updates
 	}
 
 	void MaterialInstance::createForConfiguration (const std::string& configuration)
@@ -180,6 +179,6 @@ namespace sh
 
 		// trigger updates
 		if (mMaterial.get())
-			mMaterial->removeAll();
+			destroyAll();
 	}
 }
