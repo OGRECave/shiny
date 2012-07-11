@@ -344,7 +344,7 @@ namespace sh
 		}
 	}
 
-	MaterialInstance* Factory::getInstance (const std::string& name)
+	MaterialInstance* Factory::getMaterialInstance (const std::string& name)
 	{
 		return findInstance(name);
 	}

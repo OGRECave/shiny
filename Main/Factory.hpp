@@ -75,7 +75,7 @@ namespace sh
 		void setCurrentLanguage (Language lang);
 
 		/// Get a MaterialInstance by name
-		MaterialInstance* getInstance (const std::string& name);
+		MaterialInstance* getMaterialInstance (const std::string& name);
 
 		/// Register a \a Configuration, which can then be used by switching the active material scheme
 		void registerConfiguration (const std::string& name, PropertySetGet configuration);
