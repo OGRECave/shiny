@@ -33,8 +33,8 @@ namespace sh
 
 	void MaterialInstance::destroyAll ()
 	{
-        if (hasProperty("create_configuration"))
-                return;
+		if (hasProperty("create_configuration"))
+			return;
 		mMaterial->removeAll();
 		mTexUnits.clear();
 	}
