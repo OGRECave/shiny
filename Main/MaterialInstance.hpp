@@ -33,8 +33,6 @@ namespace sh
 		/// The only place where you should use this method, is for the MaterialInstance given by the MaterialListener::materialCreated event!
 		Material* getMaterial();
 
-		void updateShaders ();
-
 		virtual void setProperty (const std::string& name, PropertyValuePtr value);
 
 	private:

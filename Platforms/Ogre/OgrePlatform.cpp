@@ -130,13 +130,23 @@ namespace sh
 		if (mSharedParameters.find(name) == mSharedParameters.end())
 		{
 			params = Ogre::GpuProgramManager::getSingleton().createSharedParameters(name);
-			params->addConstantDefinition(name, Ogre::GCT_FLOAT4); //always use float4 for now
+			Ogre::GpuConstantType type;
+			if (typeid(*value) == typeid(Vector4))
+				type = Ogre::GCT_FLOAT4;
+			else if (typeid(*value) == typeid(Vector3))
+				type = Ogre::GCT_FLOAT3;
+			else if (typeid(*value) == typeid(Vector2))
+				type = Ogre::GCT_FLOAT2;
+			else if (typeid(*value) == typeid(FloatValue))
+				type = Ogre::GCT_FLOAT1;
+			else if (typeid(*value) == typeid(IntValue))
+				type = Ogre::GCT_INT1;
+			params->addConstantDefinition(name, type);
 			mSharedParameters[name] = params;
 		}
 		else
 			params = mSharedParameters.find(name)->second;
 
-		/// \todo remove the typeid and pass it instead (ValueType enum)
 		Ogre::Vector4 v (1.0, 1.0, 1.0, 1.0);
 		if (typeid(*value) == typeid(Vector4))
 		{
