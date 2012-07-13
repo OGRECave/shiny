@@ -60,13 +60,17 @@ namespace sh
 		while (i < num_components)
 		{
 			int components_at_once = components_left - current_component_left;
-			std::string componentStr;
+			std::string componentStr = ".";
 			for (int j = 0; j < components_at_once; ++j)
 				componentStr += getComponent(j + current_component_left);
-			std::string componentStr2;
+			std::string componentStr2 = ".";
 			for (int j = 0; j < components_at_once; ++j)
 				componentStr2 += getComponent(j + current_component_right);
-			res += "passthrough" + boost::lexical_cast<std::string>(current_passthrough) + "." + componentStr + " = " + toAssign + "." + componentStr2;
+			if (num_components == 1)
+			{
+				componentStr2 = "";
+			}
+			res += "passthrough" + boost::lexical_cast<std::string>(current_passthrough) + componentStr + " = " + toAssign + componentStr2;
 
 			current_component_left += components_at_once;
 			current_component_right += components_at_once;
