@@ -37,12 +37,12 @@ namespace
 			throw std::runtime_error("invalid component");
 	}
 
-	std::string getFloat(sh::Language lang)
+	std::string getFloat(sh::Language lang, int num_components)
 	{
 		if (lang == sh::Language_CG || lang == sh::Language_HLSL)
-			return "float";
+			return (num_components == 1) ? "float" : "float" + boost::lexical_cast<std::string>(num_components);
 		else
-			return "vec";
+			return (num_components == 1) ? "float" : "vec" + boost::lexical_cast<std::string>(num_components);
 	}
 }
 
@@ -102,7 +102,7 @@ namespace sh
 	{
 		std::string res;
 
-		res += getFloat(lang) + ((num_components == 1) ? "" : boost::lexical_cast<std::string>(num_components)) + "(";
+		res += getFloat(lang, num_components) + "(";
 
 		int i = 0;
 		int current_passthrough = passthrough_number;
