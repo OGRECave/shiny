@@ -102,7 +102,7 @@ namespace sh
 	{
 		std::string res;
 
-		res += getFloat(lang) + boost::lexical_cast<std::string>(num_components) + "(";
+		res += getFloat(lang) + ((num_components == 1) ? "" : boost::lexical_cast<std::string>(num_components)) + "(";
 
 		int i = 0;
 		int current_passthrough = passthrough_number;
