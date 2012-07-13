@@ -60,6 +60,9 @@ namespace sh
 		while (i < num_components)
 		{
 			int components_at_once = components_left - current_component_left;
+			if (components_at_once < 0)
+				components_at_once = components_left;
+
 			std::string componentStr = ".";
 			for (int j = 0; j < components_at_once; ++j)
 				componentStr += getComponent(j + current_component_left);
@@ -111,6 +114,9 @@ namespace sh
 		while (i < num_components)
 		{
 			int components_at_once = components_left - current_component;
+			if (components_at_once < 0)
+				components_at_once = components_left;
+
 			std::string componentStr;
 			for (int j = 0; j < components_at_once; ++j)
 				componentStr += getComponent(j + current_component);
