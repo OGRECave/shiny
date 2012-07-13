@@ -223,14 +223,14 @@ namespace sh
 			if (cmd == "shGlobalSettingBool")
 			{
 				std::string settingName = args[0];
-				std::string value = mParent->getCurrentGlobalSettings()->find(settingName)->second;
+				std::string value = retrieveValue<StringValue>(mParent->getCurrentGlobalSettings()->getProperty(settingName), NULL).get();
 				replaceValue = (value == "true" || value == "1") ? "1" : "0";
 			}
 			else if (cmd == "shGlobalSettingEqual")
 			{
 				std::string settingName = args[0];
 				std::string comparedAgainst = args[1];
-				std::string value = mParent->getCurrentGlobalSettings()->find(settingName)->second;
+				std::string value = retrieveValue<StringValue>(mParent->getCurrentGlobalSettings()->getProperty(settingName), NULL).get();
 				replaceValue = (value == comparedAgainst) ? "1" : "0";
 			}
 			else

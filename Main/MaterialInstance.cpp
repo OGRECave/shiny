@@ -49,6 +49,8 @@ namespace sh
 	{
 		mMaterial->createConfiguration(configuration);
 
+		mFactory->setActiveConfiguration (configuration);
+
 		bool allowFixedFunction = true;
 		if (!mShadersEnabled && hasProperty("allow_fixed_function"))
 		{

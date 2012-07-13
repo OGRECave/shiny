@@ -14,7 +14,6 @@ namespace sh
 
 	typedef std::map<std::string, MaterialInstance> MaterialMap;
 	typedef std::map<std::string, ShaderSet> ShaderSetMap;
-	typedef std::map<std::string, std::string> SettingsMap;
 	typedef std::map<std::string, PropertySetGet> ConfigurationMap;
 
 	typedef std::map<std::string, std::string> TextureAliasMap;
@@ -111,6 +110,8 @@ namespace sh
 		void addTextureAliasInstance (const std::string& name, TextureUnitState* t);
 		void removeTextureAliasInstances (TextureUnitState* t);
 
+		void setActiveConfiguration (const std::string& configuration);
+
 		std::map<TextureUnitState*, std::string> mTextureAliasInstances;
 
 		friend class Platform;
@@ -125,8 +126,9 @@ namespace sh
 
 		MaterialMap mMaterials;
 		ShaderSetMap mShaderSets;
-		SettingsMap mGlobalSettings;
 		ConfigurationMap mConfigurations;
+
+		PropertySetGet mGlobalSettings;
 
 		TextureAliasMap mTextureAliases;
 

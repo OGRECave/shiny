@@ -12,7 +12,7 @@
 namespace sh
 {
 	ShaderSet::ShaderSet (const std::string& type, const std::string& cgProfile, const std::string& hlslProfile, const std::string& sourceFile, const std::string& basePath,
-						  const std::string& name, std::map <std::string, std::string>* globalSettingsPtr)
+						  const std::string& name, PropertySetGet* globalSettingsPtr)
 		: mBasePath(basePath)
 		, mName(name)
 		, mCurrentGlobalSettings(globalSettingsPtr)
@@ -129,13 +129,13 @@ namespace sh
 		}
 		for (std::vector <std::string>::iterator it = mGlobalSettings.begin(); it != mGlobalSettings.end(); ++it)
 		{
-			boost::hash_combine(seed, mCurrentGlobalSettings->find(*it)->second);
+			boost::hash_combine(seed, retrieveValue<StringValue>(mCurrentGlobalSettings->getProperty(*it), NULL).get());
 		}
 		boost::hash_combine(seed, static_cast<int>(Factory::getInstance().getCurrentLanguage()));
 		return seed;
 	}
 
-	std::map <std::string, std::string>* ShaderSet::getCurrentGlobalSettings() const
+	PropertySetGet* ShaderSet::getCurrentGlobalSettings() const
 	{
 		return mCurrentGlobalSettings;
 	}

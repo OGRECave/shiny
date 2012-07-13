@@ -296,10 +296,10 @@ namespace sh
 	void Factory::setGlobalSetting (const std::string& name, const std::string& value)
 	{
 		bool changed = true;
-		if (mGlobalSettings.find(name) != mGlobalSettings.end())
-			changed = (mGlobalSettings[name] != value);
+		if (mGlobalSettings.hasProperty(name))
+			changed = (retrieveValue<StringValue>(mGlobalSettings.getProperty(name), NULL).get() != value);
 
-		mGlobalSettings[name] = value;
+		mGlobalSettings.setProperty (name, makeProperty<StringValue>(new StringValue(value)));
 
 		if (changed)
 		{
@@ -392,5 +392,13 @@ namespace sh
 	void Factory::removeTextureAliasInstances (TextureUnitState* t)
 	{
 		mTextureAliasInstances.erase(t);
+	}
+
+	void Factory::setActiveConfiguration (const std::string& configuration)
+	{
+		if (configuration == "Default")
+			mGlobalSettings.setParent (NULL);
+		else
+			mGlobalSettings.setParent (&mConfigurations[configuration]);
 	}
 }

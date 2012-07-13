@@ -20,7 +20,7 @@ namespace sh
 	{
 	public:
 		ShaderSet (const std::string& type, const std::string& cgProfile, const std::string& hlslProfile, const std::string& sourceFile, const std::string& basePath,
-				   const std::string& name, std::map <std::string, std::string>* globalSettingsPtr);
+				   const std::string& name, PropertySetGet* globalSettingsPtr);
 
 		/// Retrieve a shader instance for the given properties. \n
 		/// If a \a ShaderInstance with the same properties exists already, simply returns this instance. \n
@@ -31,7 +31,7 @@ namespace sh
 		ShaderInstance* getInstance (PropertySetGet* properties);
 
 	private:
-		std::map <std::string, std::string>* getCurrentGlobalSettings() const;
+		PropertySetGet* getCurrentGlobalSettings() const;
 		std::string getBasePath() const;
 		std::string getSource() const;
 		std::string getCgProfile() const;
@@ -50,7 +50,7 @@ namespace sh
 
 		std::vector <size_t> mFailedToCompile;
 
-		std::map <std::string, std::string>* mCurrentGlobalSettings; ///< pointer to the current global setting values from the factory
+		PropertySetGet* mCurrentGlobalSettings; ///< pointer to the current global setting values from the factory
 
 		std::vector <std::string> mGlobalSettings; ///< names of the global settings that affect the shader source
 		std::vector <std::string> mProperties; ///< names of the per-material properties that affect the shader source
