@@ -67,9 +67,17 @@ namespace sh
 	{
 		Ogre::GpuProgramParametersSharedPtr params;
 		if (type == GPT_Vertex)
+		{
+			if (!mPass->hasVertexProgram ())
+				return;
 			params = mPass->getVertexProgramParameters();
+		}
 		else if (type == GPT_Fragment)
+		{
+			if (!mPass->hasFragmentProgram ())
+				return;
 			params = mPass->getFragmentProgramParameters();
+		}
 
 		if (vt == VT_Float)
 			params->setNamedConstant (name, retrieveValue<FloatValue>(value, context).get());
