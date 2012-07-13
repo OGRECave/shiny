@@ -260,7 +260,7 @@ namespace sh
 
 	MaterialInstance* Factory::createMaterialInstance (const std::string& name, const std::string& parentInstance)
 	{
-		if (mMaterials.find(parentInstance) == mMaterials.end())
+		if (parentInstance != "" && mMaterials.find(parentInstance) == mMaterials.end())
 			throw std::runtime_error ("trying to clone material that does not exist");
 
 		MaterialInstance newInstance(name, this);
