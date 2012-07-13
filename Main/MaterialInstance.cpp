@@ -9,6 +9,7 @@ namespace sh
 		: mName(name)
 		, mShadersEnabled(true)
 		, mFactory(f)
+		, mListener(NULL)
 	{
 	}
 
@@ -48,6 +49,9 @@ namespace sh
 	void MaterialInstance::createForConfiguration (const std::string& configuration)
 	{
 		mMaterial->createConfiguration(configuration);
+
+		if (mListener)
+			mListener->requestedConfiguration (this, configuration);
 
 		mFactory->setActiveConfiguration (configuration);
 

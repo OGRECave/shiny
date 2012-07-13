@@ -18,7 +18,7 @@ namespace sh
 
 	typedef std::map<std::string, std::string> TextureAliasMap;
 
-	/*
+	/**
 	 * @brief
 	 * Allows you to be notified when a certain material was just created. Useful for changing material properties that you can't
 	 * do in a .mat script (for example a series of animated textures) \n
