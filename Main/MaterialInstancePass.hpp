@@ -1,6 +1,8 @@
 #ifndef SH_MATERIALINSTANCEPASS_H
 #define SH_MATERIALINSTANCEPASS_H
 
+#include <vector>
+
 #include "PropertyBase.hpp"
 #include "MaterialInstanceTextureUnit.hpp"
 
@@ -18,9 +20,9 @@ namespace sh
 
 		PropertySetGet mShaderProperties;
 
-		std::map <std::string, MaterialInstanceTextureUnit> getTexUnits ();
+		std::vector <MaterialInstanceTextureUnit> getTexUnits ();
 	private:
-		std::map <std::string, MaterialInstanceTextureUnit> mTexUnits;
+		std::vector <MaterialInstanceTextureUnit> mTexUnits;
 	};
 }
 

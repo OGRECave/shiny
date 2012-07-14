@@ -5,11 +5,11 @@ namespace sh
 
 	MaterialInstanceTextureUnit* MaterialInstancePass::createTextureUnit (const std::string& name)
 	{
-		mTexUnits.insert(std::make_pair(name, MaterialInstanceTextureUnit(name)));
-		return &mTexUnits.find(name)->second;
+		mTexUnits.push_back(MaterialInstanceTextureUnit(name));
+		return &mTexUnits.back();
 	}
 
-	std::map <std::string, MaterialInstanceTextureUnit> MaterialInstancePass::getTexUnits ()
+	std::vector <MaterialInstanceTextureUnit> MaterialInstancePass::getTexUnits ()
 	{
 		return mTexUnits;
 	}

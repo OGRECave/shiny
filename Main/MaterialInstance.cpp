@@ -127,25 +127,25 @@ namespace sh
 			}
 
 			// create texture units
-			std::map<std::string, MaterialInstanceTextureUnit> texUnits = it->getTexUnits();
+			std::vector<MaterialInstanceTextureUnit> texUnits = it->getTexUnits();
 			int i=0;
-			for (std::map<std::string, MaterialInstanceTextureUnit>::iterator texIt = texUnits.begin(); texIt  != texUnits.end(); ++texIt )
+			for (std::vector<MaterialInstanceTextureUnit>::iterator texIt = texUnits.begin(); texIt  != texUnits.end(); ++texIt )
 			{
 				// only create those that are needed by the shader, OR those marked to be created in fixed function pipeline if shaders are disabled
-				bool foundVertex = std::find(usedTextureSamplersVertex.begin(), usedTextureSamplersVertex.end(), texIt->second.getName()) != usedTextureSamplersVertex.end();
-				bool foundFragment = std::find(usedTextureSamplersFragment.begin(), usedTextureSamplersFragment.end(), texIt->second.getName()) != usedTextureSamplersFragment.end();
+				bool foundVertex = std::find(usedTextureSamplersVertex.begin(), usedTextureSamplersVertex.end(), texIt->getName()) != usedTextureSamplersVertex.end();
+				bool foundFragment = std::find(usedTextureSamplersFragment.begin(), usedTextureSamplersFragment.end(), texIt->getName()) != usedTextureSamplersFragment.end();
 				if (  (foundVertex || foundFragment)
-						|| ((!mShadersEnabled && allowFixedFunction) && texIt->second.hasProperty("create_in_ffp") && retrieveValue<BooleanValue>(texIt->second.getProperty("create_in_ffp"), this).get()))
+						|| ((!mShadersEnabled && allowFixedFunction) && texIt->hasProperty("create_in_ffp") && retrieveValue<BooleanValue>(texIt->getProperty("create_in_ffp"), this).get()))
 				{
 					boost::shared_ptr<TextureUnitState> texUnit = pass->createTextureUnitState ();
-					texIt->second.copyAll (texUnit.get(), context);
+					texIt->copyAll (texUnit.get(), context);
 
 					mTexUnits.push_back(texUnit);
 
 					// set texture unit indices (required by GLSL)
 					if (mShadersEnabled && mFactory->getCurrentLanguage () == Language_GLSL)
 					{
-						pass->setTextureUnitIndex (foundVertex ? GPT_Vertex : GPT_Fragment, texIt->second.getName(), i);
+						pass->setTextureUnitIndex (foundVertex ? GPT_Vertex : GPT_Fragment, texIt->getName(), i);
 
 						++i;
 					}
