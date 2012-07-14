@@ -226,6 +226,11 @@ namespace sh
 					std::string value = retrieveValue<StringValue>(mParent->getCurrentGlobalSettings()->getProperty(settingName), NULL).get();
 					replaceValue = (value == comparedAgainst) ? "1" : "0";
 				}
+				else if (cmd == "shGlobalSettingString")
+				{
+					std::string settingName = args[0];
+					replaceValue = retrieveValue<StringValue>(mParent->getCurrentGlobalSettings()->getProperty(settingName), NULL).get();
+				}
 				else
 					throw std::runtime_error ("unknown command \"" + cmd + "\"");
 				source.replace(pos, (source.find(")")+1)-pos, replaceValue);
