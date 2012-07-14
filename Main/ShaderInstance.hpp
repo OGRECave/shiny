@@ -63,6 +63,8 @@ namespace sh
 		PassthroughMap mPassthroughMap;
 
 		std::vector<std::string> extractMacroArguments (size_t pos, const std::string& source); ///< take a macro invocation and return vector of arguments
+
+		void parse (std::string& source, PropertySetGet* properties);
 	};
 }
 

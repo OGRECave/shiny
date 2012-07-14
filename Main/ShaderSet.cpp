@@ -65,7 +65,10 @@ namespace sh
 					{
 						assert ((currentToken.find('(') != std::string::npos) && (currentToken.find(')') != std::string::npos));
 						size_t start = currentToken.find('(')+1;
-						mProperties.push_back(currentToken.substr(start, currentToken.find(')')-start));
+						std::string propertyName = currentToken.substr(start, currentToken.find(')')-start);
+						// if the property name is constructed dynamically (e.g. through an iterator) then there is nothing we can do
+						if (propertyName.find("@") == std::string::npos)
+							mProperties.push_back(propertyName);
 					}
 				}
 

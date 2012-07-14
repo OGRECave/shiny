@@ -44,6 +44,11 @@ namespace
 		else
 			return (num_components == 1) ? "float" : "vec" + boost::lexical_cast<std::string>(num_components);
 	}
+
+	bool isCmd (const std::string& source, size_t pos, const std::string& cmd)
+	{
+		return (source.size() >= pos + cmd.size() && source.substr(pos, cmd.size()) == cmd);
+	}
 }
 
 namespace sh
@@ -153,6 +158,140 @@ namespace sh
 
 	// ------------------------------------------------------------------------------
 
+	void ShaderInstance::parse (std::string& source, PropertySetGet* properties)
+	{
+		size_t pos = 0;
+		while (true)
+		{
+			pos =  source.find("@", pos);
+			if (pos == std::string::npos)
+				break;
+
+			if (isCmd(source, pos, "@shProperty"))
+			{
+				std::vector<std::string> args = extractMacroArguments (pos, source);
+
+				size_t start = source.find("(", pos);
+				size_t end = source.find(")", pos);
+				std::string cmd = source.substr(pos+1, start-(pos+1));
+
+				std::string replaceValue;
+				if (cmd == "shPropertyBool")
+				{
+					std::string propertyName = args[0];
+					PropertyValuePtr value = properties->getProperty(propertyName);
+					bool val = retrieveValue<BooleanValue>(value, properties->getContext()).get();
+					replaceValue = val ? "1" : "0";
+				}
+				else if (cmd == "shPropertyNotBool") // same as above, but inverts the result
+				{
+					std::string propertyName = args[0];
+					PropertyValuePtr value = properties->getProperty(propertyName);
+					bool val = retrieveValue<BooleanValue>(value, properties->getContext()).get();
+					replaceValue = val ? "0" : "1";
+				}
+				else if (cmd == "shPropertyString")
+				{
+					std::string propertyName = args[0];
+					PropertyValuePtr value = properties->getProperty(propertyName);
+					replaceValue = retrieveValue<StringValue>(value, properties->getContext()).get();
+				}
+				else if (cmd == "shPropertyEqual")
+				{
+					std::string propertyName = args[0];
+					std::string comparedAgainst = args[1];
+					std::string value = retrieveValue<StringValue>(properties->getProperty(propertyName), properties->getContext()).get();
+					replaceValue = (value == comparedAgainst) ? "1" : "0";
+				}
+				else
+					throw std::runtime_error ("unknown command \"" + cmd + "\"");
+				source.replace(pos, (end+1)-pos, replaceValue);
+			}
+			else if (isCmd(source, pos, "@shGlobalSetting"))
+			{
+				std::vector<std::string> args = extractMacroArguments (pos, source);
+
+				std::string cmd = source.substr(pos+1,  source.find("(", pos)-(pos+1));
+				std::string replaceValue;
+				if (cmd == "shGlobalSettingBool")
+				{
+					std::string settingName = args[0];
+					std::string value = retrieveValue<StringValue>(mParent->getCurrentGlobalSettings()->getProperty(settingName), NULL).get();
+					replaceValue = (value == "true" || value == "1") ? "1" : "0";
+				}
+				else if (cmd == "shGlobalSettingEqual")
+				{
+					std::string settingName = args[0];
+					std::string comparedAgainst = args[1];
+					std::string value = retrieveValue<StringValue>(mParent->getCurrentGlobalSettings()->getProperty(settingName), NULL).get();
+					replaceValue = (value == comparedAgainst) ? "1" : "0";
+				}
+				else
+					throw std::runtime_error ("unknown command \"" + cmd + "\"");
+				source.replace(pos, (source.find(")")+1)-pos, replaceValue);
+			}
+			else if (isCmd(source, pos, "@shForeach"))
+			{
+
+				assert(source.find("@shEndForeach", pos) != std::string::npos);
+				size_t block_end = source.find("@shEndForeach", pos);
+
+				// get the argument for parsing
+				size_t start = source.find("(", pos);
+				size_t end = start+1;
+				int brace_depth = 1;
+				while (brace_depth > 0)
+				{
+					if (source[end] == '(')
+						++brace_depth;
+					else if (source[end] == ')')
+						--brace_depth;
+				}
+				std::string arg = source.substr(start+1, end-(start+1));
+				parse(arg, properties);
+
+				int num = boost::lexical_cast<int>(arg);
+
+				// get the content of the inner block
+				std::string content = source.substr(end+1, block_end - (end+1));
+
+				// replace both outer and inner block with content of inner block num times
+				std::string replaceStr;
+				for (int i=0; i<num; ++i)
+				{
+					// replace @shIterator with the current iteration
+					std::string addStr = content;
+
+					while (true)
+					{
+						size_t pos2 = addStr.find("@shIterator");
+						if (pos2 == std::string::npos)
+							break;
+
+						// optional offset parameter.
+						size_t openBracePos = pos2 + std::string("@shIterator").length();
+						if (addStr[openBracePos] == '(')
+						{
+							size_t closeBrace = addStr.find(")", pos2);
+							int offset = boost::lexical_cast<int> (addStr.substr(openBracePos+1, closeBrace-(openBracePos+1)));
+							addStr.replace(pos2, (closeBrace+1)-pos2, boost::lexical_cast<std::string>(i+offset));
+						}
+						else
+						{
+							addStr.replace(pos2, std::string("@shIterator").length(), boost::lexical_cast<std::string>(i));
+						}
+					}
+
+					replaceStr += addStr;
+				}
+				source.replace(pos, (block_end+std::string("@shEndForeach").length())-pos, replaceStr);
+			}
+			else if (source.size() > pos+1)
+				++pos; // skip
+		}
+
+	}
+
 	ShaderInstance::ShaderInstance (ShaderSet* parent, const std::string& name, PropertySetGet* properties)
 		: mName(name)
 		, mParent(parent)
@@ -172,132 +311,7 @@ namespace sh
 			definitions.push_back("SH_FRAGMENT_SHADER");
 		definitions.push_back(convertLang(Factory::getInstance().getCurrentLanguage()));
 
-		// replace properties
-		size_t pos;
-		while (true)
-		{
-			pos =  source.find("@shProperty");
-			if (pos == std::string::npos)
-				break;
-
-			std::vector<std::string> args = extractMacroArguments (pos, source);
-
-			size_t start = source.find("(", pos);
-			size_t end = source.find(")", pos);
-			std::string cmd = source.substr(pos+1, start-(pos+1));
-
-			std::string replaceValue;
-			if (cmd == "shPropertyBool")
-			{
-				std::string propertyName = args[0];
-				PropertyValuePtr value = properties->getProperty(propertyName);
-				bool val = retrieveValue<BooleanValue>(value, properties->getContext()).get();
-				replaceValue = val ? "1" : "0";
-			}
-			else if (cmd == "shPropertyNotBool") // same as above, but inverts the result
-			{
-				std::string propertyName = args[0];
-				PropertyValuePtr value = properties->getProperty(propertyName);
-				bool val = retrieveValue<BooleanValue>(value, properties->getContext()).get();
-				replaceValue = val ? "0" : "1";
-			}
-			else if (cmd == "shPropertyString")
-			{
-				std::string propertyName = args[0];
-				PropertyValuePtr value = properties->getProperty(propertyName);
-				replaceValue = retrieveValue<StringValue>(value, properties->getContext()).get();
-			}
-			else if (cmd == "shPropertyEqual")
-			{
-				std::string propertyName = args[0];
-				std::string comparedAgainst = args[1];
-				std::string value = retrieveValue<StringValue>(properties->getProperty(propertyName), properties->getContext()).get();
-				replaceValue = (value == comparedAgainst) ? "1" : "0";
-			}
-			else
-				throw std::runtime_error ("unknown command \"" + cmd + "\" in \"" + name + "\"");
-			source.replace(pos, (end+1)-pos, replaceValue);
-		}
-
-		// replace global settings
-		while (true)
-		{
-			pos =  source.find("@shGlobalSetting");
-			if (pos == std::string::npos)
-				break;
-
-			std::vector<std::string> args = extractMacroArguments (pos, source);
-
-			std::string cmd = source.substr(pos+1,  source.find("(", pos)-(pos+1));
-			std::string replaceValue;
-			if (cmd == "shGlobalSettingBool")
-			{
-				std::string settingName = args[0];
-				std::string value = retrieveValue<StringValue>(mParent->getCurrentGlobalSettings()->getProperty(settingName), NULL).get();
-				replaceValue = (value == "true" || value == "1") ? "1" : "0";
-			}
-			else if (cmd == "shGlobalSettingEqual")
-			{
-				std::string settingName = args[0];
-				std::string comparedAgainst = args[1];
-				std::string value = retrieveValue<StringValue>(mParent->getCurrentGlobalSettings()->getProperty(settingName), NULL).get();
-				replaceValue = (value == comparedAgainst) ? "1" : "0";
-			}
-			else
-				throw std::runtime_error ("unknown command \"" + cmd + "\" in \"" + name + "\"");
-			source.replace(pos, (source.find(")")+1)-pos, replaceValue);
-		}
-
-		// parse foreach
-		while (true)
-		{
-			pos = source.find("@shForeach");
-			if (pos == std::string::npos)
-				break;
-
-			std::vector<std::string> args = extractMacroArguments (pos, source);
-			assert(args.size());
-
-			int num = boost::lexical_cast<int>(args[0]);
-
-			assert(source.find("@shEndForeach", pos) != std::string::npos);
-			size_t block_end = source.find("@shEndForeach", pos);
-			size_t end = source.find(")", pos);
-
-			// get the content of the inner block
-			std::string content = source.substr(end+1, block_end - (end+1));
-
-			// replace both outer and inner block with content of inner block num times
-			std::string replaceStr;
-			for (int i=0; i<num; ++i)
-			{
-				// replace @shIterator with the current iteration
-				std::string addStr = content;
-
-				while (true)
-				{
-					size_t pos2 = addStr.find("@shIterator");
-					if (pos2 == std::string::npos)
-						break;
-
-					// optional offset parameter.
-					size_t openBracePos = pos2 + std::string("@shIterator").length();
-					if (addStr[openBracePos] == '(')
-					{
-						size_t closeBrace = addStr.find(")", pos2);
-						int offset = boost::lexical_cast<int> (addStr.substr(openBracePos+1, closeBrace-(openBracePos+1)));
-						addStr.replace(pos2, (closeBrace+1)-pos2, boost::lexical_cast<std::string>(i+offset));
-					}
-					else
-					{
-						addStr.replace(pos2, std::string("@shIterator").length(), boost::lexical_cast<std::string>(i));
-					}
-				}
-
-				replaceStr += addStr;
-			}
-			source.replace(pos, (block_end+std::string("@shEndForeach").length())-pos, replaceStr);
-		}
+		parse(source, properties);
 
 		// why do we need our own preprocessor? there are several custom commands available in the shader files
 		// (for example for binding uniforms to properties or auto constants) - more below. it is important that these
@@ -309,6 +323,7 @@ namespace sh
 
 		// parse counter
 		std::map<int, int> counters;
+		size_t pos;
 		while (true)
 		{
 			pos = source.find("@shCounter");
