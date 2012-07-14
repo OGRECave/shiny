@@ -48,7 +48,9 @@ namespace sh
 
 	void MaterialInstance::createForConfiguration (const std::string& configuration)
 	{
-		mMaterial->createConfiguration(configuration);
+		bool res = mMaterial->createConfiguration(configuration);
+		if (!res)
+			return; // listener was false positive
 
 		if (mListener)
 			mListener->requestedConfiguration (this, configuration);

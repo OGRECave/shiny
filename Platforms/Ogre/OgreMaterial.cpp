@@ -34,14 +34,21 @@ namespace sh
 		mMaterial->createTechnique()->setSchemeName (sDefaultTechniqueName);
 	}
 
-	void OgreMaterial::createConfiguration (const std::string& name)
+	bool OgreMaterial::createConfiguration (const std::string& name)
 	{
-		removeConfiguration(name);
+		for (int i=0; i<mMaterial->getNumTechniques(); ++i)
+		{
+			if (mMaterial->getTechnique(i) == mMaterial->getTechnique(name))
+				return false;
+		}
+
 		Ogre::Technique* t = mMaterial->createTechnique();
 		t->setSchemeName (name);
 		t->setName (name);
 		if (mShadowCasterMaterial != "")
 			t->setShadowCasterMaterial(mShadowCasterMaterial);
+
+		return true;
 	}
 
 	void OgreMaterial::removeConfiguration (const std::string& name)
