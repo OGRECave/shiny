@@ -238,10 +238,11 @@ namespace sh
 
 				// get the argument for parsing
 				size_t start = source.find("(", pos);
-				size_t end = start+1;
+				size_t end = start;
 				int brace_depth = 1;
 				while (brace_depth > 0)
 				{
+					++end;
 					if (source[end] == '(')
 						++brace_depth;
 					else if (source[end] == ')')
