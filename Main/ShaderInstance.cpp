@@ -65,7 +65,7 @@ namespace sh
 		int components_at_once;
 		while (i < num_components)
 		{
-			if (components_left + current_component_left < 4)
+			if (components_left + current_component_left <= 4)
 				components_at_once = components_left;
 			else
 				components_at_once = 4 - current_component_left;
@@ -285,12 +285,12 @@ namespace sh
 							while (_brace_depth > 0)
 							{
 								++_end;
-								if (source[_end] == '(')
+								if (addStr[_end] == '(')
 									++_brace_depth;
-								else if (source[_end] == ')')
+								else if (addStr[_end] == ')')
 									--_brace_depth;
 							}
-							std::string arg = source.substr(_start+1, _end-(_start+1));
+							std::string arg = addStr.substr(_start+1, _end-(_start+1));
 							parse(arg, properties);
 
 							int offset = boost::lexical_cast<int> (arg);
@@ -486,7 +486,10 @@ namespace sh
 
 			mCurrentComponent += passthrough.num_components;
 			if (mCurrentComponent > 3)
+			{
+				mCurrentComponent -= 4;
 				++mCurrentPassthrough;
+			}
 
 			source.erase(pos, (end+1)-pos);
 		}
