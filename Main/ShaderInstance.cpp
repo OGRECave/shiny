@@ -278,9 +278,23 @@ namespace sh
 						size_t openBracePos = pos2 + std::string("@shIterator").length();
 						if (addStr[openBracePos] == '(')
 						{
-							size_t closeBrace = addStr.find(")", pos2);
-							int offset = boost::lexical_cast<int> (addStr.substr(openBracePos+1, closeBrace-(openBracePos+1)));
-							addStr.replace(pos2, (closeBrace+1)-pos2, boost::lexical_cast<std::string>(i+offset));
+							// get the argument for parsing
+							size_t _start = openBracePos;
+							size_t _end = _start;
+							int _brace_depth = 1;
+							while (_brace_depth > 0)
+							{
+								++_end;
+								if (source[_end] == '(')
+									++_brace_depth;
+								else if (source[_end] == ')')
+									--_brace_depth;
+							}
+							std::string arg = source.substr(_start+1, _end-(_start+1));
+							parse(arg, properties);
+
+							int offset = boost::lexical_cast<int> (arg);
+							addStr.replace(pos2, (_end+1)-pos2, boost::lexical_cast<std::string>(i+offset));
 						}
 						else
 						{
