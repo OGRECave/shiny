@@ -62,11 +62,13 @@ namespace sh
 		int current_component_left = component_start;
 		int current_component_right = 0;
 		int components_left = num_components;
+		int components_at_once;
 		while (i < num_components)
 		{
-			int components_at_once = components_left - current_component_left;
-			if (components_at_once < 0)
+			if (components_left + current_component_left < 4)
 				components_at_once = components_left;
+			else
+				components_at_once = 4 - current_component_left;
 
 			std::string componentStr = ".";
 			for (int j = 0; j < components_at_once; ++j)
@@ -118,9 +120,7 @@ namespace sh
 		int components_left = num_components;
 		while (i < num_components)
 		{
-			int components_at_once = components_left - current_component;
-			if (components_at_once < 0)
-				components_at_once = components_left;
+			int components_at_once = std::min(components_left, 4 - current_component);
 
 			std::string componentStr;
 			for (int j = 0; j < components_at_once; ++j)
@@ -461,6 +461,7 @@ namespace sh
 			Passthrough passthrough;
 
 			passthrough.num_components = boost::lexical_cast<int>(args[0]);
+			assert (passthrough.num_components != 0);
 
 			std::string passthroughName = args[1];
 			passthrough.lang = Factory::getInstance().getCurrentLanguage ();
@@ -491,6 +492,7 @@ namespace sh
 			std::string passthroughName = args[0];
 			std::string assignTo = args[1];
 
+			assert(mPassthroughMap.find(passthroughName) != mPassthroughMap.end());
 			Passthrough& p = mPassthroughMap[passthroughName];
 
 			source.replace(pos, (end+1)-pos, p.expand_assign(assignTo));
@@ -509,6 +511,7 @@ namespace sh
 			size_t end = source.find(")", pos);
 			std::string passthroughName = args[0];
 
+			assert(mPassthroughMap.find(passthroughName) != mPassthroughMap.end());
 			Passthrough& p = mPassthroughMap[passthroughName];
 
 			source.replace(pos, (end+1)-pos, p.expand_receive());
