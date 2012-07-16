@@ -50,8 +50,6 @@ namespace sh
 
 		std::vector <size_t> mFailedToCompile;
 
-		PropertySetGet* mCurrentGlobalSettings; ///< pointer to the current global setting values from the factory
-
 		std::vector <std::string> mGlobalSettings; ///< names of the global settings that affect the shader source
 		std::vector <std::string> mProperties; ///< names of the per-material properties that affect the shader source
 

@@ -107,6 +107,8 @@ namespace sh
 		PropertySetGet* getConfiguration (const std::string& name);
 		Platform* getPlatform ();
 
+		PropertySetGet* getCurrentGlobalSettings() { return mCurrentGlobalSettings; }
+
 		void addTextureAliasInstance (const std::string& name, TextureUnitState* t);
 		void removeTextureAliasInstances (TextureUnitState* t);
 
@@ -117,6 +119,7 @@ namespace sh
 		friend class Platform;
 		friend class MaterialInstance;
 		friend class ShaderInstance;
+		friend class ShaderSet;
 		friend class TextureUnitState;
 
 	private:
@@ -129,6 +132,8 @@ namespace sh
 		ConfigurationMap mConfigurations;
 
 		PropertySetGet mGlobalSettings;
+
+		PropertySetGet* mCurrentGlobalSettings; ///< affected by active configuration
 
 		TextureAliasMap mTextureAliases;
 

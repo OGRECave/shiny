@@ -31,6 +31,7 @@ namespace sh
 		, mShadersEnabled(true)
 		, mCurrentLanguage(platform->selectBestLanguage ())
 		, mListener(NULL)
+		, mCurrentGlobalSettings(NULL)
 	{
 		assert (!sThis);
 		sThis = this;
@@ -61,6 +62,7 @@ namespace sh
 				}
 
 				PropertySetGet newConfiguration;
+				newConfiguration.setParent(&mGlobalSettings);
 
 				std::vector<ScriptNode*> props = it->second->getChildren();
 				for (std::vector<ScriptNode*>::const_iterator propIt = props.begin(); propIt != props.end(); ++propIt)
@@ -396,9 +398,6 @@ namespace sh
 
 	void Factory::setActiveConfiguration (const std::string& configuration)
 	{
-		if (configuration == "Default")
-			mGlobalSettings.setParent (NULL);
-		else
-			mGlobalSettings.setParent (&mConfigurations[configuration]);
+		mCurrentGlobalSettings = &mConfigurations[configuration];
 	}
 }

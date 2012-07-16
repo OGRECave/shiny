@@ -15,7 +15,6 @@ namespace sh
 						  const std::string& name, PropertySetGet* globalSettingsPtr)
 		: mBasePath(basePath)
 		, mName(name)
-		, mCurrentGlobalSettings(globalSettingsPtr)
 		, mCgProfile(cgProfile)
 		, mHlslProfile(hlslProfile)
 	{
@@ -125,6 +124,8 @@ namespace sh
 	size_t ShaderSet::buildHash (PropertySetGet* properties)
 	{
 		size_t seed = 0;
+		PropertySetGet* currentGlobalSettings = getCurrentGlobalSettings ();
+
 		for (std::vector<std::string>::iterator it = mProperties.begin(); it != mProperties.end(); ++it)
 		{
 			std::string v = retrieveValue<StringValue>(properties->getProperty(*it), properties->getContext()).get();
@@ -132,7 +133,7 @@ namespace sh
 		}
 		for (std::vector <std::string>::iterator it = mGlobalSettings.begin(); it != mGlobalSettings.end(); ++it)
 		{
-			boost::hash_combine(seed, retrieveValue<StringValue>(mCurrentGlobalSettings->getProperty(*it), NULL).get());
+			boost::hash_combine(seed, retrieveValue<StringValue>(currentGlobalSettings->getProperty(*it), NULL).get());
 		}
 		boost::hash_combine(seed, static_cast<int>(Factory::getInstance().getCurrentLanguage()));
 		return seed;
@@ -140,7 +141,7 @@ namespace sh
 
 	PropertySetGet* ShaderSet::getCurrentGlobalSettings() const
 	{
-		return mCurrentGlobalSettings;
+		return Factory::getInstance ().getCurrentGlobalSettings ();
 	}
 
 	std::string ShaderSet::getBasePath() const
