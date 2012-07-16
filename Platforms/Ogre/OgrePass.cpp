@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "OgrePass.hpp"
 
 #include <OgrePass.h>

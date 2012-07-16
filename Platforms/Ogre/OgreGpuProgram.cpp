@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "OgreGpuProgram.hpp"
 
 #include <boost/lexical_cast.hpp>
