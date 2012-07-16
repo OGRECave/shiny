@@ -379,6 +379,7 @@ namespace sh
 	void Factory::registerConfiguration (const std::string& name, PropertySetGet configuration)
 	{
 		mConfigurations[name] = configuration;
+		mConfigurations[name].setParent (&mGlobalSettings);
 	}
 
 	void Factory::setMaterialListener (MaterialListener* listener)
@@ -398,6 +399,9 @@ namespace sh
 
 	void Factory::setActiveConfiguration (const std::string& configuration)
 	{
-		mCurrentGlobalSettings = &mConfigurations[configuration];
+		if (configuration == "Default")
+			mCurrentGlobalSettings = &mGlobalSettings;
+		else
+			mCurrentGlobalSettings = &mConfigurations[configuration];
 	}
 }

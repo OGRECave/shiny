@@ -75,11 +75,6 @@ namespace sh
 			std::vector<std::string> usedTextureSamplersFragment;
 
 			PropertySetGet* context = this;
-			if (configuration != "Default")
-			{
-				context = mFactory->getConfiguration (configuration);
-				context->setParent(this);
-			}
 
 			// create or retrieve shaders
 			if (mShadersEnabled || !allowFixedFunction)
