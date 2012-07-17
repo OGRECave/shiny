@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "OgrePlatform.hpp"
 
 #include <OgreDataStream.h>
