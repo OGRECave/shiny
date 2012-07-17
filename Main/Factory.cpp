@@ -367,7 +367,7 @@ namespace sh
 
 	std::string Factory::retrieveTextureAlias (const std::string& name)
 	{
-		if (mTextureAliases.find(name) != mTextureAliases.end());
+		if (mTextureAliases.find(name) != mTextureAliases.end())
 			return mTextureAliases[name];
 		else
 			return "";
