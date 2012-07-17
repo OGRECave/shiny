@@ -367,8 +367,10 @@ namespace sh
 
 	std::string Factory::retrieveTextureAlias (const std::string& name)
 	{
-		assert (mTextureAliases.find(name) != mTextureAliases.end());
-		return mTextureAliases[name];
+		if (mTextureAliases.find(name) != mTextureAliases.end());
+			return mTextureAliases[name];
+		else
+			return "";
 	}
 
 	PropertySetGet* Factory::getConfiguration (const std::string& name)
