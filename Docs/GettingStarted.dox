@@ -12,12 +12,13 @@
 	The source files you want to build are:
 	 - Main/*.cpp
 	 - OgrePlatform/*.cpp
+	 - mcpp/*.c
 
 	You can either build the sources as a static library, or simply add the sources to the source tree of your project.
 
 	If you use CMake, you might find the included CMakeLists.txt useful. It builds static libraries with the names "shiny" and "shiny.OgrePlatform".
 
-	Make sure to link against OGRE and the following boost libraries: filesystem, wave
+	Make sure to link against OGRE and the boost filesystem library.
 
 	\section code Basic initialisation code
 
