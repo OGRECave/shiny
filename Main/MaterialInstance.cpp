@@ -30,6 +30,9 @@ namespace sh
 	void MaterialInstance::create (Platform* platform)
 	{
 		mMaterial = platform->createMaterial(mName);
+
+		if (hasProperty ("shadow_caster_material"))
+			mMaterial->setShadowCasterMaterial (retrieveValue<StringValue>(getProperty("shadow_caster_material"), NULL).get());
 	}
 
 	void MaterialInstance::destroyAll ()
