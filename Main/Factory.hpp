@@ -85,8 +85,6 @@ namespace sh
 		///  - In the material definition: texture_alias ReflectionMap \n
 		///  - At runtime: factory->setTextureAlias("ReflectionMap", "rtt_654654"); \n
 		/// You can call factory->setTextureAlias as many times as you want, and if the material was already created, its texture will be updated!
-		/// @note If the material with a texture alias is requested for rendering before this method was called, will result in a crash,
-		/// so make sure to do it in time.
 		void setTextureAlias (const std::string& alias, const std::string& realName);
 
 		/// Retrieve the real texture name for a texture alias (the real name is set by the user)
