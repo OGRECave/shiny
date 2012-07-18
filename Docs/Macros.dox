@@ -212,7 +212,7 @@
 
 	\note Nested foreach blocks are currently \a not supported.
 
-	\note You can only use constant numbers or properties (\@shProperty1f) as \a n parameter.
+	\note For technical reasons, you can only use constant numbers or properties (\@shPropertyString) as \a n parameter.
 
 	<B>Example:</B>
 
