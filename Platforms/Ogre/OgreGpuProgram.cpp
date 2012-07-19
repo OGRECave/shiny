@@ -57,6 +57,9 @@ namespace sh
 			throw std::runtime_error ("can't find auto constant with name \"" + autoConstantName + "\"");
 		Ogre::GpuProgramParameters::AutoConstantType t = d->acType;
 
+		// this simplifies debugging for CG a lot.
+		mProgram->getDefaultParameters()->setIgnoreMissingParams(true);
+
 		if (d->dataType == Ogre::GpuProgramParameters::ACDT_NONE)
 			mProgram->getDefaultParameters()->setNamedAutoConstant (name, t, 0);
 		else if (d->dataType == Ogre::GpuProgramParameters::ACDT_INT)
