@@ -150,6 +150,9 @@ namespace sh
 				}
 			}
 		}
+
+		if (mListener)
+			mListener->createdConfiguration (this, configuration);
 	}
 
 	Material* MaterialInstance::getMaterial ()

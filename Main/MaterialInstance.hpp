@@ -22,7 +22,8 @@ namespace sh
 	class MaterialInstanceListener
 	{
 	public:
-		virtual void requestedConfiguration (MaterialInstance* m, const std::string& configuration) = 0;
+		virtual void requestedConfiguration (MaterialInstance* m, const std::string& configuration) = 0; ///< called before creating
+		virtual void createdConfiguration (MaterialInstance* m, const std::string& configuration) = 0; ///< called after creating
 	};
 
 	/**
