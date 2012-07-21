@@ -86,11 +86,11 @@ namespace sh
 			pos.set_column(column+5);                 // account for 'line '
 
 
-		// 21 is the max required size for a 64 bit integer represented as a
-		// string
-		char buffer[22];
+			// 21 is the max required size for a 64 bit integer represented as a
+			// string
+			char buffer[22];
 
-			sprintf (buffer, "%d", pos.get_line());
+			sprintf (buffer, "%lu", static_cast<unsigned long>(pos.get_line()));
 
 			pending.push_back(result_type(T_INTLIT, buffer, pos));
 			pos.set_column(column += (unsigned int)strlen(buffer)); // account for <number>
@@ -103,8 +103,8 @@ namespace sh
 			pending.push_back(result_type(T_SPACE, " ", pos));
 			pos.set_column(++column);                 // account for ' '
 
-		std::string file("\"");
-		boost::filesystem::path filename(
+			std::string file("\"");
+			boost::filesystem::path filename(
 			boost::wave::util::create_path(ctx.get_current_relative_filename().c_str()));
 
 			using boost::wave::util::impl::escape_lit;
