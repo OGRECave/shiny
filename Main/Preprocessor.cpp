@@ -94,7 +94,6 @@ namespace sh
 			throw std::runtime_error(error.str());
 		}
 
-		std::cout << returnString.str() << std::endl;
 		return returnString.str();
 	}
 }
