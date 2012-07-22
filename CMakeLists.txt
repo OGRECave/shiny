@@ -6,7 +6,15 @@ set(SHINY_LIBRARY "shiny")
 set(SHINY_OGREPLATFORM_LIBRARY "shiny.OgrePlatform")
 
 # Sources
-file(GLOB SOURCE_FILES Main/*.cpp Preprocessor/*.cpp)
+file(GLOB SOURCE_FILES Main/*.cpp )
+
+if (NOT SHINY_USE_WAVE_SYSTEM_INSTALL)
+    file(GLOB SOURCE_FILES2 Preprocessor/*.cpp)
+    list(APPEND SOURCE_FILES ${SOURCE_FILES2})
+else()
+    # use system install
+endif()
+
 file(GLOB OGRE_PLATFORM_SOURCE_FILES Platforms/Ogre/*.cpp)
 
 # Don't use thread-safe boost::wave. Results in a huge speed-up for the preprocessor.
