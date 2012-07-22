@@ -11,14 +11,15 @@ file(GLOB SOURCE_FILES Main/*.cpp )
 if (NOT SHINY_USE_WAVE_SYSTEM_INSTALL)
     file(GLOB SOURCE_FILES2 Preprocessor/*.cpp)
     list(APPEND SOURCE_FILES ${SOURCE_FILES2})
+
+    # Don't use thread-safe boost::wave. Results in a huge speed-up for the preprocessor.
+    add_definitions(-DBOOST_WAVE_SUPPORT_THREADING=0)
+
 else()
     # use system install
 endif()
 
 file(GLOB OGRE_PLATFORM_SOURCE_FILES Platforms/Ogre/*.cpp)
-
-# Don't use thread-safe boost::wave. Results in a huge speed-up for the preprocessor.
-add_definitions(-DBOOST_WAVE_SUPPORT_THREADING=0)
 
 add_library(${SHINY_LIBRARY} STATIC ${SOURCE_FILES})
 
