@@ -36,9 +36,10 @@ namespace sh
 	private:
 		virtual bool isProfileSupported (const std::string& profile);
 
+		/*
 		virtual void serializeShaders (const std::string& file);
 		virtual void deserializeShaders (const std::string& file);
-
+*/
 		virtual boost::shared_ptr<Material> createMaterial (const std::string& name);
 
 		virtual boost::shared_ptr<GpuProgram> createGpuProgram (
@@ -55,7 +56,7 @@ namespace sh
 		friend class Factory;
 
 	protected:
-		virtual bool supportsShaderSerialization ();
+		//virtual bool supportsShaderSerialization ();
 		virtual bool supportsMaterialQueuedListener ();
 
 		std::string mResourceGroup;
