@@ -36,7 +36,7 @@ else()
         Preprocessor/cpp_re.cpp
         Preprocessor/instantiate_cpp_exprgrammar.cpp
         Preprocessor/instantiate_cpp_grammar.cpp
-        Preprocessor/instantiate_defined_garmmar.cpp
+        Preprocessor/instantiate_defined_grammar.cpp
         Preprocessor/instantiate_predef_macros.cpp
         Preprocessor/instantiate_re2c_lexer.cpp
         Preprocessor/instantiate_re2c_lexer_str.cpp
