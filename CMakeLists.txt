@@ -8,6 +8,19 @@ set(SHINY_OGREPLATFORM_LIBRARY "shiny.OgrePlatform")
 # Sources
 file(GLOB SOURCE_FILES Main/*.cpp )
 
+set(SOURCE_FILES
+    Main/Factory.cpp
+    Main/MaterialInstance.cpp
+    Main/MaterialInstancePass.cpp
+    Main/MaterialInstanceTextureUnit.cpp
+    Main/Platform.cpp
+    Main/Preprocessor.cpp
+    Main/PropertyBase.cpp
+    Main/ScriptLoader.cpp
+    Main/ShaderInstance.cpp
+    Main/ShaderSet.cpp
+)
+
 # In Debug mode, write the shader sources to the current directory
 if (DEFINED CMAKE_BUILD_TYPE)
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -15,16 +28,33 @@ if (DEFINED CMAKE_BUILD_TYPE)
     endif()
 endif()
 
-if (NOT SHINY_USE_WAVE_SYSTEM_INSTALL)
-    file(GLOB SOURCE_FILES2 Preprocessor/*.cpp)
-    list(APPEND SOURCE_FILES ${SOURCE_FILES2})
+if (DEFINED SHINY_USE_WAVE_SYSTEM_INSTALL)
+    # use system install
+else()
+    list(APPEND SOURCE_FILES
+        Preprocessor/aq.cpp
+        Preprocessor/cpp_re.cpp
+        Preprocessor/instantiate_cpp_exprgrammar.cpp
+        Preprocessor/instantiate_cpp_grammar.cpp
+        Preprocessor/instantiate_defined_garmmar.cpp
+        Preprocessor/instantiate_predef_macros.cpp
+        Preprocessor/instantiate_re2c_lexer.cpp
+        Preprocessor/instantiate_re2c_lexer_str.cpp
+        Preprocessor/token_ids.cpp
+    )
 
     # Don't use thread-safe boost::wave. Results in a huge speed-up for the preprocessor.
     add_definitions(-DBOOST_WAVE_SUPPORT_THREADING=0)
-
-else()
-    # use system install
 endif()
+
+set(OGRE_PLATFORM_SOURCE_FILES
+    Platforms/Ogre/OgreGpuProgram.cpp
+    Platforms/Ogre/OgreMaterial.cpp
+    Platforms/Ogre/OgreMaterialSerializer.cpp
+    Platforms/Ogre/OgrePass.cpp
+    Platforms/Ogre/OgrePlatform.cpp
+    Platforms/Ogre/OgreTextureUnitState.cpp
+)
 
 file(GLOB OGRE_PLATFORM_SOURCE_FILES Platforms/Ogre/*.cpp)
 
