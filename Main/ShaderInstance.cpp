@@ -2,10 +2,13 @@
 
 #include <stdexcept>
 #include <iostream>
+#include <fstream>
 
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/bind.hpp>
+
+#include <boost/filesystem.hpp>
 
 #include "Preprocessor.hpp"
 #include "Factory.hpp"
@@ -592,6 +595,13 @@ namespace sh
 			mProgram = boost::shared_ptr<GpuProgram>(platform->createGpuProgram(GPT_Fragment, "", mName, profile, source, Factory::getInstance().getCurrentLanguage()));
 
 		//std::cout << source << std::endl;
+
+#ifdef SHINY_WRITE_SHADER_DEBUG
+		boost::filesystem::path full_path(boost::filesystem::current_path());
+		std::ofstream of ((full_path / name ).c_str() , std::ios_base::out);
+		of.write(source.c_str(), source.size());
+		of.close();
+#endif
 
 		if (!mProgram->getSupported())
 		{
