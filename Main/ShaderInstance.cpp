@@ -550,8 +550,13 @@ namespace sh
 				// not using newlines here, otherwise the line numbers reported by compiler would be messed up..
 				if (Factory::getInstance().getCurrentLanguage () == Language_CG || Factory::getInstance().getCurrentLanguage () == Language_HLSL)
 					result += ", out float4 passthrough" + boost::lexical_cast<std::string>(i) + " : TEXCOORD" + boost::lexical_cast<std::string>(i);
+
+				/*
 				else
 					result += "out vec4 passthrough" + boost::lexical_cast<std::string>(i) + "; ";
+					*/
+				else
+					result += "varying vec4 passthrough" + boost::lexical_cast<std::string>(i) + "; ";
 			}
 
 			source.replace(pos, std::string("@shPassthroughVertexOutputs").length(), result);
@@ -570,8 +575,12 @@ namespace sh
 				// not using newlines here, otherwise the line numbers reported by compiler would be messed up..
 				if (Factory::getInstance().getCurrentLanguage () == Language_CG || Factory::getInstance().getCurrentLanguage () == Language_HLSL)
 					result += ", in float4 passthrough" + boost::lexical_cast<std::string>(i) + " : TEXCOORD" + boost::lexical_cast<std::string>(i);
+				/*
 				else
 					result += "in vec4 passthrough" + boost::lexical_cast<std::string>(i) + "; ";
+					*/
+				else
+					result += "varying vec4 passthrough" + boost::lexical_cast<std::string>(i) + "; ";
 			}
 
 			source.replace(pos, std::string("@shPassthroughFragmentInputs").length(), result);
