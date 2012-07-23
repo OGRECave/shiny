@@ -34,6 +34,7 @@ else()
     list(APPEND SOURCE_FILES
         Preprocessor/aq.cpp
         Preprocessor/cpp_re.cpp
+        Preprocessor/instantiate_cpp_literalgrs.cpp
         Preprocessor/instantiate_cpp_exprgrammar.cpp
         Preprocessor/instantiate_cpp_grammar.cpp
         Preprocessor/instantiate_defined_grammar.cpp
