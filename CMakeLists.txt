@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 
+# This is NOT intended as a stand-alone build system! Instead, you should include this from the main CMakeLists of your project.
+# Make sure to link against Ogre and boost::filesystem.
+
 option(SHINY_BUILD_OGRE_PLATFORM "build the Ogre platform" ON)
 
 set(SHINY_LIBRARY "shiny")

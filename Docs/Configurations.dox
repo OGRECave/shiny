@@ -10,7 +10,7 @@
 
 	A Configuration is a set of properties that can override global settings, as long as this Configuration is active.
 
-	Here's an example. Say you have a global setting with the name 'shadows' that controls if your materials receive they receive shadows.
+	Here's an example. Say you have a global setting with the name 'shadows' that controls if your materials receive shadows.
 
 	Now, lets create a configuration for our reflection render targets that disables shadows for all materials. Paste the following in a new file with the extension '.configuration':
 

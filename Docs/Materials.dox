@@ -115,7 +115,7 @@
 
 	\endcode
 
-	There you have it! This shader will compile in all 3 languages (CG, HLSL, GLSL) thanks to the porting defines in "core.h". If you need more defines, feel free to add them and don't forget to send them to me!
+	There you have it! This shader will compile in several languages thanks to the porting defines in "core.h". If you need more defines, feel free to add them and don't forget to send them to me!
 
 	For a full list of macros available when writing your shaders, refer to the page \ref macros
 
