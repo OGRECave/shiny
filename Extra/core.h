@@ -65,7 +65,7 @@
     #define float4 vec4
     #define int2 ivec2
     #define int3 ivec3
-    #define int4 ivec4/
+    #define int4 ivec4
     #define shTexture2D sampler2D
     #define shSample(tex, coord) texture2D(tex, coord)
     #define shLerp(a, b, t) mix(a, b, t)
