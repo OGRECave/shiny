@@ -80,11 +80,13 @@ namespace sh
 			PropertySetGet* context = this;
 
 			// create or retrieve shaders
+			bool hasVertex = it->hasProperty("vertex_program");
+			bool hasFragment = it->hasProperty("fragment_program");
 			if (mShadersEnabled || !allowFixedFunction)
 			{
 				it->setContext(context);
 				it->mShaderProperties.setContext(context);
-				if (it->hasProperty("vertex_program"))
+				if (hasVertex)
 				{
 					ShaderSet* vertex = mFactory->getShaderSet(retrieveValue<StringValue>(it->getProperty("vertex_program"), context).get());
 					ShaderInstance* v = vertex->getInstance(&it->mShaderProperties);
@@ -103,7 +105,7 @@ namespace sh
 						usedTextureSamplersVertex.insert(usedTextureSamplersVertex.end(), vector.begin(), vector.end());
 					}
 				}
-				if (it->hasProperty("fragment_program"))
+				if (hasFragment)
 				{
 					ShaderSet* fragment = mFactory->getShaderSet(retrieveValue<StringValue>(it->getProperty("fragment_program"), context).get());
 					ShaderInstance* f = fragment->getInstance(&it->mShaderProperties);
@@ -133,7 +135,7 @@ namespace sh
 				bool foundVertex = std::find(usedTextureSamplersVertex.begin(), usedTextureSamplersVertex.end(), texIt->getName()) != usedTextureSamplersVertex.end();
 				bool foundFragment = std::find(usedTextureSamplersFragment.begin(), usedTextureSamplersFragment.end(), texIt->getName()) != usedTextureSamplersFragment.end();
 				if (  (foundVertex || foundFragment)
-						|| ((!mShadersEnabled && allowFixedFunction) && texIt->hasProperty("create_in_ffp") && retrieveValue<BooleanValue>(texIt->getProperty("create_in_ffp"), this).get()))
+						|| (((!mShadersEnabled || (!hasVertex || !hasFragment)) && allowFixedFunction) && texIt->hasProperty("create_in_ffp") && retrieveValue<BooleanValue>(texIt->getProperty("create_in_ffp"), this).get()))
 				{
 					boost::shared_ptr<TextureUnitState> texUnit = pass->createTextureUnitState ();
 					texIt->copyAll (texUnit.get(), context);
@@ -141,7 +143,7 @@ namespace sh
 					mTexUnits.push_back(texUnit);
 
 					// set texture unit indices (required by GLSL)
-					if (mShadersEnabled && mFactory->getCurrentLanguage () == Language_GLSL)
+					if (mShadersEnabled && ((hasVertex && foundVertex) || (hasFragment && foundFragment)) && mFactory->getCurrentLanguage () == Language_GLSL)
 					{
 						pass->setTextureUnitIndex (foundVertex ? GPT_Vertex : GPT_Fragment, texIt->getName(), i);
 
