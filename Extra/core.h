@@ -1,4 +1,4 @@
-#if SH_HLSL == 0
+#if SH_HLSL == 1
     #error "HLSL is unsupported"
 #endif
 
