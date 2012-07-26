@@ -5,9 +5,11 @@ namespace sh
 {
 	enum Language
 	{
-		Language_CG = 0x01,
-		Language_HLSL = 0x02,
-		Language_GLSL = 0x03
+		Language_CG,
+		Language_HLSL,
+		Language_GLSL,
+		Language_Count,
+		Language_None
 	};
 }
 

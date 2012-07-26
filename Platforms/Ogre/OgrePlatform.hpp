@@ -50,8 +50,6 @@ namespace sh
 
 		virtual void setSharedParameter (const std::string& name, PropertyValuePtr value);
 
-		Language selectBestLanguage ();
-
 		friend class ShaderInstance;
 		friend class Factory;
 

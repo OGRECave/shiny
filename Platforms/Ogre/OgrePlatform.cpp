@@ -49,17 +49,6 @@ namespace sh
 		return *sSerializer;
 	}
 
-	Language OgrePlatform::selectBestLanguage ()
-	{
-		std::string name = Ogre::Root::getSingleton().getRenderSystem ()->getName();
-		if (name.find("OpenGL") != std::string::npos)
-			return Language_GLSL;
-		else if (name.find("Direct3D") != std::string::npos)
-			return Language_HLSL;
-		else
-			return Language_CG;
-	}
-
 	OgrePlatform::~OgrePlatform ()
 	{
 		delete sSerializer;

@@ -29,7 +29,7 @@ namespace sh
 	Factory::Factory (Platform* platform)
 		: mPlatform(platform)
 		, mShadersEnabled(true)
-		, mCurrentLanguage(platform->selectBestLanguage ())
+		, mCurrentLanguage(Language_None)
 		, mListener(NULL)
 		, mCurrentGlobalSettings(NULL)
 	{
@@ -46,6 +46,11 @@ namespace sh
 				mPlatform->deserializeShaders (file);
 			}
 		}
+	}
+
+	void Factory::loadAllFiles()
+	{
+		assert(mCurrentLanguage != Language_None);
 
 		// load configurations
 		{

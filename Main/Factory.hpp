@@ -93,6 +93,9 @@ namespace sh
 		/// Attach a listener for material created events
 		void setMaterialListener (MaterialListener* listener);
 
+		/// call this after you have set up basic stuff, like the shader language.
+		void loadAllFiles ();
+
 		static Factory& getInstance();
 		///< Return instance of this class.
 

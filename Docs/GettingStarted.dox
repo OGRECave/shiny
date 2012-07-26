@@ -46,6 +46,11 @@
 
 	sh::Factory* factory = new sh::Factory(platform);
 
+	// Set a language. Valid options: CG, HLSL, GLSL
+	factory->setCurrentLanguage(sh::Language_GLSL);
+
+	factory->loadAllFiles();
+
 	....
 	your application runs here
 	....

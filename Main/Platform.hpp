@@ -102,8 +102,6 @@ namespace sh
 
 		std::string getCacheFolder () const;
 
-		virtual Language selectBestLanguage () = 0;
-
 		friend class Factory;
 		friend class MaterialInstance;
 		friend class ShaderInstance;
