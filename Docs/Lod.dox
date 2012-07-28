@@ -2,6 +2,12 @@
 
 	\page lod Material LOD
 
+    \section howitworks How it works
+    
+    When Ogre requests a technique for a specific LOD index, the Factory selects the appropriate LOD configuration which then temporarily overrides the global settings in the shaders. We can use this to disable shader features one by one at a lower LOD, resulting in simpler and faster techniques for distant objects.
+    
+    \section howtouseit How to use it
+
      - Create a file with the extension '.lod'. There you can specify shader features to disable at a specific LOD level. Higher LOD index refers to a lower LOD. Example contents:
     
     \code
