@@ -108,7 +108,7 @@
 		shInput(float2, UV)
 	SH_START_PROGRAM
 	{
-		shOutputColor = shSample(diffuse, UV);
+		shOutputColor(0) = shSample(diffuse, UV);
 	}
 
 	#endif
