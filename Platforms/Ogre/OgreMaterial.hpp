@@ -15,15 +15,16 @@ namespace sh
 		OgreMaterial (const std::string& name, const std::string& resourceGroup);
 		virtual ~OgreMaterial();
 
-		virtual boost::shared_ptr<Pass> createPass (const std::string& configuration);
-		virtual bool createConfiguration (const std::string& name);
-		virtual void removeConfiguration (const std::string& name); ///< safe to call if configuration does not exist
+		virtual boost::shared_ptr<Pass> createPass (const std::string& configuration, unsigned short lodIndex);
+		virtual bool createConfiguration (const std::string& name, unsigned short lodIndex);
 
 		virtual void removeAll ();
 
 		Ogre::MaterialPtr getOgreMaterial();
 
-		Ogre::Technique* getOgreTechniqueForConfiguration (const std::string& configurationName);
+		virtual void setLodLevels (const std::string& lodLevels);
+
+		Ogre::Technique* getOgreTechniqueForConfiguration (const std::string& configurationName, unsigned short lodIndex);
 
 		virtual void setShadowCasterMaterial (const std::string& name);
 

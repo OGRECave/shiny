@@ -37,9 +37,9 @@ namespace sh
 		return false;
 	}
 
-	MaterialInstance* Platform::fireMaterialRequested (const std::string& name, const std::string& configuration)
+	MaterialInstance* Platform::fireMaterialRequested (const std::string& name, const std::string& configuration, unsigned short lodIndex)
 	{
-		return mFactory->requestMaterial (name, configuration);
+		return mFactory->requestMaterial (name, configuration, lodIndex);
 	}
 
 	void Platform::serializeShaders (const std::string& file)

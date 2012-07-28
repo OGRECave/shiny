@@ -1,0 +1,40 @@
+/*!
+
+	\page lod Material LOD
+
+     - Create a file with the extension '.lod'. There you can specify shader features to disable at a specific lod level. Higher LOD index refers to a lower LOD. Example contents:
+    
+    \code
+    lod_configuration 1
+    {
+        specular_mapping false
+    }
+    
+    lod_configuration 2
+    {
+        specular_mapping false
+        normal_mapping false
+    }
+    
+    lod_configuration 3
+    {
+        terrain_composite_map true
+        specular_mapping false
+        normal_mapping false
+    }
+    \endcode
+    
+
+    
+     - In your materials, specify the distances at which a lower LOD kicks in. Note that the actual distance is also affected by the viewport and current entity LOD bias. In this example, the first LOD level (lod index 1) would be applied at a distance of 100 units, the next after 300, and the last after 1000 units.
+    
+    \code
+    material sample_material
+    {
+        lod_values 100 300 1000
+        
+        ... your passes, texture units etc ...
+    }
+    \endcode
+
+*/

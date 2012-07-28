@@ -18,6 +18,7 @@ namespace sh
 	public:
 		bool setPassProperty (const std::string& param, std::string value, Ogre::Pass* pass);
 		bool setTextureUnitProperty (const std::string& param, std::string value, Ogre::TextureUnitState* t);
+		bool setMaterialProperty (const std::string& param, std::string value, Ogre::MaterialPtr m);
 
 	private:
 		void reset();

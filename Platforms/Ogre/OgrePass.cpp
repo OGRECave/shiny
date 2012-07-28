@@ -13,10 +13,10 @@
 
 namespace sh
 {
-	OgrePass::OgrePass (OgreMaterial* parent, const std::string& configuration)
+	OgrePass::OgrePass (OgreMaterial* parent, const std::string& configuration, unsigned short lodIndex)
 		: Pass()
 	{
-		Ogre::Technique* t = parent->getOgreMaterial()->getTechnique(configuration);
+		Ogre::Technique* t = parent->getOgreTechniqueForConfiguration(configuration, lodIndex);
 		mPass = t->createPass();
 	}
 

@@ -33,6 +33,9 @@ namespace sh
 
 		if (hasProperty ("shadow_caster_material"))
 			mMaterial->setShadowCasterMaterial (retrieveValue<StringValue>(getProperty("shadow_caster_material"), NULL).get());
+
+		if (hasProperty ("lod_values"))
+			mMaterial->setLodLevels (retrieveValue<StringValue>(getProperty("lod_values"), NULL).get());
 	}
 
 	void MaterialInstance::destroyAll ()
@@ -49,9 +52,9 @@ namespace sh
 		destroyAll(); // trigger updates
 	}
 
-	void MaterialInstance::createForConfiguration (const std::string& configuration)
+	void MaterialInstance::createForConfiguration (const std::string& configuration, unsigned short lodIndex)
 	{
-		bool res = mMaterial->createConfiguration(configuration);
+		bool res = mMaterial->createConfiguration(configuration, lodIndex);
 		if (!res)
 			return; // listener was false positive
 
@@ -59,6 +62,7 @@ namespace sh
 			mListener->requestedConfiguration (this, configuration);
 
 		mFactory->setActiveConfiguration (configuration);
+		mFactory->setActiveLodLevel (lodIndex);
 
 		bool allowFixedFunction = true;
 		if (!mShadersEnabled && hasProperty("allow_fixed_function"))
@@ -70,7 +74,7 @@ namespace sh
 		PassVector passes = getPasses();
 		for (PassVector::iterator it = passes.begin(); it != passes.end(); ++it)
 		{
-			boost::shared_ptr<Pass> pass = mMaterial->createPass (configuration);
+			boost::shared_ptr<Pass> pass = mMaterial->createPass (configuration, lodIndex);
 			it->copyAll (pass.get(), this);
 
 			// texture samplers used in the shaders

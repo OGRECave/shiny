@@ -15,6 +15,7 @@ namespace sh
 	typedef std::map<std::string, MaterialInstance> MaterialMap;
 	typedef std::map<std::string, ShaderSet> ShaderSetMap;
 	typedef std::map<std::string, PropertySetGet> ConfigurationMap;
+	typedef std::vector<PropertySetGet> LodConfigurationMap;
 
 	typedef std::map<std::string, std::string> TextureAliasMap;
 
@@ -28,7 +29,7 @@ namespace sh
 	class MaterialListener
 	{
 	public:
-		virtual void materialCreated (MaterialInstance* m, const std::string& configuration) = 0;
+		virtual void materialCreated (MaterialInstance* m, const std::string& configuration, unsigned short lodIndex) = 0;
 	};
 
 	/**
@@ -76,8 +77,12 @@ namespace sh
 		/// Get a MaterialInstance by name
 		MaterialInstance* getMaterialInstance (const std::string& name);
 
-		/// Register a \a Configuration, which can then be used by switching the active material scheme
+		/// Register a configuration, which can then be used by switching the active material scheme
 		void registerConfiguration (const std::string& name, PropertySetGet configuration);
+
+		/// Register a lod configuration, which can then be used by setting up lod distance values for the material \n
+		/// 0 refers to highest lod, so use 1 or higher as index parameter
+		void registerLodConfiguration (int index, PropertySetGet configuration);
 
 		/// Set an alias name for a texture, the real name can then be retrieved with the "texture_alias"
 		/// property in a texture unit - this is useful if you don't know the name of your texture beforehand. \n
@@ -103,17 +108,18 @@ namespace sh
 
 	private:
 
-		MaterialInstance* requestMaterial (const std::string& name, const std::string& configuration);
+		MaterialInstance* requestMaterial (const std::string& name, const std::string& configuration, unsigned short lodIndex);
 		ShaderSet* getShaderSet (const std::string& name);
 		PropertySetGet* getConfiguration (const std::string& name);
 		Platform* getPlatform ();
 
-		PropertySetGet* getCurrentGlobalSettings() { return mCurrentGlobalSettings; }
+		PropertySetGet* getCurrentGlobalSettings();
 
 		void addTextureAliasInstance (const std::string& name, TextureUnitState* t);
 		void removeTextureAliasInstances (TextureUnitState* t);
 
 		void setActiveConfiguration (const std::string& configuration);
+		void setActiveLodLevel (int level);
 
 		std::map<TextureUnitState*, std::string> mTextureAliasInstances;
 
@@ -131,10 +137,12 @@ namespace sh
 		MaterialMap mMaterials;
 		ShaderSetMap mShaderSets;
 		ConfigurationMap mConfigurations;
+		LodConfigurationMap mLodConfigurations;
 
 		PropertySetGet mGlobalSettings;
 
-		PropertySetGet* mCurrentGlobalSettings; ///< affected by active configuration
+		PropertySetGet* mCurrentConfiguration;
+		PropertySetGet* mCurrentLodConfiguration;
 
 		TextureAliasMap mTextureAliases;
 

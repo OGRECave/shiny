@@ -4,6 +4,8 @@
 #include <OgreTechnique.h>
 
 #include "OgrePass.hpp"
+#include "OgreMaterialSerializer.hpp"
+#include "OgrePlatform.hpp"
 
 namespace sh
 {
@@ -23,9 +25,9 @@ namespace sh
 		Ogre::MaterialManager::getSingleton().remove(mMaterial->getName());
 	}
 
-	boost::shared_ptr<Pass> OgreMaterial::createPass (const std::string& configuration)
+	boost::shared_ptr<Pass> OgreMaterial::createPass (const std::string& configuration, unsigned short lodIndex)
 	{
-		return boost::shared_ptr<Pass> (new OgrePass (this, configuration));
+		return boost::shared_ptr<Pass> (new OgrePass (this, configuration, lodIndex));
 	}
 
 	void OgreMaterial::removeAll ()
@@ -34,30 +36,28 @@ namespace sh
 		mMaterial->createTechnique()->setSchemeName (sDefaultTechniqueName);
 	}
 
-	bool OgreMaterial::createConfiguration (const std::string& name)
+	void OgreMaterial::setLodLevels (const std::string& lodLevels)
+	{
+		OgreMaterialSerializer& s = OgrePlatform::getSerializer();
+
+		s.setMaterialProperty ("lod_values", lodLevels, mMaterial);
+	}
+
+	bool OgreMaterial::createConfiguration (const std::string& name, unsigned short lodIndex)
 	{
 		for (int i=0; i<mMaterial->getNumTechniques(); ++i)
 		{
-			if (mMaterial->getTechnique(i) == mMaterial->getTechnique(name))
+			if (mMaterial->getTechnique(i)->getSchemeName() == name && mMaterial->getTechnique(i)->getLodIndex() == lodIndex)
 				return false;
 		}
 
 		Ogre::Technique* t = mMaterial->createTechnique();
 		t->setSchemeName (name);
-		t->setName (name);
+		t->setLodIndex (lodIndex);
 		if (mShadowCasterMaterial != "")
 			t->setShadowCasterMaterial(mShadowCasterMaterial);
 
 		return true;
-	}
-
-	void OgreMaterial::removeConfiguration (const std::string& name)
-	{
-		for (int i=0; i<mMaterial->getNumTechniques(); ++i)
-		{
-			if (mMaterial->getTechnique(i) == mMaterial->getTechnique(name))
-				mMaterial->removeTechnique(i);
-		}
 	}
 
 	Ogre::MaterialPtr OgreMaterial::getOgreMaterial ()
@@ -65,9 +65,16 @@ namespace sh
 		return mMaterial;
 	}
 
-	Ogre::Technique* OgreMaterial::getOgreTechniqueForConfiguration (const std::string& configurationName)
+	Ogre::Technique* OgreMaterial::getOgreTechniqueForConfiguration (const std::string& configurationName, unsigned short lodIndex)
 	{
-		return mMaterial->getTechnique (configurationName); /// \todo don't use strings here?
+		for (int i=0; i<mMaterial->getNumTechniques(); ++i)
+		{
+			if (mMaterial->getTechnique(i)->getSchemeName() == configurationName && mMaterial->getTechnique(i)->getLodIndex() == lodIndex)
+			{
+				return mMaterial->getTechnique(i);
+			}
+		}
+		assert(0);
 	}
 
 	void OgreMaterial::setShadowCasterMaterial (const std::string& name)

@@ -12,7 +12,7 @@ namespace sh
 	class OgrePass : public Pass
 	{
 	public:
-		OgrePass (OgreMaterial* parent, const std::string& configuration);
+		OgrePass (OgreMaterial* parent, const std::string& configuration, unsigned short lodIndex);
 
 		virtual boost::shared_ptr<TextureUnitState> createTextureUnitState ();
 		virtual void assignProgram (GpuProgramType type, const std::string& name);

@@ -64,11 +64,11 @@ namespace sh
 	class Material : public PropertySet
 	{
 	public:
-		virtual boost::shared_ptr<Pass> createPass (const std::string& configuration) = 0;
-		virtual bool createConfiguration (const std::string& name) = 0; ///< @return false if already exists
-		virtual void removeConfiguration (const std::string& name) = 0; ///< safe to call if configuration does not exist
+		virtual boost::shared_ptr<Pass> createPass (const std::string& configuration, unsigned short lodIndex) = 0;
+		virtual bool createConfiguration (const std::string& name, unsigned short lodIndex) = 0; ///< @return false if already exists
 		virtual void removeAll () = 0; ///< remove all configurations
-		//virtual boost::shared_ptr<Pass> getPass (int index, const std::string& configuration);
+
+		virtual void setLodLevels (const std::string& lodLevels) = 0;
 
 		virtual void setShadowCasterMaterial (const std::string& name) = 0;
 	};
@@ -126,7 +126,7 @@ namespace sh
 		 * @param name material name
 		 * @param configuration requested configuration
 		 */
-		MaterialInstance* fireMaterialRequested (const std::string& name, const std::string& configuration);
+		MaterialInstance* fireMaterialRequested (const std::string& name, const std::string& configuration, unsigned short lodIndex);
 
 		std::string mCacheFolder;
 		Factory* mFactory;

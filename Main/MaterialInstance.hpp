@@ -58,7 +58,7 @@ namespace sh
 		std::string getParentInstance ();
 
 		void create (Platform* platform);
-		void createForConfiguration (const std::string& configuration);
+		void createForConfiguration (const std::string& configuration, unsigned short lodIndex);
 
 		void destroyAll ();
 

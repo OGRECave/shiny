@@ -92,11 +92,11 @@ namespace sh
 		unsigned short schemeIndex, const Ogre::String &schemeName, Ogre::Material *originalMaterial,
 		unsigned short lodIndex, const Ogre::Renderable *rend)
 	{
-		MaterialInstance* m = fireMaterialRequested(originalMaterial->getName(), schemeName);
+		MaterialInstance* m = fireMaterialRequested(originalMaterial->getName(), schemeName, lodIndex);
 		if (m)
 		{
 			OgreMaterial* _m = static_cast<OgreMaterial*>(m->getMaterial());
-			return _m->getOgreTechniqueForConfiguration (schemeName);
+			return _m->getOgreTechniqueForConfiguration (schemeName, lodIndex);
 		}
 		else
 			return 0; // material does not belong to us

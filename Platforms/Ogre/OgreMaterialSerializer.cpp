@@ -48,4 +48,20 @@ namespace sh
 			return true;
 		}
 	}
+
+	bool OgreMaterialSerializer::setMaterialProperty (const std::string& param, std::string value, Ogre::MaterialPtr m)
+	{
+		reset();
+
+		mScriptContext.section = Ogre::MSS_MATERIAL;
+		mScriptContext.material = m;
+
+		if (mMaterialAttribParsers.find (param) == mMaterialAttribParsers.end())
+			return false;
+		else
+		{
+			mMaterialAttribParsers.find(param)->second(value, mScriptContext);
+			return true;
+		}
+	}
 }

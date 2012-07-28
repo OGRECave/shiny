@@ -5,6 +5,7 @@
 
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include "Platform.hpp"
 #include "ScriptLoader.hpp"
@@ -31,7 +32,8 @@ namespace sh
 		, mShadersEnabled(true)
 		, mCurrentLanguage(Language_None)
 		, mListener(NULL)
-		, mCurrentGlobalSettings(NULL)
+		, mCurrentConfiguration(NULL)
+		, mCurrentLodConfiguration(NULL)
 	{
 		assert (!sThis);
 		sThis = this;
@@ -79,6 +81,42 @@ namespace sh
 				}
 
 				mConfigurations[it->first] = newConfiguration;
+			}
+		}
+
+		// load lod configurations
+		{
+			ScriptLoader lodLoader(".lod");
+			ScriptLoader::loadAllFiles (&lodLoader, mPlatform->getBasePath());
+			std::map <std::string, ScriptNode*> nodes = lodLoader.getAllConfigScripts();
+			for (std::map <std::string, ScriptNode*>::const_iterator it = nodes.begin();
+				it != nodes.end(); ++it)
+			{
+				if (!(it->second->getName() == "lod_configuration"))
+				{
+					std::cerr << "sh::Factory: Warning: Unsupported root node type \"" << it->second->getName() << "\" for file type .lod" << std::endl;
+					break;
+				}
+
+				if (it->first == "0")
+				{
+					throw std::runtime_error("lod level 0 (max lod) can't have a configuration");
+				}
+
+				PropertySetGet newLod;
+
+				std::vector<ScriptNode*> props = it->second->getChildren();
+				for (std::vector<ScriptNode*>::const_iterator propIt = props.begin(); propIt != props.end(); ++propIt)
+				{
+					std::string name = (*propIt)->getName();
+					std::string val = (*propIt)->getValue();
+
+					newLod.setProperty (name, makeProperty(val));
+				}
+
+				mLodConfigurations.reserve(boost::lexical_cast<int>(it->first)+1);
+
+				mLodConfigurations[boost::lexical_cast<int>(it->first)] = newLod;
 			}
 		}
 
@@ -207,7 +245,7 @@ namespace sh
 				if (newInstance.hasProperty("create_configuration"))
 				{
 					std::string config = retrieveValue<StringValue>(newInstance.getProperty("create_configuration"), NULL).get();
-					newInstance.createForConfiguration (config);
+					newInstance.createForConfiguration (config, 0);
 				}
 
 				mMaterials.insert (std::make_pair(it->first, newInstance));
@@ -253,14 +291,26 @@ namespace sh
 		return &mMaterials.find(name)->second;
 	}
 
-	MaterialInstance* Factory::requestMaterial (const std::string& name, const std::string& configuration)
+	MaterialInstance* Factory::requestMaterial (const std::string& name, const std::string& configuration, unsigned short lodIndex)
 	{
 		MaterialInstance* m = searchInstance (name);
+
 		if (m)
 		{
-			m->createForConfiguration (configuration);
+			// make sure all lod techniques below (higher lod) exist
+			int i = lodIndex;
+			while (i>0)
+			{
+				--i;
+				m->createForConfiguration (configuration, i);
+
+				if (mListener)
+					mListener->materialCreated (m, configuration, i);
+			}
+
+			m->createForConfiguration (configuration, lodIndex);
 			if (mListener)
-				mListener->materialCreated (m, configuration);
+				mListener->materialCreated (m, configuration, lodIndex);
 		}
 		return m;
 	}
@@ -389,6 +439,11 @@ namespace sh
 		mConfigurations[name].setParent (&mGlobalSettings);
 	}
 
+	void Factory::registerLodConfiguration (int index, PropertySetGet configuration)
+	{
+		mLodConfigurations[index] = configuration;
+	}
+
 	void Factory::setMaterialListener (MaterialListener* listener)
 	{
 		mListener = listener;
@@ -407,8 +462,38 @@ namespace sh
 	void Factory::setActiveConfiguration (const std::string& configuration)
 	{
 		if (configuration == "Default")
-			mCurrentGlobalSettings = &mGlobalSettings;
+			mCurrentConfiguration = 0;
 		else
-			mCurrentGlobalSettings = &mConfigurations[configuration];
+			mCurrentConfiguration = &mConfigurations[configuration];
+	}
+
+	void Factory::setActiveLodLevel (int level)
+	{
+		if (level == 0)
+			mCurrentLodConfiguration = 0;
+		else
+		{
+			mCurrentLodConfiguration = &mLodConfigurations[level];
+		}
+	}
+
+	PropertySetGet* Factory::getCurrentGlobalSettings()
+	{
+		PropertySetGet* p = &mGlobalSettings;
+
+		// current global settings are affected by active configuration & active lod configuration
+
+		if (mCurrentConfiguration)
+		{
+			p = mCurrentConfiguration;
+		}
+
+		if (mCurrentLodConfiguration)
+		{
+			mCurrentLodConfiguration->setParent(p);
+			p = mCurrentLodConfiguration;
+		}
+
+		return p;
 	}
 }
