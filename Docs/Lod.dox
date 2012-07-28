@@ -29,7 +29,7 @@
     \note Do not use an index of 0. LOD 0 refers to the highest LOD, and you will never want to disable features at the highest LOD level.
 
     
-     - In your materials, specify the distances at which a lower LOD kicks in. Note that the actual distance is also affected by the viewport and current entity LOD bias. In this example, the first LOD level (lod index 1) would be applied at a distance of 100 units, the next after 300, and the last after 1000 units.
+     - In your materials, specify the distances at which a lower LOD kicks in. Note that the actual distance might also be affected by the viewport and current entity LOD bias. In this example, the first LOD level (lod index 1) would normally be applied at a distance of 100 units, the next after 300, and the last after 1000 units.
     
     \code
     material sample_material
