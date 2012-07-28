@@ -40,9 +40,7 @@
 
 	However, as soon as you begin to have lots of permutations of the same shader source, a problem arises. All current GPUs have a limit of 8 vertex to fragment passthroughs (with 4 components each, for example a float4).
 
-	A common optimization is to put several individual float values together in a float4 (so-called "Packing"). But how can you do this if your shader has lots of permutations and you don't know beforehand all of the passthroughs you will need?
-
-	The answer is: You can't, unless you use the following macros.
+	A common optimization is to put several individual float values together in a float4 (so-called "Packing"). But if your shader has lots of permutations and the passthrough elements you actually need are not known beforehand, it can be very tedious to pack manually. With the following macros, packing can become easier.
 
 	\subsection shAllocatePassthrough shAllocatePassthrough
 
@@ -113,7 +111,7 @@
 
 	<B>Usage:</B> \@shUniformProperty<4f|3f|2f|1f|int> (uniformName, property)
 
-	Binds the value of \a property (from the pass this shader belongs to) to the uniform with name \a uniformName.
+	Binds the value of \a property (from the shader_properties of the pass this shader belongs to) to the uniform with name \a uniformName.
 
 	The following variants are available, depending on the type of your uniform variable:
 	 - \@shUniformProperty4f
@@ -145,7 +143,7 @@
 
 	Retrieve a string property of the pass that this shader belongs to
 
-	<B>Usage:</B> \@shPropertyBool(propertyName)
+	<B>Usage:</B> \@shPropertyString(propertyName)
 
 	\subsection shPropertyEqual shPropertyEqual
 
@@ -198,6 +196,10 @@
 
 	<B>Usage:</B> \@shAutoConstant(uniformName, autoConstantName, [extraData])
 
+	<B>Example</B>: \@shAutoConstant(uModelViewMatrix, worldviewproj_matrix)
+	
+	<B>Example</B>: \@shAutoConstant(uLightPosition4, light_position, 4)
+	
 	Binds auto constant with name \a autoConstantName to the uniform \a uniformName. Optionally, you may specify extra data (for example the light index), as required by some auto constants.
 
 	The auto constant names are the same as Ogre's. Read the section "3.1.9 Using Vertex/Geometry/Fragment Programs in a Pass" of the Ogre manual for a list of all auto constant names.
@@ -212,7 +214,7 @@
 
 	\note Nested foreach blocks are currently \a not supported.
 
-	\note For technical reasons, you can only use constant numbers or properties (\@shPropertyString) as \a n parameter.
+	\note For technical reasons, you can only use constant numbers, properties (\@shPropertyString) or global settings (\@shGlobalSettingString) as \a n parameter.
 
 	<B>Example:</B>
 

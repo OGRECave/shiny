@@ -104,7 +104,12 @@
 	#else
 
 	SH_BEGIN_PROGRAM
-		shSampler2D(diffuse)
+	    // NOTE: It is important that the sampler name here (diffuseMap) matches
+	    // the name of the texture unit in the material. This is necessary because the system
+	    // skips texture units that are never "referenced" in the shader. This can be the case
+	    // when your base material has optional assets (for example a normal map) that are not
+	    // used by some derived materials.
+		shSampler2D(diffuseMap)
 		shInput(float2, UV)
 	SH_START_PROGRAM
 	{
