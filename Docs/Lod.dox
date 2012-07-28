@@ -2,7 +2,7 @@
 
 	\page lod Material LOD
 
-     - Create a file with the extension '.lod'. There you can specify shader features to disable at a specific lod level. Higher LOD index refers to a lower LOD. Example contents:
+     - Create a file with the extension '.lod'. There you can specify shader features to disable at a specific LOD level. Higher LOD index refers to a lower LOD. Example contents:
     
     \code
     lod_configuration 1
@@ -24,6 +24,9 @@
     }
     \endcode
     
+    \note You can also add LOD configurations by calling \a sh::Factory::registerLodConfiguration.
+    
+    \note Do not use an index of 0. LOD 0 refers to the highest LOD, and you will never want to disable features at the highest LOD level.
 
     
      - In your materials, specify the distances at which a lower LOD kicks in. Note that the actual distance is also affected by the viewport and current entity LOD bias. In this example, the first LOD level (lod index 1) would be applied at a distance of 100 units, the next after 300, and the last after 1000 units.
