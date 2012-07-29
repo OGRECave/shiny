@@ -605,12 +605,23 @@ namespace sh
 
 		//std::cout << source << std::endl;
 
+
+		if (Factory::getInstance ().getShaderDebugOutputEnabled ())
+		{
+			boost::filesystem::path full_path(boost::filesystem::current_path());
+			std::ofstream of ((full_path / name ).c_str() , std::ios_base::out);
+			of.write(source.c_str(), source.size());
+			of.close();
+		}
+		else
+		{
 #ifdef SHINY_WRITE_SHADER_DEBUG
 		boost::filesystem::path full_path(boost::filesystem::current_path());
 		std::ofstream of ((full_path / name ).c_str() , std::ios_base::out);
 		of.write(source.c_str(), source.size());
 		of.close();
 #endif
+		}
 
 		if (!mProgram->getSupported())
 		{

@@ -30,6 +30,7 @@ namespace sh
 	Factory::Factory (Platform* platform)
 		: mPlatform(platform)
 		, mShadersEnabled(true)
+		, mShaderDebugOutputEnabled(false)
 		, mCurrentLanguage(Language_None)
 		, mListener(NULL)
 		, mCurrentConfiguration(NULL)
@@ -473,6 +474,11 @@ namespace sh
 		{
 			mCurrentLodConfiguration = &mLodConfigurations[level];
 		}
+	}
+
+	void Factory::setShaderDebugOutputEnabled (bool enabled)
+	{
+		mShaderDebugOutputEnabled = enabled;
 	}
 
 	PropertySetGet* Factory::getCurrentGlobalSettings()

@@ -58,6 +58,9 @@ namespace sh
 		/// Use this to enable or disable shaders on-the-fly
 		void setShadersEnabled (bool enabled);
 
+		/// write generated shaders to current directory, useful for debugging
+		void setShaderDebugOutputEnabled (bool enabled);
+
 		/// Use this to manage user settings. \n
 		/// Global settings can be retrieved in shaders through a macro. \n
 		/// When a global setting is changed, the shaders that depend on them are recompiled automatically.
@@ -121,6 +124,8 @@ namespace sh
 		void setActiveConfiguration (const std::string& configuration);
 		void setActiveLodLevel (int level);
 
+		bool getShaderDebugOutputEnabled() { return mShaderDebugOutputEnabled; }
+
 		std::map<TextureUnitState*, std::string> mTextureAliasInstances;
 
 		friend class Platform;
@@ -133,6 +138,7 @@ namespace sh
 		static Factory* sThis;
 
 		bool mShadersEnabled;
+		bool mShaderDebugOutputEnabled;
 
 		MaterialMap mMaterials;
 		ShaderSetMap mShaderSets;
