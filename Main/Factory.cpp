@@ -114,8 +114,6 @@ namespace sh
 					newLod.setProperty (name, makeProperty(val));
 				}
 
-				mLodConfigurations.reserve(boost::lexical_cast<int>(it->first)+1);
-
 				mLodConfigurations[boost::lexical_cast<int>(it->first)] = newLod;
 			}
 		}

@@ -15,7 +15,7 @@ namespace sh
 	typedef std::map<std::string, MaterialInstance> MaterialMap;
 	typedef std::map<std::string, ShaderSet> ShaderSetMap;
 	typedef std::map<std::string, PropertySetGet> ConfigurationMap;
-	typedef std::vector<PropertySetGet> LodConfigurationMap;
+	typedef std::map<int, PropertySetGet> LodConfigurationMap;
 
 	typedef std::map<std::string, std::string> TextureAliasMap;
 
