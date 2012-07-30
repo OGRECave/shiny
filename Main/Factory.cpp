@@ -463,7 +463,10 @@ namespace sh
 		if (configuration == "Default")
 			mCurrentConfiguration = 0;
 		else
+		{
+			assert (mConfigurations.find(configuration) != mConfigurations.end());
 			mCurrentConfiguration = &mConfigurations[configuration];
+		}
 	}
 
 	void Factory::setActiveLodLevel (int level)
