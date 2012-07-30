@@ -52,6 +52,14 @@ namespace
 	{
 		return (source.size() >= pos + cmd.size() && source.substr(pos, cmd.size()) == cmd);
 	}
+
+	void writeDebugFile (const std::string& content, const std::string& filename)
+	{
+		boost::filesystem::path full_path(boost::filesystem::current_path());
+		std::ofstream of ((full_path / filename ).c_str() , std::ios_base::out);
+		of.write(content.c_str(), content.size());
+		of.close();
+	}
 }
 
 namespace sh
@@ -336,6 +344,15 @@ namespace sh
 
 		parse(source, properties);
 
+		if (Factory::getInstance ().getShaderDebugOutputEnabled ())
+			writeDebugFile(source, name + ".pre");
+		else
+		{
+#ifdef SHINY_WRITE_SHADER_DEBUG
+			writeDebugFile(source, name + ".pre");
+#endif
+		}
+
 		// why do we need our own preprocessor? there are several custom commands available in the shader files
 		// (for example for binding uniforms to properties or auto constants) - more below. it is important that these
 		// commands are _only executed if the specific code path actually "survives" the compilation.
@@ -607,19 +624,11 @@ namespace sh
 
 
 		if (Factory::getInstance ().getShaderDebugOutputEnabled ())
-		{
-			boost::filesystem::path full_path(boost::filesystem::current_path());
-			std::ofstream of ((full_path / name ).c_str() , std::ios_base::out);
-			of.write(source.c_str(), source.size());
-			of.close();
-		}
+			writeDebugFile(source, name);
 		else
 		{
 #ifdef SHINY_WRITE_SHADER_DEBUG
-		boost::filesystem::path full_path(boost::filesystem::current_path());
-		std::ofstream of ((full_path / name ).c_str() , std::ios_base::out);
-		of.write(source.c_str(), source.size());
-		of.close();
+			writeDebugFile(source, name);
 #endif
 		}
 
