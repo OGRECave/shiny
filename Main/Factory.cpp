@@ -475,6 +475,7 @@ namespace sh
 			mCurrentLodConfiguration = 0;
 		else
 		{
+			assert (mLodConfigurations.find(level) != mLodConfigurations.end());
 			mCurrentLodConfiguration = &mLodConfigurations[level];
 		}
 	}
