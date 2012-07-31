@@ -1,5 +1,7 @@
 #include "MaterialInstance.hpp"
 
+#include <stdexcept>
+
 #include "Factory.hpp"
 #include "ShaderSet.hpp"
 
@@ -72,6 +74,9 @@ namespace sh
 
 		// get passes of the top-most parent
 		PassVector passes = getPasses();
+		if (passes.size() == 0)
+			throw std::runtime_error ("material \"" + mName + "\" does not have any passes");
+
 		for (PassVector::iterator it = passes.begin(); it != passes.end(); ++it)
 		{
 			boost::shared_ptr<Pass> pass = mMaterial->createPass (configuration, lodIndex);

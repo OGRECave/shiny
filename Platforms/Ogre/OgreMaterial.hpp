@@ -24,7 +24,7 @@ namespace sh
 
 		virtual void setLodLevels (const std::string& lodLevels);
 
-		Ogre::Technique* getOgreTechniqueForConfiguration (const std::string& configurationName, unsigned short lodIndex);
+		Ogre::Technique* getOgreTechniqueForConfiguration (const std::string& configurationName, unsigned short lodIndex = 0);
 
 		virtual void setShadowCasterMaterial (const std::string& name);
 
