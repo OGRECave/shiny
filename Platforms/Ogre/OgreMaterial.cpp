@@ -34,6 +34,7 @@ namespace sh
 	{
 		mMaterial->removeAllTechniques();
 		mMaterial->createTechnique()->setSchemeName (sDefaultTechniqueName);
+		mMaterial->compile();
 	}
 
 	void OgreMaterial::setLodLevels (const std::string& lodLevels)
