@@ -224,8 +224,8 @@ namespace sh
 					{
 						std::string key;
 
-						assert ( (newNode->getValue() != "")
-							&& "ConfigLoader: Root node must have a name");
+						if (newNode->getValue() == "")
+								throw std::runtime_error("Root node must have a name (\"" + newNode->getName() + "\")");
 						key = newNode->getValue();
 
 						m_scriptList.insert(ScriptItem(key, newNode));
