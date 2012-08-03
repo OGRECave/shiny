@@ -244,7 +244,8 @@ namespace sh
 				}
 				else
 					throw std::runtime_error ("unknown command \"" + cmd + "\"");
-				source.replace(pos, (source.find(")")+1)-pos, replaceValue);
+
+				source.replace(pos, (source.find(")", pos)+1)-pos, replaceValue);
 			}
 			else if (isCmd(source, pos, "@shForeach"))
 			{
