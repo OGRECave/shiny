@@ -18,6 +18,7 @@ namespace sh
 		mMaterial = Ogre::MaterialManager::getSingleton().create (name, resourceGroup);
 		mMaterial->removeAllTechniques();
 		mMaterial->createTechnique()->setSchemeName (sDefaultTechniqueName);
+		mMaterial->compile();
 	}
 
 	OgreMaterial::~OgreMaterial()
@@ -57,6 +58,8 @@ namespace sh
 		t->setLodIndex (lodIndex);
 		if (mShadowCasterMaterial != "")
 			t->setShadowCasterMaterial(mShadowCasterMaterial);
+
+		mMaterial->compile();
 
 		return true;
 	}
