@@ -37,7 +37,7 @@ namespace sh
 	{
 		Ogre::MaterialManager::getSingleton().addListener(this);
 
-		if (supportsShaderSerialization() && mFactory->getWriteMicrocodeCache ())
+		if (supportsShaderSerialization())
 			Ogre::GpuProgramManager::getSingletonPtr()->setSaveMicrocodesToCache(true);
 
 		sSerializer = new OgreMaterialSerializer();
