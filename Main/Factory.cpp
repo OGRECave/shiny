@@ -35,13 +35,22 @@ namespace sh
 		, mListener(NULL)
 		, mCurrentConfiguration(NULL)
 		, mCurrentLodConfiguration(NULL)
+		, mReadMicrocodeCache(false)
+		, mWriteMicrocodeCache(false)
+		, mReadSourceCache(false)
+		, mWriteSourceCache(false)
 	{
 		assert (!sThis);
 		sThis = this;
 
 		mPlatform->setFactory(this);
+	}
 
-		if (mPlatform->supportsShaderSerialization ())
+	void Factory::loadAllFiles()
+	{
+		assert(mCurrentLanguage != Language_None);
+
+		if (mPlatform->supportsShaderSerialization () && mReadMicrocodeCache)
 		{
 			std::string file = mPlatform->getCacheFolder () + "/shShaderCache.txt";
 			if (boost::filesystem::exists(file))
@@ -49,11 +58,6 @@ namespace sh
 				mPlatform->deserializeShaders (file);
 			}
 		}
-	}
-
-	void Factory::loadAllFiles()
-	{
-		assert(mCurrentLanguage != Language_None);
 
 		// load configurations
 		{
@@ -266,7 +270,7 @@ namespace sh
 
 	Factory::~Factory ()
 	{
-		if (mPlatform->supportsShaderSerialization ())
+		if (mPlatform->supportsShaderSerialization () && mWriteMicrocodeCache)
 		{
 			std::string file = mPlatform->getCacheFolder () + "/shShaderCache.txt";
 			mPlatform->serializeShaders (file);

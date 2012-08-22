@@ -101,8 +101,28 @@ namespace sh
 		/// Attach a listener for material created events
 		void setMaterialListener (MaterialListener* listener);
 
-		/// call this after you have set up basic stuff, like the shader language.
+		/// Call this after you have set up basic stuff, like the shader language.
 		void loadAllFiles ();
+
+		/// Controls writing of generated shader source code to the cache folder, so that the
+		/// (rather expensive) preprocessing step can be skipped on the next run. See Factory::setReadSourceCache \n
+		/// \note The default is off (no cache writing)
+		void setWriteSourceCache(bool write) { mWriteSourceCache = read; }
+
+		/// Controls reading of generated shader sources from the cache folder
+		/// \note The default is off (no cache reading)
+		/// \note Even if microcode caching is enabled, generating (or caching) the source is still required due to the macros.
+		void setReadSourceCache(bool read) { mReadSourceCache = read; }
+
+		/// Controls writing the microcode of the generated shaders to the cache folder. Microcode is machine independent
+		/// and loads very fast compared to regular compilation. Note that the availability of this feature depends on the \a Platform.
+		/// \note The default is off (no cache writing)
+		void setWriteMicrocodeCache(bool write) { mWriteMicrocodeCache = write; }
+
+		/// Controls reading of shader microcode from the cache folder. Microcode is machine independent
+		/// and loads very fast compared to regular compilation. Note that the availability of this feature depends on the \a Platform.
+		/// \note The default is off (no cache reading)
+		void setReadMicrocodeCache(bool read) { mReadMicrocodeCache = read; }
 
 		static Factory& getInstance();
 		///< Return instance of this class.
@@ -120,6 +140,10 @@ namespace sh
 
 		void addTextureAliasInstance (const std::string& name, TextureUnitState* t);
 		void removeTextureAliasInstances (TextureUnitState* t);
+
+		std::string getCacheFolder () { return mPlatform->getCacheFolder (); }
+		bool getReadSourceCache() { return mReadSourceCache; }
+		bool getWriteSourceCache() { return mReadSourceCache; }
 
 		void setActiveConfiguration (const std::string& configuration);
 		void setActiveLodLevel (int level);
@@ -140,6 +164,11 @@ namespace sh
 		bool mShadersEnabled;
 		bool mShaderDebugOutputEnabled;
 
+		bool mReadMicrocodeCache;
+		bool mWriteMicrocodeCache;
+		bool mReadSourceCache;
+		bool mWriteSourceCache;
+
 		MaterialMap mMaterials;
 		ShaderSetMap mShaderSets;
 		ConfigurationMap mConfigurations;
@@ -151,8 +180,6 @@ namespace sh
 		PropertySetGet* mCurrentLodConfiguration;
 
 		TextureAliasMap mTextureAliases;
-
-		std::string mCachePath;
 
 		Language mCurrentLanguage;
 

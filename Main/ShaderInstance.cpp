@@ -334,55 +334,205 @@ namespace sh
 		std::string source = mParent->getSource();
 		int type = mParent->getType();
 		std::string basePath = mParent->getBasePath();
-
-		std::vector<std::string> definitions;
-
-		if (mParent->getType() == GPT_Vertex)
-			definitions.push_back("SH_VERTEX_SHADER");
-		else
-			definitions.push_back("SH_FRAGMENT_SHADER");
-		definitions.push_back(convertLang(Factory::getInstance().getCurrentLanguage()));
-
-		parse(source, properties);
-
-		if (Factory::getInstance ().getShaderDebugOutputEnabled ())
-			writeDebugFile(source, name + ".pre");
-		else
-		{
-#ifdef SHINY_WRITE_SHADER_DEBUG
-			writeDebugFile(source, name + ".pre");
-#endif
-		}
-
-		// why do we need our own preprocessor? there are several custom commands available in the shader files
-		// (for example for binding uniforms to properties or auto constants) - more below. it is important that these
-		// commands are _only executed if the specific code path actually "survives" the compilation.
-		// thus, we run the code through a preprocessor first to remove the parts that are unused because of
-		// unmet #if conditions (or other preprocessor directives).
-		Preprocessor p;
-		source = p.preprocess(source, basePath, definitions, name);
-
-		// parse counter
-		std::map<int, int> counters;
 		size_t pos;
-		while (true)
+
+		bool readCache = Factory::getInstance ().getReadSourceCache () && boost::filesystem::exists(
+					Factory::getInstance ().getCacheFolder () + "/" + mName);
+		bool writeCache = Factory::getInstance ().getWriteSourceCache ();
+
+
+		if (readCache)
 		{
-			pos = source.find("@shCounter");
-			if (pos == std::string::npos)
-				break;
-
-			size_t end = source.find(")", pos);
-
-			std::vector<std::string> args = extractMacroArguments (pos, source);
-			assert(args.size());
-
-			int index = boost::lexical_cast<int>(args[0]);
-
-			if (counters.find(index) == counters.end())
-				counters[index] = 0;
-
-			source.replace(pos, (end+1)-pos, boost::lexical_cast<std::string>(counters[index]++));
+			std::ifstream ifs( std::string(Factory::getInstance ().getCacheFolder () + "/" + mName).c_str() );
+			std::stringstream ss;
+			ss << ifs.rdbuf();
+			source = ss.str();
 		}
+		else
+		{
+			std::vector<std::string> definitions;
+
+			if (mParent->getType() == GPT_Vertex)
+				definitions.push_back("SH_VERTEX_SHADER");
+			else
+				definitions.push_back("SH_FRAGMENT_SHADER");
+			definitions.push_back(convertLang(Factory::getInstance().getCurrentLanguage()));
+
+			parse(source, properties);
+
+			if (Factory::getInstance ().getShaderDebugOutputEnabled ())
+				writeDebugFile(source, name + ".pre");
+			else
+			{
+	#ifdef SHINY_WRITE_SHADER_DEBUG
+				writeDebugFile(source, name + ".pre");
+	#endif
+			}
+
+			// why do we need our own preprocessor? there are several custom commands available in the shader files
+			// (for example for binding uniforms to properties or auto constants) - more below. it is important that these
+			// commands are _only executed if the specific code path actually "survives" the compilation.
+			// thus, we run the code through a preprocessor first to remove the parts that are unused because of
+			// unmet #if conditions (or other preprocessor directives).
+			Preprocessor p;
+			source = p.preprocess(source, basePath, definitions, name);
+
+			// parse counter
+			std::map<int, int> counters;
+			while (true)
+			{
+				pos = source.find("@shCounter");
+				if (pos == std::string::npos)
+					break;
+
+				size_t end = source.find(")", pos);
+
+				std::vector<std::string> args = extractMacroArguments (pos, source);
+				assert(args.size());
+
+				int index = boost::lexical_cast<int>(args[0]);
+
+				if (counters.find(index) == counters.end())
+					counters[index] = 0;
+
+				source.replace(pos, (end+1)-pos, boost::lexical_cast<std::string>(counters[index]++));
+			}
+
+			// parse passthrough declarations
+			while (true)
+			{
+				pos = source.find("@shAllocatePassthrough");
+				if (pos == std::string::npos)
+					break;
+
+				if (mCurrentPassthrough > 7)
+					throw std::runtime_error ("too many passthrough's requested (max 8)");
+
+				std::vector<std::string> args = extractMacroArguments (pos, source);
+				assert(args.size() == 2);
+
+				size_t end = source.find(")", pos);
+
+				Passthrough passthrough;
+
+				passthrough.num_components = boost::lexical_cast<int>(args[0]);
+				assert (passthrough.num_components != 0);
+
+				std::string passthroughName = args[1];
+				passthrough.lang = Factory::getInstance().getCurrentLanguage ();
+				passthrough.component_start = mCurrentComponent;
+				passthrough.passthrough_number = mCurrentPassthrough;
+
+				mPassthroughMap[passthroughName] = passthrough;
+
+				mCurrentComponent += passthrough.num_components;
+				if (mCurrentComponent > 3)
+				{
+					mCurrentComponent -= 4;
+					++mCurrentPassthrough;
+				}
+
+				source.erase(pos, (end+1)-pos);
+			}
+
+			// passthrough assign
+			while (true)
+			{
+				pos = source.find("@shPassthroughAssign");
+				if (pos == std::string::npos)
+					break;
+
+				std::vector<std::string> args = extractMacroArguments (pos, source);
+				assert(args.size() == 2);
+
+				size_t end = source.find(")", pos);
+
+				std::string passthroughName = args[0];
+				std::string assignTo = args[1];
+
+				assert(mPassthroughMap.find(passthroughName) != mPassthroughMap.end());
+				Passthrough& p = mPassthroughMap[passthroughName];
+
+				source.replace(pos, (end+1)-pos, p.expand_assign(assignTo));
+			}
+
+			// passthrough receive
+			while (true)
+			{
+				pos = source.find("@shPassthroughReceive");
+				if (pos == std::string::npos)
+					break;
+
+				std::vector<std::string> args = extractMacroArguments (pos, source);
+				assert(args.size() == 1);
+
+				size_t end = source.find(")", pos);
+				std::string passthroughName = args[0];
+
+				assert(mPassthroughMap.find(passthroughName) != mPassthroughMap.end());
+				Passthrough& p = mPassthroughMap[passthroughName];
+
+				source.replace(pos, (end+1)-pos, p.expand_receive());
+			}
+
+			// passthrough vertex outputs
+			while (true)
+			{
+				pos = source.find("@shPassthroughVertexOutputs");
+				if (pos == std::string::npos)
+					break;
+
+				std::string result;
+				for (int i = 0; i < mCurrentPassthrough+1; ++i)
+				{
+					// not using newlines here, otherwise the line numbers reported by compiler would be messed up..
+					if (Factory::getInstance().getCurrentLanguage () == Language_CG || Factory::getInstance().getCurrentLanguage () == Language_HLSL)
+						result += ", out float4 passthrough" + boost::lexical_cast<std::string>(i) + " : TEXCOORD" + boost::lexical_cast<std::string>(i);
+
+					/*
+					else
+						result += "out vec4 passthrough" + boost::lexical_cast<std::string>(i) + "; ";
+						*/
+					else
+						result += "varying vec4 passthrough" + boost::lexical_cast<std::string>(i) + "; ";
+				}
+
+				source.replace(pos, std::string("@shPassthroughVertexOutputs").length(), result);
+			}
+
+			// passthrough fragment inputs
+			while (true)
+			{
+				pos = source.find("@shPassthroughFragmentInputs");
+				if (pos == std::string::npos)
+					break;
+
+				std::string result;
+				for (int i = 0; i < mCurrentPassthrough+1; ++i)
+				{
+					// not using newlines here, otherwise the line numbers reported by compiler would be messed up..
+					if (Factory::getInstance().getCurrentLanguage () == Language_CG || Factory::getInstance().getCurrentLanguage () == Language_HLSL)
+						result += ", in float4 passthrough" + boost::lexical_cast<std::string>(i) + " : TEXCOORD" + boost::lexical_cast<std::string>(i);
+					/*
+					else
+						result += "in vec4 passthrough" + boost::lexical_cast<std::string>(i) + "; ";
+						*/
+					else
+						result += "varying vec4 passthrough" + boost::lexical_cast<std::string>(i) + "; ";
+				}
+
+				source.replace(pos, std::string("@shPassthroughFragmentInputs").length(), result);
+			}
+		}
+
+		// save to cache _here_ - we want to preserve some macros
+		if (writeCache && !readCache)
+		{
+			std::ofstream of (std::string(Factory::getInstance ().getCacheFolder () + "/" + mName).c_str(), std::ios_base::out);
+			of.write(source.c_str(), source.size());
+			of.close();
+		}
+
 
 		// parse shared parameters
 		while (true)
@@ -478,132 +628,6 @@ namespace sh
 			source.erase(pos, (end+1)-pos);
 		}
 
-		// parse passthrough declarations
-		while (true)
-		{
-			pos = source.find("@shAllocatePassthrough");
-			if (pos == std::string::npos)
-				break;
-
-			if (mCurrentPassthrough > 7)
-				throw std::runtime_error ("too many passthrough's requested (max 8)");
-
-			std::vector<std::string> args = extractMacroArguments (pos, source);
-			assert(args.size() == 2);
-
-			size_t end = source.find(")", pos);
-
-			Passthrough passthrough;
-
-			passthrough.num_components = boost::lexical_cast<int>(args[0]);
-			assert (passthrough.num_components != 0);
-
-			std::string passthroughName = args[1];
-			passthrough.lang = Factory::getInstance().getCurrentLanguage ();
-			passthrough.component_start = mCurrentComponent;
-			passthrough.passthrough_number = mCurrentPassthrough;
-
-			mPassthroughMap[passthroughName] = passthrough;
-
-			mCurrentComponent += passthrough.num_components;
-			if (mCurrentComponent > 3)
-			{
-				mCurrentComponent -= 4;
-				++mCurrentPassthrough;
-			}
-
-			source.erase(pos, (end+1)-pos);
-		}
-
-		// passthrough assign
-		while (true)
-		{
-			pos = source.find("@shPassthroughAssign");
-			if (pos == std::string::npos)
-				break;
-
-			std::vector<std::string> args = extractMacroArguments (pos, source);
-			assert(args.size() == 2);
-
-			size_t end = source.find(")", pos);
-
-			std::string passthroughName = args[0];
-			std::string assignTo = args[1];
-
-			assert(mPassthroughMap.find(passthroughName) != mPassthroughMap.end());
-			Passthrough& p = mPassthroughMap[passthroughName];
-
-			source.replace(pos, (end+1)-pos, p.expand_assign(assignTo));
-		}
-
-		// passthrough receive
-		while (true)
-		{
-			pos = source.find("@shPassthroughReceive");
-			if (pos == std::string::npos)
-				break;
-
-			std::vector<std::string> args = extractMacroArguments (pos, source);
-			assert(args.size() == 1);
-
-			size_t end = source.find(")", pos);
-			std::string passthroughName = args[0];
-
-			assert(mPassthroughMap.find(passthroughName) != mPassthroughMap.end());
-			Passthrough& p = mPassthroughMap[passthroughName];
-
-			source.replace(pos, (end+1)-pos, p.expand_receive());
-		}
-
-		// passthrough vertex outputs
-		while (true)
-		{
-			pos = source.find("@shPassthroughVertexOutputs");
-			if (pos == std::string::npos)
-				break;
-
-			std::string result;
-			for (int i = 0; i < mCurrentPassthrough+1; ++i)
-			{
-				// not using newlines here, otherwise the line numbers reported by compiler would be messed up..
-				if (Factory::getInstance().getCurrentLanguage () == Language_CG || Factory::getInstance().getCurrentLanguage () == Language_HLSL)
-					result += ", out float4 passthrough" + boost::lexical_cast<std::string>(i) + " : TEXCOORD" + boost::lexical_cast<std::string>(i);
-
-				/*
-				else
-					result += "out vec4 passthrough" + boost::lexical_cast<std::string>(i) + "; ";
-					*/
-				else
-					result += "varying vec4 passthrough" + boost::lexical_cast<std::string>(i) + "; ";
-			}
-
-			source.replace(pos, std::string("@shPassthroughVertexOutputs").length(), result);
-		}
-
-		// passthrough fragment inputs
-		while (true)
-		{
-			pos = source.find("@shPassthroughFragmentInputs");
-			if (pos == std::string::npos)
-				break;
-
-			std::string result;
-			for (int i = 0; i < mCurrentPassthrough+1; ++i)
-			{
-				// not using newlines here, otherwise the line numbers reported by compiler would be messed up..
-				if (Factory::getInstance().getCurrentLanguage () == Language_CG || Factory::getInstance().getCurrentLanguage () == Language_HLSL)
-					result += ", in float4 passthrough" + boost::lexical_cast<std::string>(i) + " : TEXCOORD" + boost::lexical_cast<std::string>(i);
-				/*
-				else
-					result += "in vec4 passthrough" + boost::lexical_cast<std::string>(i) + "; ";
-					*/
-				else
-					result += "varying vec4 passthrough" + boost::lexical_cast<std::string>(i) + "; ";
-			}
-
-			source.replace(pos, std::string("@shPassthroughFragmentInputs").length(), result);
-		}
-
 		// convert any left-over @'s to #
 		boost::algorithm::replace_all(source, "@", "#");
 
@@ -620,8 +644,6 @@ namespace sh
 			mProgram = boost::shared_ptr<GpuProgram>(platform->createGpuProgram(GPT_Vertex, "", mName, profile, source, Factory::getInstance().getCurrentLanguage()));
 		else if (type == GPT_Fragment)
 			mProgram = boost::shared_ptr<GpuProgram>(platform->createGpuProgram(GPT_Fragment, "", mName, profile, source, Factory::getInstance().getCurrentLanguage()));
-
-		//std::cout << source << std::endl;
 
 
 		if (Factory::getInstance ().getShaderDebugOutputEnabled ())
