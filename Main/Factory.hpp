@@ -144,7 +144,10 @@ namespace sh
 		std::string getCacheFolder () { return mPlatform->getCacheFolder (); }
 		bool getReadSourceCache() { return mReadSourceCache; }
 		bool getWriteSourceCache() { return mReadSourceCache; }
+	public:
+		bool getWriteMicrocodeCache() { return mWriteMicrocodeCache; } // Fixme
 
+	private:
 		void setActiveConfiguration (const std::string& configuration);
 		void setActiveLodLevel (int level);
 
