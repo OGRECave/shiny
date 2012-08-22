@@ -37,8 +37,8 @@ namespace sh
 	{
 		Ogre::MaterialManager::getSingleton().addListener(this);
 
-		// This causes crashes on some computers when using GLSL shaders. Ogre Bug :/
-		//Ogre::GpuProgramManager::getSingletonPtr()->setSaveMicrocodesToCache(true);
+		if (supportsShaderSerialization())
+			Ogre::GpuProgramManager::getSingletonPtr()->setSaveMicrocodesToCache(true);
 
 		sSerializer = new OgreMaterialSerializer();
 	}
@@ -59,13 +59,11 @@ namespace sh
 		return Ogre::GpuProgramManager::getSingleton().isSyntaxSupported(profile);
 	}
 
-	/*
 	bool OgrePlatform::supportsShaderSerialization ()
 	{
-		// not working in GLSL for some reason, ogre bug?
-		return (mFactory->getCurrentLanguage() != Language_GLSL) && mShaderCachingEnabled;
+		// Not very reliable in OpenGL mode (requires extension), and somehow doesn't work on linux even if the extension is present
+		return Ogre::Root::getSingleton ().getRenderSystem ()->getName ().find("OpenGL") != std::string::npos;
 	}
-	*/
 
 	bool OgrePlatform::supportsMaterialQueuedListener ()
 	{
@@ -102,7 +100,6 @@ namespace sh
 			return 0; // material does not belong to us
 	}
 
-	/*
 	void OgrePlatform::serializeShaders (const std::string& file)
 	{
 		std::fstream output;
@@ -118,7 +115,6 @@ namespace sh
 		Ogre::DataStreamPtr shaderCache(OGRE_NEW Ogre::FileStreamDataStream(file, &inp, false));
 		Ogre::GpuProgramManager::getSingleton().loadMicrocodeCache(shaderCache);
 	}
-	*/
 
 	void OgrePlatform::setSharedParameter (const std::string& name, PropertyValuePtr value)
 	{
