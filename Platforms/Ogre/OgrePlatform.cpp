@@ -62,7 +62,7 @@ namespace sh
 	bool OgrePlatform::supportsShaderSerialization ()
 	{
 		// Not very reliable in OpenGL mode (requires extension), and somehow doesn't work on linux even if the extension is present
-		return Ogre::Root::getSingleton ().getRenderSystem ()->getName ().find("OpenGL") != std::string::npos;
+		return Ogre::Root::getSingleton ().getRenderSystem ()->getName ().find("OpenGL") == std::string::npos;
 	}
 
 	bool OgrePlatform::supportsMaterialQueuedListener ()
