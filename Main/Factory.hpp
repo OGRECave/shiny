@@ -107,7 +107,7 @@ namespace sh
 		/// Controls writing of generated shader source code to the cache folder, so that the
 		/// (rather expensive) preprocessing step can be skipped on the next run. See Factory::setReadSourceCache \n
 		/// \note The default is off (no cache writing)
-		void setWriteSourceCache(bool write) { mWriteSourceCache = read; }
+		void setWriteSourceCache(bool write) { mWriteSourceCache = write; }
 
 		/// Controls reading of generated shader sources from the cache folder
 		/// \note The default is off (no cache reading)
