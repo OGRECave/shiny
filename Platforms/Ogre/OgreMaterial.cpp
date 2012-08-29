@@ -78,7 +78,13 @@ namespace sh
 				return mMaterial->getTechnique(i);
 			}
 		}
-		assert(0);
+
+		// Prepare and throw error message
+		std::stringstream message;
+		message << "Could not find configurationName '" << configurationName
+				<< "' and lodIndex " << lodIndex;
+
+		throw std::runtime_error(message.str());
 	}
 
 	void OgreMaterial::setShadowCasterMaterial (const std::string& name)
