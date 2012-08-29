@@ -65,6 +65,6 @@ namespace sh
 		else if (d->dataType == Ogre::GpuProgramParameters::ACDT_INT)
 			mProgram->getDefaultParameters()->setNamedAutoConstant (name, t, extraInfo == "" ? 0 : boost::lexical_cast<int>(extraInfo));
 		else if (d->dataType == Ogre::GpuProgramParameters::ACDT_REAL)
-			mProgram->getDefaultParameters()->setNamedAutoConstant (name, t, extraInfo == "" ? 0.f : boost::lexical_cast<float>(extraInfo));
+			mProgram->getDefaultParameters()->setNamedAutoConstantReal (name, t, extraInfo == "" ? 0.f : boost::lexical_cast<float>(extraInfo));
 	}
 }
