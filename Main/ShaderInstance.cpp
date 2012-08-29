@@ -374,8 +374,7 @@ namespace sh
 			// commands are _only executed if the specific code path actually "survives" the compilation.
 			// thus, we run the code through a preprocessor first to remove the parts that are unused because of
 			// unmet #if conditions (or other preprocessor directives).
-			Preprocessor p;
-			source = p.preprocess(source, basePath, definitions, name);
+			Preprocessor::preprocess(source, basePath, definitions, name);
 
 			// parse counter
 			std::map<int, int> counters;
