@@ -27,6 +27,8 @@ namespace sh
 	public:
 		PropertyValue() {}
 
+		virtual ~PropertyValue() {}
+
 		std::string _getStringValue() { return mStringValue; }
 
 		virtual std::string serialize() = 0;
@@ -146,6 +148,8 @@ namespace sh
 	public:
 		PropertySetGet (PropertySetGet* parent);
 		PropertySetGet ();
+
+		virtual ~PropertySetGet() {}
 
 		void copyAll (PropertySet* target, PropertySetGet* context); ///< call setProperty for each property/value pair stored in \a this
 
