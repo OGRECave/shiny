@@ -56,7 +56,7 @@ namespace
 	void writeDebugFile (const std::string& content, const std::string& filename)
 	{
 		boost::filesystem::path full_path(boost::filesystem::current_path());
-		std::ofstream of ((full_path / filename ).c_str() , std::ios_base::out);
+		std::ofstream of ((full_path / filename ).string().c_str() , std::ios_base::out);
 		of.write(content.c_str(), content.size());
 		of.close();
 	}
