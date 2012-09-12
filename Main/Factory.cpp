@@ -298,6 +298,9 @@ namespace sh
 	{
 		MaterialInstance* m = searchInstance (name);
 
+		if (configuration != "Default" && mConfigurations.find(configuration) == mConfigurations.end())
+			return NULL;
+
 		if (m)
 		{
 			// make sure all lod techniques below (higher lod) exist
