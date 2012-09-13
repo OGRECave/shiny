@@ -511,4 +511,11 @@ namespace sh
 
 		return p;
 	}
+
+	void Factory::_ensureMaterial(const std::string& name, const std::string& configuration)
+	{
+		MaterialInstance* m = searchInstance (name);
+		assert(m);
+		m->createForConfiguration (configuration, 0);
+	}
 }
