@@ -337,7 +337,8 @@ namespace sh
 		size_t pos;
 
 		bool readCache = Factory::getInstance ().getReadSourceCache () && boost::filesystem::exists(
-					Factory::getInstance ().getCacheFolder () + "/" + mName);
+					Factory::getInstance ().getCacheFolder () + "/" + mName)
+				&& !mParent->isDirty ();
 		bool writeCache = Factory::getInstance ().getWriteSourceCache ();
 
 

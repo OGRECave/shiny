@@ -16,6 +16,7 @@ namespace sh
 	typedef std::map<std::string, ShaderSet> ShaderSetMap;
 	typedef std::map<std::string, PropertySetGet> ConfigurationMap;
 	typedef std::map<int, PropertySetGet> LodConfigurationMap;
+	typedef std::map<std::string, int> LastModifiedMap;
 
 	typedef std::map<std::string, std::string> TextureAliasMap;
 
@@ -179,6 +180,7 @@ namespace sh
 		ShaderSetMap mShaderSets;
 		ConfigurationMap mConfigurations;
 		LodConfigurationMap mLodConfigurations;
+		LastModifiedMap mShadersLastModified;
 
 		PropertySetGet mGlobalSettings;
 

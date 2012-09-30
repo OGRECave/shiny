@@ -50,12 +50,24 @@ namespace sh
 	{
 		assert(mCurrentLanguage != Language_None);
 
-		if (mPlatform->supportsShaderSerialization () && mReadMicrocodeCache)
+		bool anyShaderDirty = false;
+
+		if (boost::filesystem::exists (mPlatform->getCacheFolder () + "/lastModified.txt"))
 		{
-			std::string file = mPlatform->getCacheFolder () + "/shShaderCache.txt";
-			if (boost::filesystem::exists(file))
+			std::ifstream file;
+			file.open(std::string(mPlatform->getCacheFolder () + "/lastModified.txt").c_str());
+
+			std::string line;
+			while (getline(file, line))
 			{
-				mPlatform->deserializeShaders (file);
+				std::string sourceFile = line;
+
+				if (!getline(file, line))
+					assert(0);
+
+				int modified = boost::lexical_cast<int>(line);
+
+				mShadersLastModified[sourceFile] = modified;
 			}
 		}
 
@@ -170,11 +182,23 @@ namespace sh
 					}
 				}
 
+				std::string sourceFile = mPlatform->getBasePath() + "/" + it->second->findChild("source")->getValue();
+
 				ShaderSet newSet (it->second->findChild("type")->getValue(), cg_profile, hlsl_profile,
-								  mPlatform->getBasePath() + "/" + it->second->findChild("source")->getValue(),
+								  sourceFile,
 								  mPlatform->getBasePath(),
 								  it->first,
 								  &mGlobalSettings);
+
+				int lastModified = boost::filesystem::last_write_time (boost::filesystem::path(sourceFile));
+				if (mShadersLastModified.find(sourceFile) != mShadersLastModified.end()
+						&& mShadersLastModified[sourceFile] != lastModified)
+				{
+					newSet.markDirty ();
+					anyShaderDirty = true;
+				}
+
+				mShadersLastModified[sourceFile] = lastModified;
 
 				mShaderSets.insert(std::make_pair(it->first, newSet));
 			}
@@ -268,6 +292,15 @@ namespace sh
 				}
 			}
 		}
+
+		if (mPlatform->supportsShaderSerialization () && mReadMicrocodeCache && !anyShaderDirty)
+		{
+			std::string file = mPlatform->getCacheFolder () + "/shShaderCache.txt";
+			if (boost::filesystem::exists(file))
+			{
+				mPlatform->deserializeShaders (file);
+			}
+		}
 	}
 
 	Factory::~Factory ()
@@ -276,6 +309,20 @@ namespace sh
 		{
 			std::string file = mPlatform->getCacheFolder () + "/shShaderCache.txt";
 			mPlatform->serializeShaders (file);
+		}
+
+		if (mReadSourceCache)
+		{
+			// save the last modified time of shader sources
+			std::ofstream file;
+			file.open(std::string(mPlatform->getCacheFolder () + "/lastModified.txt").c_str());
+
+			for (LastModifiedMap::const_iterator it = mShadersLastModified.begin(); it != mShadersLastModified.end(); ++it)
+			{
+				file << it->first << "\n" << it->second << std::endl;
+			}
+
+			file.close();
 		}
 
 		delete mPlatform;
