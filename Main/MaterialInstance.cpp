@@ -196,4 +196,23 @@ namespace sh
 		if (mMaterial.get())
 			destroyAll();
 	}
+
+	void MaterialInstance::save (std::ofstream& stream)
+	{
+		stream << "material " << mName << "\n"
+			   << "{\n";
+
+		if (mParent)
+		{
+			stream << "\t" << static_cast<MaterialInstance*>(mParent)->getName() << "\n";
+		}
+
+		const PropertyMap& properties = listProperties ();
+		for (PropertyMap::const_iterator it = properties.begin(); it != properties.end(); ++it)
+		{
+			stream << "\t" << it->first << " " << retrieveValue<StringValue>(getProperty(it->first), NULL).get() << "\n";
+		}
+
+		stream << "}\n";
+	}
 }

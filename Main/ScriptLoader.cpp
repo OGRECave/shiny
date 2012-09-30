@@ -16,6 +16,7 @@ namespace sh
 			boost::filesystem::path p(*dir);
 			if(p.extension() == c->m_fileEnding)
 			{
+				c->m_currentFileName = (*dir).path().string();
 				std::ifstream in((*dir).path().string().c_str(), std::ios::binary);
 				c->parseScript(in);
 			}
@@ -247,6 +248,8 @@ namespace sh
 						_nextToken(stream);
 						_skipNewLines(stream);
 					}
+
+					newNode->m_fileName = m_currentFileName;
 
 					break;
 				}

@@ -2,6 +2,7 @@
 #define SH_MATERIALINSTANCE_H
 
 #include <vector>
+#include <fstream>
 
 #include "PropertyBase.hpp"
 #include "Platform.hpp"
@@ -64,6 +65,15 @@ namespace sh
 
 		void setShadersEnabled (bool enabled);
 
+		void setSourceFile(const std::string& sourceFile) { mSourceFile = sourceFile; }
+
+		std::string getSourceFile() { return mSourceFile; }
+		///< get the name of the file this material was read from, or empty if it was created dynamically by code
+
+		void save (std::ofstream& stream);
+		///< this will only save the properties, not the passes and texture units, and as such
+		/// is only intended to be used for derived materials
+
 		friend class Factory;
 
 
@@ -80,6 +90,8 @@ namespace sh
 		PassVector mPasses;
 
 		std::string mName;
+
+		std::string mSourceFile;
 
 		boost::shared_ptr<Material> mMaterial;
 

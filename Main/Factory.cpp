@@ -200,6 +200,8 @@ namespace sh
 				if (!mShadersEnabled)
 					newInstance.setShadersEnabled (false);
 
+				newInstance.setSourceFile (it->second->m_fileName);
+
 				std::vector<ScriptNode*> props = it->second->getChildren();
 				for (std::vector<ScriptNode*>::const_iterator propIt = props.begin(); propIt != props.end(); ++propIt)
 				{
@@ -510,5 +512,18 @@ namespace sh
 		}
 
 		return p;
+	}
+
+	void Factory::saveMaterials (const std::string& filename)
+	{
+		std::ofstream file;
+		file.open (filename.c_str ());
+
+		for (MaterialMap::iterator it = mMaterials.begin(); it != mMaterials.end(); ++it)
+		{
+			it->second.save(file);
+		}
+
+		file.close();
 	}
 }

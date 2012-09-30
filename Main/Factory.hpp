@@ -124,6 +124,9 @@ namespace sh
 		/// \note The default is off (no cache reading)
 		void setReadMicrocodeCache(bool read) { mReadMicrocodeCache = read; }
 
+		/// Saves all the materials that were initially loaded from the file with this name
+		void saveMaterials (const std::string& filename);
+
 		static Factory& getInstance();
 		///< Return instance of this class.
 

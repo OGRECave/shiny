@@ -38,6 +38,7 @@ namespace sh
 
 		void parseScript(std::ifstream &stream);
 
+		std::string m_currentFileName;
 
 	protected:
 
@@ -112,11 +113,15 @@ namespace sh
 			return m_parent;
 		}
 
+		std::string m_fileName;
+
+
 	private:
 		std::string m_name;
 		std::string m_value;
 		std::vector<ScriptNode*> m_children;
 		ScriptNode *m_parent;
+
 
 		int m_lastChildFound;  //The last child node's index found with a call to findChild()
 
