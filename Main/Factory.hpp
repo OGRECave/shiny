@@ -133,6 +133,10 @@ namespace sh
 
 		static Factory* getInstancePtr();
 
+		/// Make sure a material technique is loaded.\n
+		/// You will probably never have to use this.
+		void _ensureMaterial(const std::string& name, const std::string& configuration);
+
 	private:
 
 		MaterialInstance* requestMaterial (const std::string& name, const std::string& configuration, unsigned short lodIndex);
