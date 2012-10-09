@@ -21,6 +21,6 @@ namespace sh
 	private:
 		std::string mName;
 	};
-};
+}
 
 #endif
