@@ -53,7 +53,7 @@ namespace sh
 			TOKEN_NewLine,
 			TOKEN_OpenBrace,
 			TOKEN_CloseBrace,
-			TOKEN_EOF,
+			TOKEN_EOF
 		};
 
 		Token tok, lastTok;
