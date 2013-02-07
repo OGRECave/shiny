@@ -182,18 +182,19 @@ namespace sh
 					}
 				}
 
-				std::string sourceFile = mPlatform->getBasePath() + "/" + it->second->findChild("source")->getValue();
+				std::string sourceAbsolute = mPlatform->getBasePath() + "/" + it->second->findChild("source")->getValue();
+				std::string sourceRelative = it->second->findChild("source")->getValue();
 
 				ShaderSet newSet (it->second->findChild("type")->getValue(), cg_profile, hlsl_profile,
-								  sourceFile,
+								  sourceAbsolute,
 								  mPlatform->getBasePath(),
 								  it->first,
 								  &mGlobalSettings);
 
-				int lastModified = boost::filesystem::last_write_time (boost::filesystem::path(sourceFile));
-				mShadersLastModifiedNew[sourceFile] = lastModified;
-				if (mShadersLastModified.find(sourceFile) != mShadersLastModified.end()
-						&& mShadersLastModified[sourceFile] != lastModified)
+				int lastModified = boost::filesystem::last_write_time (boost::filesystem::path(sourceAbsolute));
+				mShadersLastModifiedNew[sourceRelative] = lastModified;
+				if (mShadersLastModified.find(sourceRelative) != mShadersLastModified.end()
+						&& mShadersLastModified[sourceRelative] != lastModified)
 				{
 					// delete any outdated shaders based on this shader set.
 					if ( boost::filesystem::exists(mPlatform->getCacheFolder())
