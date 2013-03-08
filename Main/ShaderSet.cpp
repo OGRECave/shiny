@@ -6,6 +6,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/filesystem.hpp>
 
 #include "Factory.hpp"
 
@@ -25,6 +26,10 @@ namespace sh
 
 		std::ifstream stream(sourceFile.c_str(), std::ifstream::in);
 		std::stringstream buffer;
+
+		boost::filesystem::path p (sourceFile);
+		p = p.branch_path();
+		mBasePath = p.string();
 
 		buffer << stream.rdbuf();
 		stream.close();
