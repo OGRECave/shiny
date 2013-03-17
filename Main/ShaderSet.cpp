@@ -57,6 +57,12 @@ namespace sh
 						size_t start = currentToken.find('(')+1;
 						mGlobalSettings.push_back(currentToken.substr(start, currentToken.find(')')-start));
 					}
+					else if (boost::starts_with(currentToken, "@shPropertyHasValue"))
+					{
+						assert ((currentToken.find('(') != std::string::npos) && (currentToken.find(')') != std::string::npos));
+						size_t start = currentToken.find('(')+1;
+						mPropertiesToExist.push_back(currentToken.substr(start, currentToken.find(')')-start));
+					}
 					else if (boost::starts_with(currentToken, "@shPropertyEqual"))
 					{
 						assert ((currentToken.find('(') != std::string::npos) && (currentToken.find(')') != std::string::npos)
@@ -139,6 +145,11 @@ namespace sh
 		for (std::vector <std::string>::iterator it = mGlobalSettings.begin(); it != mGlobalSettings.end(); ++it)
 		{
 			boost::hash_combine(seed, retrieveValue<StringValue>(currentGlobalSettings->getProperty(*it), NULL).get());
+		}
+		for (std::vector<std::string>::iterator it = mPropertiesToExist.begin(); it != mPropertiesToExist.end(); ++it)
+		{
+			std::string v = retrieveValue<StringValue>(properties->getProperty(*it), properties->getContext()).get();
+			boost::hash_combine(seed, static_cast<bool>(v != ""));
 		}
 		boost::hash_combine(seed, static_cast<int>(Factory::getInstance().getCurrentLanguage()));
 		return seed;
