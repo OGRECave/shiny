@@ -76,7 +76,7 @@ namespace sh
 
 		// get passes of the top-most parent
 		PassVector passes = getPasses();
-		if (passes.size() == 0)
+		if (passes.empty())
 			throw std::runtime_error ("material \"" + mName + "\" does not have any passes");
 
 		for (PassVector::iterator it = passes.begin(); it != passes.end(); ++it)

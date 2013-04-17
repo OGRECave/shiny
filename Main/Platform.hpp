@@ -24,6 +24,7 @@ namespace sh
 	class GpuProgram
 	{
 	public:
+        virtual ~GpuProgram() {}
 		virtual bool getSupported () = 0; ///< @return true if the compilation was successful
 
 		/// @param name name of the uniform in the shader
@@ -35,8 +36,7 @@ namespace sh
 	class TextureUnitState : public PropertySet
 	{
 	public:
-		virtual ~TextureUnitState();
-
+        virtual ~TextureUnitState();
 		virtual void setTextureName (const std::string& textureName) = 0;
 
 	protected:

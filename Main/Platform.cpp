@@ -10,6 +10,7 @@ namespace sh
 		: mBasePath(basePath)
 		, mCacheFolder("./")
 		, mShaderCachingEnabled(false)
+		, mFactory(NULL)
 	{
 	}
 

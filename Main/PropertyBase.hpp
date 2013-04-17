@@ -133,6 +133,7 @@ namespace sh
 	class PropertySet
 	{
 	public:
+        virtual ~PropertySet() {}
 		void setProperty (const std::string& name, PropertyValuePtr& value, PropertySetGet* context);
 
 	protected:
