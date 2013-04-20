@@ -148,7 +148,7 @@ namespace sh
 				if (  (foundVertex || foundFragment)
 						|| (((!useShaders || (!hasVertex || !hasFragment)) && allowFixedFunction) && texIt->hasProperty("create_in_ffp") && retrieveValue<BooleanValue>(texIt->getProperty("create_in_ffp"), this).get()))
 				{
-					boost::shared_ptr<TextureUnitState> texUnit = pass->createTextureUnitState ();
+					boost::shared_ptr<TextureUnitState> texUnit = pass->createTextureUnitState (texIt->getName());
 					texIt->copyAll (texUnit.get(), context);
 
 					mTexUnits.push_back(texUnit);

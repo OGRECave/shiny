@@ -46,7 +46,7 @@ namespace sh
 	class Pass : public PropertySet
 	{
 	public:
-		virtual boost::shared_ptr<TextureUnitState> createTextureUnitState () = 0;
+		virtual boost::shared_ptr<TextureUnitState> createTextureUnitState (const std::string& name) = 0;
 		virtual void assignProgram (GpuProgramType type, const std::string& name) = 0;
 
 		/// @param type gpu program type
