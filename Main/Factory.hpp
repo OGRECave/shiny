@@ -163,6 +163,12 @@ namespace sh
 		/// through the Ogre API. Luckily, this is already fixed in Ogre 1.9.
 		void doMonitorShaderFiles();
 
+		/// Unloads all materials that are currently not referenced. This will not unload the textures themselves,
+		/// but it will let go of the SharedPtr's to the textures, so that you may unload them if you so desire. \n
+		/// A good time to call this would be after a new level has been loaded, but just calling it occasionally after a period
+		/// of time should work just fine too.
+		void unloadUnreferencedMaterials();
+
 		void destroyConfiguration (const std::string& name);
 
 		void notifyConfigurationChanged();

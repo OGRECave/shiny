@@ -777,6 +777,15 @@ namespace sh
 		return errors;
 	}
 
+	void Factory::unloadUnreferencedMaterials()
+	{
+		for (MaterialMap::iterator it = mMaterials.begin(); it != mMaterials.end(); ++it)
+		{
+			if (it->second.getMaterial()->isUnreferenced())
+				it->second.destroyAll();
+		}
+	}
+
 	void Configuration::save(const std::string& name, std::ofstream &stream)
 	{
 		stream << "configuration " << name << '\n';

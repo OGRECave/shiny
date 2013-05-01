@@ -1,6 +1,7 @@
 #include "MaterialInstance.hpp"
 
 #include <stdexcept>
+#include <iostream>
 
 #include "Factory.hpp"
 #include "ShaderSet.hpp"
@@ -61,6 +62,7 @@ namespace sh
 		if (mFailedToCreate)
 			return false;
 		try{
+			mMaterial->ensureLoaded();
 			bool res = mMaterial->createConfiguration(configuration, lodIndex);
 			if (!res)
 				return false; // listener was false positive
