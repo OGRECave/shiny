@@ -22,8 +22,10 @@ namespace
 			return "SH_CG";
 		else if (lang == sh::Language_HLSL)
 			return "SH_HLSL";
-		else //if (lang == sh::Language_GLSL)
+		else if (lang == sh::Language_GLSL)
 			return "SH_GLSL";
+		else if (lang == sh::Language_GLSLES)
+			return "SH_GLSLES";
 	}
 
 	char getComponent(int num)
