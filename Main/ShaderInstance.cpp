@@ -26,6 +26,7 @@ namespace
 			return "SH_GLSL";
 		else if (lang == sh::Language_GLSLES)
 			return "SH_GLSLES";
+		throw std::runtime_error("invalid language");
 	}
 
 	char getComponent(int num)
