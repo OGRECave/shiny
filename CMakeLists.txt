@@ -10,7 +10,7 @@ option(SHINY_BUILD_OGRE_PLATFORM "build the Ogre platform" ON)
 set(SHINY_LIBRARY "shiny")
 set(SHINY_OGREPLATFORM_LIBRARY "shiny.OgrePlatform")
 
-# Sources
+# Sources of shiny
 set(SOURCE_FILES
     Main/Factory.cpp
     Main/MaterialInstance.cpp
@@ -24,17 +24,6 @@ set(SOURCE_FILES
     Main/ShaderSet.cpp
 )
 
-set(OGRE_PLATFORM_SOURCE_FILES
-    Platforms/Ogre/OgreGpuProgram.cpp
-    Platforms/Ogre/OgreMaterial.cpp
-    Platforms/Ogre/OgreMaterialSerializer.cpp
-    Platforms/Ogre/OgrePass.cpp
-    Platforms/Ogre/OgrePlatform.cpp
-    Platforms/Ogre/OgreTextureUnitState.cpp
-)
-
-file(GLOB OGRE_PLATFORM_SOURCE_FILES Platforms/Ogre/*.cpp)
-
 include_directories(${Boost_INCLUDE_DIRS})
 add_definitions(-DBOOST_ALL_NO_LIB)
 add_library(${SHINY_LIBRARY} STATIC ${SOURCE_FILES})
@@ -46,8 +35,21 @@ if (SHINY_BUILD_OGRE_PLATFORM)
         find_package(OGRE REQUIRED)
     endif()
     include_directories(${Boost_INCLUDE_DIRS} ${OGRE_INCLUDE_DIRS})
+
+    # Sources of shiny.OgrePlatform
+    set(OGRE_PLATFORM_SOURCE_FILES
+        Platforms/Ogre/OgreGpuProgram.cpp
+        Platforms/Ogre/OgreMaterial.cpp
+        Platforms/Ogre/OgreMaterialSerializer.cpp
+        Platforms/Ogre/OgrePass.cpp
+        Platforms/Ogre/OgrePlatform.cpp
+        Platforms/Ogre/OgreTextureUnitState.cpp
+    )
+    file(GLOB OGRE_PLATFORM_SOURCE_FILES Platforms/Ogre/*.cpp)
+
     add_definitions(-DBOOST_ALL_NO_LIB)
     add_library(${SHINY_OGREPLATFORM_LIBRARY} STATIC ${OGRE_PLATFORM_SOURCE_FILES})
+    add_dependencies(${SHINY_OGREPLATFORM_LIBRARY} ${SHINY_LIBRARY})
     set(SHINY_LIBRARIES ${SHINY_LIBRARIES} ${SHINY_OGREPLATFORM_LIBRARY})
 endif()
 
