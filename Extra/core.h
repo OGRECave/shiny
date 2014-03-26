@@ -1,7 +1,7 @@
 #if SH_HLSL == 1 || SH_CG == 1
 
     #define shTexture2D sampler2D
-	#define shTexture3D sampler3D 
+    #define shTexture3D sampler3D 
     #define shSample(tex, coord) tex2D(tex, coord)
     #define shCubicSample(tex, coord) texCUBE(tex, coord)
     #define shLerp(a, b, t) lerp(a, b, t)
@@ -9,7 +9,7 @@
 
     #define shSampler2D(name) , uniform sampler2D name : register(s@shCounter(0)) @shUseSampler(name)
 
-	#define	shSampler3D(name) , uniform sampler3D name : register(s@shCounter(0)) @shUseSampler(name)
+    #define shSampler3D(name) , uniform sampler3D name : register(s@shCounter(0)) @shUseSampler(name)
 
     #define shSamplerCube(name) , uniform samplerCUBE name : register(s@shCounter(0)) @shUseSampler(name)
 
@@ -70,7 +70,7 @@
     #define int3 ivec3
     #define int4 ivec4
     #define shTexture2D sampler2D
-	#define shTexture3D sampler3D 
+    #define shTexture3D sampler3D 
     #define shSample(tex, coord) texture2D(tex, coord)
     #define shCubicSample(tex, coord) textureCube(tex, coord)
     #define shLerp(a, b, t) mix(a, b, t)
@@ -80,7 +80,7 @@
 
     #define shSampler2D(name) uniform sampler2D name; @shUseSampler(name)
 
-	#define	shSampler3D(name) , uniform sampler3D name : @shUseSampler(name)
+    #define shSampler3D(name) uniform sampler3D name; @shUseSampler(name)
 
     #define shSamplerCube(name) uniform samplerCube name; @shUseSampler(name)
 
