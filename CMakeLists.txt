@@ -50,6 +50,12 @@ else(BUILD_SHARED_LIBS)
             ARCHIVE DESTINATION lib${LIB_SUFFIX}
             RUNTIME DESTINATION lib${LIB_SUFFIX})
 endif(BUILD_SHARED_LIBS)
+file(GLOB HEADERS_EDITOR Editor/*.hpp)
+file(GLOB HEADERS_EXTRA Extra/*.h)
+file(GLOB HEADERS_MAIN Main/*.hpp)
+install(FILES ${HEADERS_EDITOR} DESTINATION include/shiny/Editor)
+install(FILES ${HEADERS_EXTRA} DESTINATION include/shiny/Extra)
+install(FILES ${HEADERS_MAIN} DESTINATION include/shiny/Main)
 
 set(SHINY_LIBRARIES ${SHINY_LIBRARY})
 
@@ -83,6 +89,8 @@ if (SHINY_BUILD_OGRE_PLATFORM)
                 ARCHIVE DESTINATION lib${LIB_SUFFIX}//OGRE
                 RUNTIME DESTINATION lib${LIB_SUFFIX}//OGRE)
     endif(BUILD_SHARED_LIBS)
+    file(GLOB HEADERS_PLATFORM_OGRE Platforms/Ogre/*.hpp)
+    install(FILES ${HEADERS_PLATFORM_OGRE} DESTINATION include/shiny/Platforms/Ogre)
 endif()
 
 set(SHINY_LIBRARY ${SHINY_LIBRARY} PARENT_SCOPE)
