@@ -1,11 +1,20 @@
 cmake_minimum_required(VERSION 2.8)
 
+set(SHINY_MAJOR_VERSION 0)
+set(SHINY_MINOR_VERSION 3)
+
 # This is NOT intended as a stand-alone build system! Instead, you should include this from the main CMakeLists of your project.
 # Make sure to link against Ogre, boost::filesystem and boost::wave.
 
 find_package(Boost REQUIRED QUIET COMPONENTS system filesystem wave)
 
 option(SHINY_BUILD_OGRE_PLATFORM "build the Ogre platform" ON)
+option(SHINY_BUILD_SHARED "build the shiny libraries shared" OFF)
+if(SHINY_BUILD_SHARED)
+    set(SHINY_LIBRARY_TYPE SHARED)
+else(SHINY_BUILD_SHARED)
+    set(SHINY_LIBRARY_TYPE STATIC)
+endif(SHINY_BUILD_SHARED)
 
 set(SHINY_LIBRARY "shiny")
 set(SHINY_OGREPLATFORM_LIBRARY "shiny.OgrePlatform")
@@ -26,7 +35,12 @@ set(SOURCE_FILES
 
 include_directories(${Boost_INCLUDE_DIRS})
 add_definitions(-DBOOST_ALL_NO_LIB)
-add_library(${SHINY_LIBRARY} STATIC ${SOURCE_FILES})
+add_library(${SHINY_LIBRARY} ${SHINY_LIBRARY_TYPE} ${SOURCE_FILES})
+if(SHINY_BUILD_SHARED)
+    target_link_libraries(${SHINY_LIBRARY} ${Boost_LIBRARIES})
+    set_target_properties(${SHINY_LIBRARY} PROPERTIES SOVERSION "${SHINY_MAJOR_VERSION}.${SHINY_MINOR_VERSION}")
+endif(SHINY_BUILD_SHARED)
+install(TARGETS ${SHINY_LIBRARY} LIBRARY DESTINATION lib${LIB_SUFFIX})
 
 set(SHINY_LIBRARIES ${SHINY_LIBRARY})
 
@@ -48,9 +62,11 @@ if (SHINY_BUILD_OGRE_PLATFORM)
     file(GLOB OGRE_PLATFORM_SOURCE_FILES Platforms/Ogre/*.cpp)
 
     add_definitions(-DBOOST_ALL_NO_LIB)
-    add_library(${SHINY_OGREPLATFORM_LIBRARY} STATIC ${OGRE_PLATFORM_SOURCE_FILES})
+    add_library(${SHINY_OGREPLATFORM_LIBRARY} ${SHINY_LIBRARY_TYPE} ${OGRE_PLATFORM_SOURCE_FILES})
     add_dependencies(${SHINY_OGREPLATFORM_LIBRARY} ${SHINY_LIBRARY})
     set(SHINY_LIBRARIES ${SHINY_LIBRARIES} ${SHINY_OGREPLATFORM_LIBRARY})
+    install(TARGETS ${SHINY_OGREPLATFORM_LIBRARY}
+            LIBRARY DESTINATION lib${LIB_SUFFIX}//OGRE)
 endif()
 
 set(SHINY_LIBRARY ${SHINY_LIBRARY} PARENT_SCOPE)
