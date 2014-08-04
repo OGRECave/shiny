@@ -441,8 +441,9 @@ namespace sh
 
 	std::string Factory::retrieveTextureAlias (const std::string& name)
 	{
-		if (mTextureAliases.find(name) != mTextureAliases.end())
-			return mTextureAliases[name];
+		TextureAliasMap::iterator it = mTextureAliases.find(name);
+		if (it != mTextureAliases.end())
+			return it->second;
 		else
 			return "";
 	}
