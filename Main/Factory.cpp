@@ -275,16 +275,18 @@ namespace sh
 
 	MaterialInstance* Factory::searchInstance (const std::string& name)
 	{
-		if (mMaterials.find(name) != mMaterials.end())
-				return &mMaterials.find(name)->second;
-
-		return NULL;
+		MaterialMap::iterator it = mMaterials.find(name);
+		if (it != mMaterials.end())
+			return &(it->second);
+		else
+			return NULL;
 	}
 
 	MaterialInstance* Factory::findInstance (const std::string& name)
 	{
-		assert (mMaterials.find(name) != mMaterials.end());
-		return &mMaterials.find(name)->second;
+		MaterialInstance* m = searchInstance(name);
+		assert (m);
+		return m;
 	}
 
 	MaterialInstance* Factory::requestMaterial (const std::string& name, const std::string& configuration, unsigned short lodIndex)
