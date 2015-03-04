@@ -59,6 +59,16 @@ namespace sh
 		delete sSerializer;
 	}
 
+	bool OgrePlatform::isDefaultMaterialSchemeName(const std::string &name) const
+	{
+		// Big mess here, and it's all Ogre's fault.
+		// When using a rendersystem with no fixed function support,
+		// Ogre will use "ShaderGeneratorDefaultScheme" instead of "Default" as the scheme name.
+		// Except for compositors, then it's always using MaterialManager::DEFAULT_SCHEME_NAME.
+		return name == Ogre::Root::getSingleton().getRenderSystem()->_getDefaultViewportMaterialScheme()
+			|| name == Ogre::MaterialManager::DEFAULT_SCHEME_NAME;
+	}
+
 	bool OgrePlatform::isProfileSupported (const std::string& profile)
 	{
 		return Ogre::GpuProgramManager::getSingleton().isSyntaxSupported(profile);

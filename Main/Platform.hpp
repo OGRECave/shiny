@@ -87,6 +87,8 @@ namespace sh
 		void setCacheFolder (const std::string& folder);
 
 	private:
+		virtual bool isDefaultMaterialSchemeName(const std::string& name) const = 0;
+
 		virtual boost::shared_ptr<Material> createMaterial (const std::string& name) = 0;
 
 		virtual boost::shared_ptr<GpuProgram> createGpuProgram (

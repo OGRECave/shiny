@@ -293,9 +293,8 @@ namespace sh
 	{
 		MaterialInstance* m = searchInstance (name);
 
-		if (configuration != "Default" && mConfigurations.find(configuration) == mConfigurations.end())
+		if (!mPlatform->isDefaultMaterialSchemeName(configuration) && mConfigurations.find(configuration) == mConfigurations.end())
 			return NULL;
-
 		if (m)
 		{
 			if (m->createForConfiguration (configuration, 0))
@@ -485,7 +484,7 @@ namespace sh
 
 	void Factory::setActiveConfiguration (const std::string& configuration)
 	{
-		if (configuration == "Default")
+		if (mPlatform->isDefaultMaterialSchemeName(configuration))
 			mCurrentConfiguration = 0;
 		else
 		{

@@ -39,6 +39,8 @@ namespace sh
 		virtual void serializeShaders (const std::string& file);
 		virtual void deserializeShaders (const std::string& file);
 
+		virtual bool isDefaultMaterialSchemeName(const std::string& name) const;
+
 		virtual boost::shared_ptr<Material> createMaterial (const std::string& name);
 
 		virtual boost::shared_ptr<GpuProgram> createGpuProgram (
