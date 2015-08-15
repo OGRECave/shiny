@@ -92,8 +92,8 @@ namespace sh
 			return mValue;
 		}
 
-		ScriptNode *addChild(const std::string &name = "untitled", bool replaceExisting = false);
-		ScriptNode *findChild(const std::string &name, bool recursive = false);
+		ScriptNode *addChild(const std::string &name = "untitled");
+		ScriptNode *findChild(const std::string &name);
 
 		inline std::vector<ScriptNode*> &getChildren()
 		{
@@ -105,8 +105,6 @@ namespace sh
 			assert(index < mChildren.size());
 			return mChildren[index];
 		}
-
-		void setParent(ScriptNode *newParent);
  
 		inline ScriptNode *getParent()
 		{
@@ -121,12 +119,6 @@ namespace sh
 		std::string mValue;
 		std::vector<ScriptNode*> mChildren;
 		ScriptNode *mParent;
-
-
-		int mLastChildFound;  //The last child node's index found with a call to findChild()
-
-		std::vector<ScriptNode*>::iterator mIter;
-		bool mRemoveSelf;
 	};
  
 }
