@@ -7,6 +7,7 @@
 #include <OgreHighLevelGpuProgramManager.h>
 #include <OgreGpuProgramManager.h>
 #include <OgreVector4.h>
+#include <iostream>
 
 namespace sh
 {
