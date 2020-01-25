@@ -1,6 +1,6 @@
-shiny - a shader and material management library for OGRE
+# shiny - a shader and material management library for OGRE
 
-FEATURES
+## FEATURES
 
 - High-level layer on top of OGRE's material system. It allows you to generate multiple techniques for all your materials from a set of high-level per-material properties.
 
@@ -24,10 +24,10 @@ FEATURES
 
 - Fixed function support. You can globally enable or disable shaders at any time, and for texture units you can specify if they're only needed for the shader-based path (e.g. normal maps) or if they should also be created in the fixed function path. 
 
-LICENSE
+## LICENSE
 
 see License.txt
 
-AUTHOR
+## AUTHOR
 
 scrawl <scrawl@baseoftrash.de>
