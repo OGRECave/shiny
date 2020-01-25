@@ -1,0 +1,5 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="/usr/local/share/doc/OGRE/api/Ogre.tag$class_ogre_1_1_allocated_object.html" title="Ogre::AllocatedObject\l\&lt; Category \&gt;" alt="" coords="5,5,156,47"/>
+<area shape="rect" id="node2" href="/usr/local/share/doc/OGRE/api/Ogre.tag$class_ogre_1_1_material_serializer.html" title="Ogre::MaterialSerializer" alt="" coords="204,13,363,39"/>
+<area shape="rect" id="node3" href="$classsh_1_1_ogre_material_serializer.html" title="This class allows me to let Ogre handle the pass &amp; texture unit properties. " alt="" coords="411,13,583,39"/>
+</map>

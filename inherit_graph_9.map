@@ -1,0 +1,9 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classsh_1_1_property_set.html" title="base class that allows setting properties with any kind of value&#45;type " alt="" coords="5,56,119,83"/>
+<area shape="rect" id="node2" href="$classsh_1_1_material.html" title="sh::Material" alt="" coords="193,5,283,32"/>
+<area shape="rect" id="node4" href="$classsh_1_1_pass.html" title="sh::Pass" alt="" coords="201,56,275,83"/>
+<area shape="rect" id="node6" href="$classsh_1_1_texture_unit_state.html" title="sh::TextureUnitState" alt="" coords="167,107,309,133"/>
+<area shape="rect" id="node3" href="$classsh_1_1_ogre_material.html" title="sh::OgreMaterial" alt="" coords="383,5,502,32"/>
+<area shape="rect" id="node5" href="$classsh_1_1_ogre_pass.html" title="sh::OgrePass" alt="" coords="391,56,494,83"/>
+<area shape="rect" id="node7" href="$classsh_1_1_ogre_texture_unit_state.html" title="sh::OgreTextureUnitState" alt="" coords="357,107,528,133"/>
+</map>

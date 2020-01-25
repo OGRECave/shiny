@@ -1,0 +1,8 @@
+<map id="sh::PropertySet" name="sh::PropertySet">
+<area shape="rect" id="node2" href="$classsh_1_1_material.html" title="sh::Material" alt="" coords="34,80,125,107"/>
+<area shape="rect" id="node4" href="$classsh_1_1_pass.html" title="sh::Pass" alt="" coords="162,80,237,107"/>
+<area shape="rect" id="node6" href="$classsh_1_1_texture_unit_state.html" title="sh::TextureUnitState" alt="" coords="275,80,417,107"/>
+<area shape="rect" id="node3" href="$classsh_1_1_ogre_material.html" title="sh::OgreMaterial" alt="" coords="5,155,124,181"/>
+<area shape="rect" id="node5" href="$classsh_1_1_ogre_pass.html" title="sh::OgrePass" alt="" coords="148,155,251,181"/>
+<area shape="rect" id="node7" href="$classsh_1_1_ogre_texture_unit_state.html" title="sh::OgreTextureUnitState" alt="" coords="275,155,446,181"/>
+</map>

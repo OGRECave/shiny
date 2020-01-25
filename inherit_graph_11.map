@@ -1,0 +1,11 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classsh_1_1_property_value.html" title="sh::PropertyValue" alt="" coords="5,183,132,209"/>
+<area shape="rect" id="node2" href="$classsh_1_1_boolean_value.html" title="sh::BooleanValue" alt="" coords="180,5,304,32"/>
+<area shape="rect" id="node3" href="$classsh_1_1_float_value.html" title="sh::FloatValue" alt="" coords="189,56,295,83"/>
+<area shape="rect" id="node4" href="$classsh_1_1_int_value.html" title="sh::IntValue" alt="" coords="196,107,288,133"/>
+<area shape="rect" id="node5" href="$classsh_1_1_linked_value.html" title="Used for retrieving a named property from a context. " alt="" coords="185,157,299,184"/>
+<area shape="rect" id="node6" href="$classsh_1_1_string_value.html" title="sh::StringValue" alt="" coords="187,208,297,235"/>
+<area shape="rect" id="node7" href="$classsh_1_1_vector2.html" title="sh::Vector2" alt="" coords="197,259,287,285"/>
+<area shape="rect" id="node8" href="$classsh_1_1_vector3.html" title="sh::Vector3" alt="" coords="197,309,287,336"/>
+<area shape="rect" id="node9" href="$classsh_1_1_vector4.html" title="sh::Vector4" alt="" coords="197,360,287,387"/>
+</map>

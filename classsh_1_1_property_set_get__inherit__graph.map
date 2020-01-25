@@ -1,0 +1,6 @@
+<map id="sh::PropertySetGet" name="sh::PropertySetGet">
+<area shape="rect" id="node2" href="$classsh_1_1_configuration.html" title="sh::Configuration" alt="" coords="231,5,353,32"/>
+<area shape="rect" id="node3" href="$classsh_1_1_material_instance.html" title="A specific material instance, which has all required properties set (for example the diffuse &amp; normal..." alt="" coords="222,56,362,83"/>
+<area shape="rect" id="node4" href="$classsh_1_1_material_instance_pass.html" title="Holds properties of a single texture unit in a MaterialInstancePass. &#160;No inheritance here for now..." alt="" coords="207,107,377,133"/>
+<area shape="rect" id="node5" href="$classsh_1_1_material_instance_texture_unit.html" title="A single texture unit state that belongs to a MaterialInstancePass &#160;this is not the real &quot;backend&quot; Te..." alt="" coords="188,157,396,184"/>
+</map>
